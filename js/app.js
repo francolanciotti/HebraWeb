@@ -69,6 +69,14 @@ class KencaloApp {
         this.captureCurrentKencalo();
       });
     }
+
+    // Botón ir a AR desde la pantalla de no capturado
+    const btnGoAr = document.getElementById('btn-go-ar');
+    if (btnGoAr) {
+      btnGoAr.addEventListener('click', () => {
+        this.switchView('ar');
+      });
+    }
   }
 
   /**
@@ -88,15 +96,6 @@ class KencaloApp {
       setTimeout(() => {
         this.switchView('companion');
       }, 700);
-    }
-  }
-
-    // Botón ir a AR desde la pantalla de no capturado
-    const btnGoAr = document.getElementById('btn-go-ar');
-    if (btnGoAr) {
-      btnGoAr.addEventListener('click', () => {
-        this.switchView('ar');
-      });
     }
   }
 
