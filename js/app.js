@@ -28,6 +28,7 @@ class KencaloApp {
     const container = document.getElementById('companion-3d-root');
     this.sceneManager = new SceneManager(container);
     this.kencaloModel = new KencaloModel(this.sceneManager.scene);
+    this.sceneManager.setTargetModel(this.kencaloModel.group);
 
     // Intentar cargar modelo .glb si existe en la ruta de assets
     this.kencaloModel.loadGLBModel('./assets/models/kencalo.glb');

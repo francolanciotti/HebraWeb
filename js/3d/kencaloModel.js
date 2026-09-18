@@ -322,10 +322,10 @@ export class KencaloModel {
     }
 
     // Flotación suave y balanceo en el eje X
-    const floatY = Math.sin(time * 2.0) * 0.12;
-    this.group.position.y = floatY;
-    this.group.rotation.y = Math.sin(time * 0.8) * 0.3;
-    this.group.rotation.x = Math.sin(time * 1.4) * 0.15;
+    //const floatY = Math.sin(time * 2.0) * 0.12;
+    //this.group.position.y = floatY;
+    //this.group.rotation.y = Math.sin(time * 0.8) * 0.3;
+    //this.group.rotation.x = Math.sin(time * 1.4) * 0.15;
   }
 
   getInteractiveMesh() {

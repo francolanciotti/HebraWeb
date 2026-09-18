@@ -65,6 +65,7 @@ html, body {
   height: 100vh;
   z-index: 5;
   pointer-events: auto;
+  touch-action: none;
 }
 
 /* Main App Wrapper */
