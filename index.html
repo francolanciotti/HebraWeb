@@ -1,0 +1,256 @@
+<!DOCTYPE html>
+<html lang="es">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport"
+    content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>Hebra</title>
+
+  <!-- SEO & Social Meta Tags -->
+  <meta name="description"
+    content="Descubre a Hebra en Realidad Aumentada, interactúa con él y explora el portal transmedia de la obra física.">
+  <meta name="theme-color" content="#0d0f12">
+
+  <!-- Google Fonts -->
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link
+    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;700&display=swap"
+    rel="stylesheet">
+
+  <!-- Three.js (r128) -->
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+
+  <!-- Stylesheets -->
+  <link rel="stylesheet" href="css/main.css">
+  <link rel="stylesheet" href="css/ar-view.css">
+  <link rel="stylesheet" href="css/companion.css">
+  <link rel="stylesheet" href="css/transmedia.css">
+</head>
+
+<body>
+  <!-- Canvas para la escena 3D global de Kencalo cuando no está en AR -->
+  <div id="companion-3d-root" class="fullscreen-3d"></div>
+
+  <!-- App Wrapper Principal -->
+  <div id="app" class="app-layout">
+
+    <!-- Banner de Notificación de Nuevo Árbol -->
+    <div id="notification-banner" class="notification-banner glass-card hidden">
+      <div class="banner-content">
+        <span class="banner-badge">¡NUEVO DISCUBRIMIENTO!</span>
+        <p id="banner-message">Se ha detectado el Árbol B cerca. ¡Escanéalo para desbloquear ropa!</p>
+      </div>
+      <button id="btn-banner-action" class="btn-primary-sm">Ir a Cámara</button>
+    </div>
+
+    <!-- MAIN VIEW CONTAINERS -->
+    <main class="main-content">
+
+      <!-- TAB 1: VISOR AR -->
+      <section id="view-ar" class="view-section active">
+        <div id="ar-viewport" class="ar-viewport">
+          <!-- Canvas de MindAR se renderiza aquí -->
+        </div>
+
+        <div class="ar-overlay-ui">
+          <div id="ar-target-scanner" class="scanner-frame">
+            <div class="scanner-corner top-left"></div>
+            <div class="scanner-corner top-right"></div>
+            <div class="scanner-corner bottom-left"></div>
+            <div class="scanner-corner bottom-right"></div>
+            <p id="ar-instruction" class="scanner-hint">Apunta la cámara al árbol</p>
+          </div>
+
+          <!-- Acciones de Captura -->
+          <div id="ar-actions" class="ar-action-bar hidden">
+            <button id="btn-capture-kencalo" class="btn-glow-pulse">
+              <span class="btn-icon">✨</span>
+              <span>¡CAPTURAR EL KENCALO!</span>
+            </button>
+          </div>
+
+          <!-- Dev Simulator Tools -->
+          <div class="dev-sim-bar glass-card">
+            <span class="dev-label">Modo Prueba:</span>
+            <button id="btn-sim-tree-a" class="btn-sim">Simular Árbol A</button>
+            <button id="btn-sim-tree-b" class="btn-sim">Simular Árbol B</button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 2: MI KENCALO (COMPANION 3D) -->
+      <section id="view-companion" class="view-section">
+        <!-- Pantalla si Kencalo no fue capturado aún -->
+        <div id="companion-unclaimed-hint" class="unclaimed-card glass-card">
+          <span class="unclaimed-icon">🔍</span>
+          <h2>Todavia no capturaste ningun Kencalo</h2>
+          <p>Explora la ciudad para encontrar y capturar un Kencalo.</p>
+          <button id="btn-go-ar" class="btn-primary-sm">Ir a Cámara</button>
+        </div>
+
+        <div class="companion-hud">
+          <div class="companion-controls">
+            <button id="btn-open-wardrobe" class="btn-glass-circle disabled" title="Indumentaria">
+              <span class="circle-icon">👕</span>
+              <span class="badge-count hidden" id="wardrobe-badge">!</span>
+            </button>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 3: UNIVERSO TRANSMEDIA -->
+      <section id="view-transmedia" class="view-section">
+        <div class="transmedia-container scrollable">
+          <div class="hero-card glass-card">
+            <div class="glow-orb"></div>
+            <span class="hero-tag">PROYECTO TRANSMEDIA</span>
+            <h2>Hebra</h2>
+            <p>
+              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
+              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
+              ea commodo consequat.
+            </p>
+          </div>
+
+          <div class="links-grid">
+            <a href="https://www.instagram.com/hebra.tdm3" target="_blank" rel="noopener noreferrer"
+              class="link-card glass-card">
+              <div class="link-icon instagram-bg">
+                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
+                  <path
+                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
+                </svg>
+              </div>
+              <div class="link-info">
+                <h3>Entérate mas de nuestro universo en Instagram</h3>
+                <p>Contenido exclusivo para tu kencalo, nuevos arboles y mas novedades.</p>
+              </div>
+              <span class="link-arrow">→</span>
+            </a>
+          </div>
+
+          <div class="transmedia-lore glass-card">
+            <h3>Mapa de la Instalación Física</h3>
+            <p>Visita los árboles intervenidos en la ciudad. Cada marcador desbloquea indumentaria única
+              para tu kencalo.</p>
+            <div class="trees-status-grid">
+              <div class="tree-badge-card" id="badge-tree-a">
+                <span class="tree-icon">🌳</span>
+                <span class="tree-name">Árbol A</span>
+                <span class="tree-state" id="state-tree-a">No descubierto</span>
+              </div>
+              <div class="tree-badge-card" id="badge-tree-b">
+                <span class="tree-icon">🌲</span>
+                <span class="tree-name">Árbol B</span>
+                <span class="tree-state" id="state-tree-b">Bloqueado</span>
+              </div>
+            </div>
+          </div>
+        </div>
+      </section>
+
+      <!-- TAB 4: RESPALDO Y TOKEN -->
+      <section id="view-backup" class="view-section">
+        <div class="backup-container scrollable">
+          <div class="backup-card glass-card">
+            <div class="backup-header">
+              <span class="backup-icon">🔑</span>
+              <h2>Respaldo de Partida</h2>
+            </div>
+            <p>Exporta tu progreso mediante un código corto o ingresa un código existente para restaurar tus logros en
+              cualquier dispositivo.</p>
+
+            <div class="token-box">
+              <label>Tu Código de Respaldo:</label>
+              <div class="token-input-group">
+                <input type="text" id="token-display" readonly value="KENC-XXXXX" class="token-input">
+                <button id="btn-copy-token" class="btn-primary-sm">Copiar</button>
+              </div>
+              <span id="copy-feedback" class="feedback-text hidden">¡Copiado al portapapeles!</span>
+            </div>
+
+            <div class="token-box restore-box">
+              <label>Restaurar o Importar Partida:</label>
+              <div class="token-input-group">
+                <input type="text" id="token-import-input" placeholder="Ej: KENC-9A8F2" class="token-input uppercase">
+                <button id="btn-import-token" class="btn-accent-sm">Restaurar</button>
+              </div>
+            </div>
+
+            <div class="reset-box">
+              <button id="btn-reset-game" class="btn-danger-ghost">Reiniciar Progreso Local</button>
+            </div>
+          </div>
+        </div>
+      </section>
+
+    </main>
+
+    <!-- DRAWER SELECTOR DE INDUMENTARIA -->
+    <div id="wardrobe-drawer" class="drawer glass-card hidden">
+      <div class="drawer-header">
+        <h3>Indumentaria de tu Kencalo</h3>
+        <button id="btn-close-wardrobe" class="btn-close">&times;</button>
+      </div>
+      <div class="drawer-body">
+        <p class="drawer-subtitle">Personaliza a tu Kencalo con las prendas desbloqueadas.</p>
+        <div id="outfit-options-grid" class="outfit-grid">
+          <!-- Opciones inyectadas dinámicamente -->
+        </div>
+      </div>
+    </div>
+
+    <!-- NAVEGACIÓN INFERIOR (BOTTOM NAV) -->
+    <nav class="bottom-nav glass-card">
+      <button class="nav-item active" data-view="ar">
+        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
+          <circle cx="12" cy="13" r="4" />
+        </svg>
+        <span class="nav-label">Cámara</span>
+      </button>
+
+      <button class="nav-item" data-view="companion">
+        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <path d="M8 14s1.5 2 4 2 4-2 4-2" />
+          <line x1="9" y1="9" x2="9.01" y2="9" />
+          <line x1="15" y1="9" x2="15.01" y2="9" />
+        </svg>
+        <span class="nav-label">Kencalo</span>
+      </button>
+
+      <button class="nav-item" data-view="transmedia">
+        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <circle cx="12" cy="12" r="10" />
+          <line x1="2" y1="12" x2="22" y2="12" />
+          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z" />
+        </svg>
+        <span class="nav-label">Universo</span>
+      </button>
+
+      <button class="nav-item" data-view="backup">
+        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
+          stroke-width="2">
+          <path
+            d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
+        </svg>
+        <span class="nav-label">Respaldo</span>
+      </button>
+    </nav>
+
+    <!-- TOAST CONTAINER FOR NOTIFICATIONS -->
+    <div id="toast-container" class="toast-container"></div>
+  </div>
+
+  <!-- Entry Script Modular -->
+  <script type="module" src="js/app.js"></script>
+</body>
+
+</html>
