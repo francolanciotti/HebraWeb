@@ -13,6 +13,7 @@ import { NotificationUI } from './ui/notificationUI.js';
 class KencaloApp {
   constructor() {
     this.currentView = 'ar'; // 'ar' | 'companion' | 'transmedia' | 'backup'
+    this.isKencaloSpawnedInAR = false;
     
     this.init3DScene();
     this.initUI();
@@ -34,13 +35,20 @@ class KencaloApp {
     // Registrar malla para toques táctiles
     this.sceneManager.registerInteractiveObject(this.kencaloModel.getInteractiveMesh());
 
-    // Evento al tocar a Kencalo
+    // Evento al tocar a Kencalo en 3D
     this.sceneManager.onTap((intersect, point) => {
       const state = stateManager.getState();
-      if (!state.kencaloCaptured) return; // No interactuar si no fue capturado
 
-      // Disparar animación de reacción
-      this.kencaloModel.triggerTouchReaction();
+      // Si estamos en AR y Kencalo apareció pero aún no fue capturado
+      if (this.currentView === 'ar' && this.isKencaloSpawnedInAR && !state.kencaloCaptured) {
+        this.captureCurrentKencalo();
+        return;
+      }
+
+      // Si estamos en la vista Companion y ya fue capturado
+      if (this.currentView === 'companion' && state.kencaloCaptured) {
+        this.kencaloModel.triggerTouchReaction();
+      }
     });
 
     // Render Loop Update
@@ -56,14 +64,32 @@ class KencaloApp {
     // Botón de captura en vista AR
     const btnCapture = document.getElementById('btn-capture-kencalo');
     if (btnCapture) {
-      btnCapture.addEventListener('click', () => {
-        const captured = stateManager.captureKencalo();
-        if (captured) {
-          NotificationUI.showToast('¡Has capturado a Kencalo!', '✨');
-          this.switchView('companion');
-        }
+      btnCapture.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.captureCurrentKencalo();
       });
     }
+  }
+
+  /**
+   * Captura a Kencalo, dispara su animación alegre y pasa a la vista Companion
+   */
+  captureCurrentKencalo() {
+    const captured = stateManager.captureKencalo();
+    if (captured) {
+      this.isKencaloSpawnedInAR = false;
+
+      const arActions = document.getElementById('ar-actions');
+      if (arActions) arActions.classList.add('hidden');
+
+      NotificationUI.showToast('¡Has capturado a Kencalo!', '✨');
+      this.kencaloModel.triggerTouchReaction();
+
+      setTimeout(() => {
+        this.switchView('companion');
+      }, 700);
+    }
+  }
 
     // Botón ir a AR desde la pantalla de no capturado
     const btnGoAr = document.getElementById('btn-go-ar');
@@ -89,18 +115,37 @@ class KencaloApp {
   }
 
   handleTargetFoundA() {
+    const state = stateManager.getState();
+    if (state.kencaloCaptured) {
+      NotificationUI.showToast('¡Árbol A detectado! (Ya capturaste a Kencalo)', '🌳');
+      return;
+    }
+
+    this.isKencaloSpawnedInAR = true;
+
+    // Hacer visible a Kencalo flotando en la escena AR
+    if (this.kencaloModel && this.kencaloModel.group) {
+      this.kencaloModel.group.visible = true;
+    }
+
+    const root3D = document.getElementById('companion-3d-root');
+    if (root3D) {
+      root3D.style.pointerEvents = 'auto';
+      root3D.style.opacity = '1';
+    }
+
     const arActions = document.getElementById('ar-actions');
     const arInstruction = document.getElementById('ar-instruction');
 
     if (arInstruction) {
-      arInstruction.textContent = '¡Marcador A detectado! Kencalo está aquí';
+      arInstruction.textContent = '¡Kencalo ha aparecido! Tócalo para capturarlo';
     }
 
     if (arActions) {
       arActions.classList.remove('hidden');
     }
 
-    NotificationUI.showToast('¡Marcador A del Árbol A reconocido!', '🌳');
+    NotificationUI.showToast('¡Kencalo descubierto en el Árbol A!', '✨');
   }
 
   handleTargetFoundB() {
@@ -166,6 +211,9 @@ class KencaloApp {
       if (viewName === 'companion' && state.kencaloCaptured) {
         root3D.style.pointerEvents = 'auto';
         root3D.style.opacity = '1';
+      } else if (viewName === 'ar' && this.isKencaloSpawnedInAR && !state.kencaloCaptured) {
+        root3D.style.pointerEvents = 'auto';
+        root3D.style.opacity = '1';
       } else {
         root3D.style.pointerEvents = 'none';
         root3D.style.opacity = '0';
@@ -186,7 +234,7 @@ class KencaloApp {
 
     // Control de visibilidad del modelo 3D de Kencalo
     if (this.kencaloModel && this.kencaloModel.group) {
-      this.kencaloModel.group.visible = isCaptured;
+      this.kencaloModel.group.visible = isCaptured || (this.currentView === 'ar' && this.isKencaloSpawnedInAR);
     }
 
     // Pantalla de estado no capturado en la solapa Companion

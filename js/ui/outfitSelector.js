@@ -81,7 +81,7 @@ export class OutfitSelectorUI {
 
   render() {
     const state = this.stateManager.getState();
-    const unlocked = state.unlockedOutfits || ['default', 'outfit_corona', 'outfit_flor', 'outfit_palos', 'outfit_reno'];
+    const unlocked = state.unlockedOutfits || ['default'];
     const current = state.currentOutfit || 'default';
 
     // Actualizar botón del armario en HUD

@@ -8,7 +8,7 @@ const defaultState = {
   kencaloCaptured: false,
   kencaloTexture: 'A', // 'A' | 'B' | 'C' | 'D'
   discoveredTrees: [], // ['tree_a', 'tree_b']
-  unlockedOutfits: ['default', 'outfit_corona', 'outfit_flor', 'outfit_palos', 'outfit_reno'],
+  unlockedOutfits: ['default'], // Solo 'default'. Las demás se desbloquean al descubrir el Árbol B
   currentOutfit: 'default',
   lastInteractionTime: null
 };
@@ -23,7 +23,15 @@ class StateManager {
     try {
       const raw = localStorage.getItem(STORAGE_KEY);
       if (raw) {
-        return { ...defaultState, ...JSON.parse(raw) };
+        const parsed = { ...defaultState, ...JSON.parse(raw) };
+        // Si aún no se descubrió el Árbol B, asegurar que las indumentarias permanezcan bloqueadas
+        if (!parsed.discoveredTrees || !parsed.discoveredTrees.includes('tree_b')) {
+          parsed.unlockedOutfits = ['default'];
+          if (parsed.currentOutfit !== 'default') {
+            parsed.currentOutfit = 'default';
+          }
+        }
+        return parsed;
       }
     } catch (e) {
       console.warn('Error al cargar estado de localStorage:', e);
@@ -74,6 +82,9 @@ class StateManager {
       this.state.kencaloCaptured = true;
       this.state.kencaloTexture = randomTex;
       this.state.discoveredTrees = Array.from(discovered);
+      if (!this.state.unlockedOutfits || this.state.unlockedOutfits.length === 0) {
+        this.state.unlockedOutfits = ['default'];
+      }
       this.saveState();
       return true;
     }
@@ -82,11 +93,12 @@ class StateManager {
 
   discoverTreeB() {
     const discovered = new Set(this.state.discoveredTrees);
-    const outfits = new Set(this.state.unlockedOutfits);
+    const outfits = new Set(this.state.unlockedOutfits || ['default']);
     
     let isNew = !discovered.has('tree_b');
     discovered.add('tree_b');
     
+    // Desbloquear indumentaria al descubrir el Árbol B
     ['outfit_corona', 'outfit_flor', 'outfit_palos', 'outfit_reno'].forEach(id => outfits.add(id));
 
     this.state.discoveredTrees = Array.from(discovered);
