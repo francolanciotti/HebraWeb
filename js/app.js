@@ -9,12 +9,14 @@ import { ARController } from './ar/arController.js';
 import { OutfitSelectorUI } from './ui/outfitSelector.js';
 import { TransmediaUI } from './ui/transmediaModal.js';
 import { NotificationUI } from './ui/notificationUI.js';
+import { InkBleedCanvas } from './fx/inkBleed.js';
 
 class KencaloApp {
   constructor() {
     this.currentView = 'ar'; // 'ar' | 'companion' | 'transmedia' | 'backup'
     this.isKencaloSpawnedInAR = false;
-    
+
+    this.initWelcomeModal();
     this.init3DScene();
     this.initUI();
     this.initAR();
@@ -22,6 +24,49 @@ class KencaloApp {
 
     // Suscribirse a cambios de estado
     stateManager.subscribe(state => this.onStateChange(state));
+  }
+
+  /**
+   * Inicializa la ventana de bienvenida con el motor de sangrado de tinta líquida "HEBRA"
+   */
+  initWelcomeModal() {
+    const welcomeWrapper = document.getElementById('welcome-ink-wrapper');
+    const welcomeModal = document.getElementById('welcome-splash-modal');
+    const btnEnter = document.getElementById('btn-enter-universe');
+
+    if (welcomeWrapper) {
+      this.welcomeInkCanvas = new InkBleedCanvas(welcomeWrapper, {
+        text: 'HEBRA',
+        fontFamily: "'Outfit', 'Inter', sans-serif",
+        fontWeight: '800',
+        inkColor: [0.95, 0.96, 1.0],     // Blanco brillante
+        maxVolatility: 0.85,
+        baseVolatility: 0.0              // Grosor normal en reposo
+      });
+    }
+
+    if (btnEnter && welcomeModal) {
+      btnEnter.addEventListener('click', () => {
+        welcomeModal.classList.add('fade-out');
+
+        setTimeout(() => {
+          welcomeModal.style.display = 'none';
+        }, 750);
+      });
+    }
+
+    const btnReopen = document.getElementById('btn-reopen-welcome');
+    if (btnReopen && welcomeModal) {
+      btnReopen.addEventListener('click', () => {
+        welcomeModal.style.display = 'flex';
+        // Forzar reflow para reiniciar la animación CSS de fade-in
+        void welcomeModal.offsetWidth;
+        welcomeModal.classList.remove('fade-out');
+        if (this.welcomeInkCanvas) {
+          this.welcomeInkCanvas.resize();
+        }
+      });
+    }
   }
 
   init3DScene() {
@@ -150,9 +195,9 @@ class KencaloApp {
 
   handleTargetFoundB() {
     const isNew = stateManager.discoverTreeB();
-    
+
     NotificationUI.showToast('¡Marcador B del Árbol B reconocido!', '🌲');
-    
+
     if (isNew) {
       NotificationUI.showBanner(
         '¡Has descubierto el Árbol B! Se ha desbloqueado la indumentaria Corona Cyber Neón.',
@@ -206,7 +251,7 @@ class KencaloApp {
     // Visibilidad del canvas 3D global según vista
     const state = stateManager.getState();
     const root3D = document.getElementById('companion-3d-root');
-    
+
     if (root3D) {
       if (viewName === 'companion' && state.kencaloCaptured) {
         root3D.style.pointerEvents = 'auto';

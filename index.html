@@ -28,9 +28,40 @@
   <link rel="stylesheet" href="css/ar-view.css">
   <link rel="stylesheet" href="css/companion.css">
   <link rel="stylesheet" href="css/transmedia.css">
+  <link rel="stylesheet" href="css/ink-bleed.css">
 </head>
 
 <body>
+  <!-- VENTANA DE BIENVENIDA CON SANGRADO DE TINTA HEBRA -->
+  <div id="welcome-splash-modal" class="welcome-splash-modal">
+    <div class="splash-bg-glow"></div>
+    <div class="welcome-content-card">
+      <div class="welcome-badge">
+        <span class="badge-dot"></span>
+        <span>EXPERIENCIA TRANSMEDIA & AR</span>
+      </div>
+
+      <!-- Contenedor WebGL para Título HEBRA con Sangrado de Tinta -->
+      <div id="welcome-ink-wrapper" class="welcome-ink-wrapper"></div>
+
+      <h1 class="welcome-subtitle">Instalación Urbana & Compañero 3D</h1>
+      <p class="welcome-description">
+        Escanea los marcadores de la ciudad para capturar a tu Kencalo, desbloquear indumentarias únicas y explorar la
+        obra.
+      </p>
+
+      <div class="welcome-interaction-hint">
+        <span class="hint-icon">✍️</span>
+        <span>Mueve el cursor o desliza sobre HEBRA para sangrar la tinta</span>
+      </div>
+
+      <button id="btn-enter-universe" class="btn-enter-universe">
+        <span>EXPLORAR EL UNIVERSO</span>
+        <span class="btn-arrow">→</span>
+      </button>
+    </div>
+  </div>
+
   <!-- Canvas para la escena 3D global de Kencalo cuando no está en AR -->
   <div id="companion-3d-root" class="fullscreen-3d"></div>
 
@@ -109,10 +140,11 @@
             <span class="hero-tag">PROYECTO TRANSMEDIA</span>
             <h2>Hebra</h2>
             <p>
-              Lorem ipsum dolor sit amet, consectetur adipiscing elit, sed do eiusmod tempor incididunt ut labore et
-              dolore magna aliqua. Ut enim ad minim veniam, quis nostrud exercitation ullamco laboris nisi ut aliquip ex
-              ea commodo consequat.
+              Explora la instalación urbana transmedia y descubre a Kencalo en su hábitat natural.
             </p>
+            <button id="btn-reopen-welcome" class="btn-primary-sm" style="margin-top: 12px;">
+              <span>✨ Ver Pantalla de Bienvenida (Tinta Líquida)</span>
+            </button>
           </div>
 
           <div class="links-grid">
