@@ -148,3 +148,71 @@
   background: var(--primary-neon);
   color: #000;
 }
+
+/* Tarjeta de Solicitud de Permiso de Cámara */
+.ar-permission-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 24px;
+  max-width: 360px;
+  width: 90%;
+  margin: auto;
+  gap: 14px;
+  border-radius: var(--radius-lg);
+  background: rgba(17, 33, 66, 0.88);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1px solid rgba(255, 255, 255, 0.18);
+  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  z-index: 20;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
+}
+
+.ar-permission-card.hidden {
+  opacity: 0;
+  transform: scale(0.92);
+  pointer-events: none;
+  visibility: hidden;
+  display: none;
+}
+
+.camera-icon-wrapper {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(245, 246, 250, 0.1);
+  border: 1px solid rgba(245, 246, 250, 0.25);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
+  box-shadow: 0 0 24px rgba(245, 246, 250, 0.15);
+}
+
+.ar-permission-card h3 {
+  font-family: var(--font-epilogue);
+  font-size: 1.35rem;
+  font-weight: 600;
+  color: #F5F6FA;
+  margin: 0;
+}
+
+.ar-permission-card p {
+  font-size: 0.9rem;
+  color: rgba(245, 246, 250, 0.82);
+  line-height: 1.45;
+  margin: 0;
+}
+
+.ar-permission-error {
+  font-size: 0.82rem;
+  color: #ff6b6b;
+  margin-top: 4px;
+}
+
+.scanner-frame.hidden {
+  display: none !important;
+}

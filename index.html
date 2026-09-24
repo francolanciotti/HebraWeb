@@ -77,7 +77,21 @@
         </div>
 
         <div class="ar-overlay-ui">
-          <div id="ar-target-scanner" class="scanner-frame">
+          <!-- Tarjeta de Solicitud de Permiso de Cámara -->
+          <div id="ar-permission-card" class="ar-permission-card glass-card">
+            <div class="camera-icon-wrapper">
+              <span class="camera-icon">📷</span>
+            </div>
+            <h3>Realidad Aumentada</h3>
+            <p>Activa tu cámara para escanear los árboles y descubrir a Hebra en tu entorno.</p>
+            <button id="btn-request-camera" class="btn-primary-sm btn-glow-pulse">
+              <span class="btn-icon">📹</span>
+              <span id="btn-request-camera-text">Activar Cámara</span>
+            </button>
+            <p id="ar-permission-error" class="ar-permission-error hidden"></p>
+          </div>
+
+          <div id="ar-target-scanner" class="scanner-frame hidden">
             <div class="scanner-corner top-left"></div>
             <div class="scanner-corner top-right"></div>
             <div class="scanner-corner bottom-left"></div>

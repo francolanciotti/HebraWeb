@@ -240,6 +240,37 @@ class KencaloApp {
     this.outfitUI = new OutfitSelectorUI(stateManager, this.kencaloModel);
     this.transmediaUI = new TransmediaUI(stateManager);
 
+    // Botón para solicitar acceso a la cámara de forma explícita
+    const btnRequestCamera = document.getElementById('btn-request-camera');
+    const permissionCard = document.getElementById('ar-permission-card');
+    const scannerFrame = document.getElementById('ar-target-scanner');
+    const permissionError = document.getElementById('ar-permission-error');
+    const btnText = document.getElementById('btn-request-camera-text');
+
+    if (btnRequestCamera) {
+      btnRequestCamera.addEventListener('click', async (e) => {
+        e.stopPropagation();
+        if (btnText) btnText.textContent = 'Iniciando cámara...';
+        btnRequestCamera.disabled = true;
+        if (permissionError) permissionError.classList.add('hidden');
+
+        const arViewport = document.getElementById('ar-viewport');
+        await this.arController.startAR(arViewport);
+
+        if (this.arController.isARActive) {
+          if (permissionCard) permissionCard.classList.add('hidden');
+          if (scannerFrame) scannerFrame.classList.remove('hidden');
+        } else {
+          btnRequestCamera.disabled = false;
+          if (btnText) btnText.textContent = 'Reintentar';
+          if (permissionError) {
+            permissionError.textContent = 'No se pudo acceder a la cámara. Por favor permite el acceso en tu navegador.';
+            permissionError.classList.remove('hidden');
+          }
+        }
+      });
+    }
+
     // Botón de captura en vista AR
     const btnCapture = document.getElementById('btn-capture-kencalo');
     if (btnCapture) {
@@ -396,8 +427,18 @@ class KencaloApp {
 
     // Gestiones específicas de cámara AR
     if (viewName === 'ar') {
-      const arViewport = document.getElementById('ar-viewport');
-      if (arViewport) this.arController.startAR(arViewport);
+      const permissionCard = document.getElementById('ar-permission-card');
+      const scannerFrame = document.getElementById('ar-target-scanner');
+
+      if (this.arController.hasPermission) {
+        if (permissionCard) permissionCard.classList.add('hidden');
+        if (scannerFrame) scannerFrame.classList.remove('hidden');
+        const arViewport = document.getElementById('ar-viewport');
+        if (arViewport) this.arController.startAR(arViewport);
+      } else {
+        if (permissionCard) permissionCard.classList.remove('hidden');
+        if (scannerFrame) scannerFrame.classList.add('hidden');
+      }
     } else {
       this.arController.stopAR();
     }

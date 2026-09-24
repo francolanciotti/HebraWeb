@@ -11,6 +11,7 @@ export class ARController {
     this.mindThree = null;
     this.isARActive = false;
     this.isStartingAR = false;
+    this.hasPermission = false;
     this.cameraStream = null;
     this.videoElement = null;
 
@@ -38,6 +39,10 @@ export class ARController {
       if (!this.isStartingAR) {
         this.stopAR();
         return;
+      }
+
+      if (this.cameraStream) {
+        this.hasPermission = true;
       }
 
       // 2. Si MindAR está disponible y existe targets.mind, inicializar Image Tracking
