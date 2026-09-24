@@ -24,14 +24,18 @@ export class SceneManager {
     );
     this.camera.position.set(0, 0, this.initialZoom);
 
-    // Renderer con soporte de alpha transparente
-    this.renderer = new THREE.WebGLRenderer({ antialias: true, alpha: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
+    // Renderer con soporte de alpha transparente y DPR optimizado para móviles
+    const isMobile = ('ontouchstart' in window) || (window.innerWidth < 768);
+    this.renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.5));
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.shadowMap.enabled = true;
-    this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    this.renderer.shadowMap.enabled = !isMobile; // Sombras activas en Desktop, desactivadas en móvil para máxima fluidez
+    if (this.renderer.shadowMap.enabled) {
+      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
+    }
 
     this.container.appendChild(this.renderer.domElement);
+    this.isVisible = true;
 
     // Luces
     this.initLights();
@@ -229,6 +233,10 @@ export class SceneManager {
     this.updateCallbacks.push(cb);
   }
 
+  setVisible(visible) {
+    this.isVisible = !!visible;
+  }
+
   onWindowResize() {
     this.camera.aspect = window.innerWidth / window.innerHeight;
     this.camera.updateProjectionMatrix();
@@ -237,6 +245,9 @@ export class SceneManager {
 
   animate() {
     requestAnimationFrame(() => this.animate());
+
+    // Si la escena 3D está oculta, no desperdiciar recursos de GPU/batería renderizando
+    if (!this.isVisible) return;
 
     const time = performance.now() * 0.001;
 

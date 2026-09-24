@@ -51,6 +51,9 @@ class KencaloApp {
 
         setTimeout(() => {
           welcomeModal.style.display = 'none';
+          if (this.welcomeInkCanvas) {
+            this.welcomeInkCanvas.pause();
+          }
         }, 750);
       });
     }
@@ -63,6 +66,7 @@ class KencaloApp {
         void welcomeModal.offsetWidth;
         welcomeModal.classList.remove('fade-out');
         if (this.welcomeInkCanvas) {
+          this.welcomeInkCanvas.resume();
           this.welcomeInkCanvas.resize();
         }
       });
@@ -151,12 +155,6 @@ class KencaloApp {
       onTargetFoundB: () => this.handleTargetFoundB(),
       onTargetLost: () => this.handleTargetLost()
     });
-
-    // Iniciar cámara AR si estamos en la vista AR
-    const arViewport = document.getElementById('ar-viewport');
-    if (arViewport) {
-      this.arController.startAR(arViewport);
-    }
   }
 
   handleTargetFoundA() {
@@ -251,18 +249,20 @@ class KencaloApp {
     // Visibilidad del canvas 3D global según vista
     const state = stateManager.getState();
     const root3D = document.getElementById('companion-3d-root');
+    const shouldShow3D = (viewName === 'companion' && state.kencaloCaptured) || (viewName === 'ar' && this.isKencaloSpawnedInAR && !state.kencaloCaptured);
 
     if (root3D) {
-      if (viewName === 'companion' && state.kencaloCaptured) {
-        root3D.style.pointerEvents = 'auto';
-        root3D.style.opacity = '1';
-      } else if (viewName === 'ar' && this.isKencaloSpawnedInAR && !state.kencaloCaptured) {
+      if (shouldShow3D) {
         root3D.style.pointerEvents = 'auto';
         root3D.style.opacity = '1';
       } else {
         root3D.style.pointerEvents = 'none';
         root3D.style.opacity = '0';
       }
+    }
+
+    if (this.sceneManager) {
+      this.sceneManager.setVisible(shouldShow3D);
     }
 
     // Gestiones específicas de cámara AR

@@ -10,6 +10,7 @@ export class ARController {
 
     this.mindThree = null;
     this.isARActive = false;
+    this.isStartingAR = false;
     this.cameraStream = null;
     this.videoElement = null;
 
@@ -22,38 +23,60 @@ export class ARController {
   async startAR(containerElement) {
     if (!containerElement) return;
 
-    // 1. Iniciar la cámara en vivo del dispositivo (pide permisos de cámara al usuario)
-    await this.startLiveCamera(containerElement);
+    // Evitar ejecuciones simultáneas o duplicadas (Guard Lock)
+    if (this.isARActive || this.isStartingAR) {
+      return;
+    }
 
-    // 2. Si MindAR está disponible y existe targets.mind, inicializar Image Tracking
-    if (window.MINDAR && window.MINDAR.IMAGE) {
-      try {
-        const res = await fetch('./assets/targets/targets.mind', { method: 'HEAD' }).catch(() => null);
-        if (res && res.ok) {
-          this.mindThree = new window.MINDAR.IMAGE.MindARThree({
-            container: containerElement,
-            imageTargetSrc: './assets/targets/targets.mind'
-          });
+    this.isStartingAR = true;
 
-          const { renderer, scene, camera } = this.mindThree;
+    try {
+      // 1. Iniciar la cámara en vivo del dispositivo
+      await this.startLiveCamera(containerElement);
 
-          const anchorA = this.mindThree.addAnchor(0);
-          anchorA.onTargetFound = () => this.onTargetFoundA();
-          anchorA.onTargetLost = () => this.onTargetLost();
-
-          const anchorB = this.mindThree.addAnchor(1);
-          anchorB.onTargetFound = () => this.onTargetFoundB();
-          anchorB.onTargetLost = () => this.onTargetLost();
-
-          await this.mindThree.start();
-          renderer.setAnimationLoop(() => {
-            renderer.render(scene, camera);
-          });
-          console.log('MindAR Image Tracking iniciado.');
-        }
-      } catch (e) {
-        console.warn('Error al iniciar MindAR:', e);
+      // Si stopAR() fue llamado mientras la cámara iniciaba, cancelar
+      if (!this.isStartingAR) {
+        this.stopAR();
+        return;
       }
+
+      // 2. Si MindAR está disponible y existe targets.mind, inicializar Image Tracking
+      if (window.MINDAR && window.MINDAR.IMAGE) {
+        try {
+          const res = await fetch('./assets/targets/targets.mind', { method: 'HEAD' }).catch(() => null);
+          if (res && res.ok && this.isStartingAR) {
+            this.mindThree = new window.MINDAR.IMAGE.MindARThree({
+              container: containerElement,
+              imageTargetSrc: './assets/targets/targets.mind'
+            });
+
+            const { renderer, scene, camera } = this.mindThree;
+
+            const anchorA = this.mindThree.addAnchor(0);
+            anchorA.onTargetFound = () => this.onTargetFoundA();
+            anchorA.onTargetLost = () => this.onTargetLost();
+
+            const anchorB = this.mindThree.addAnchor(1);
+            anchorB.onTargetFound = () => this.onTargetFoundB();
+            anchorB.onTargetLost = () => this.onTargetLost();
+
+            await this.mindThree.start();
+            renderer.setAnimationLoop(() => {
+              if (this.isARActive) {
+                renderer.render(scene, camera);
+              }
+            });
+            console.log('MindAR Image Tracking iniciado.');
+          }
+        } catch (e) {
+          console.warn('Error al iniciar MindAR:', e);
+        }
+      }
+      this.isARActive = true;
+    } catch (err) {
+      console.warn('Error en startAR:', err);
+    } finally {
+      this.isStartingAR = false;
     }
   }
 
@@ -81,9 +104,20 @@ export class ARController {
       };
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
+
+      // Si stopAR fue invocado mientras esperábamos la cámara, cerrar el stream
+      if (!this.isStartingAR) {
+        stream.getTracks().forEach(track => track.stop());
+        return;
+      }
+
       this.cameraStream = stream;
 
-      if (!this.videoElement) {
+      // Buscar si ya existe un elemento de video previo para evitar nodos duplicados
+      const existingVideo = containerElement.querySelector('.ar-camera-video');
+      if (existingVideo) {
+        this.videoElement = existingVideo;
+      } else if (!this.videoElement) {
         this.videoElement = document.createElement('video');
         this.videoElement.setAttribute('autoplay', '');
         this.videoElement.setAttribute('muted', '');
@@ -95,7 +129,6 @@ export class ARController {
 
       this.videoElement.srcObject = stream;
       await this.videoElement.play().catch(err => console.warn('Autoplay video error:', err));
-      this.isARActive = true;
       console.log('Cámara en vivo activada.');
     } catch (err) {
       console.warn('No se pudo acceder a la cámara o el usuario denegó el permiso:', err);
@@ -106,6 +139,9 @@ export class ARController {
    * Detiene la cámara y el visor AR para ahorrar batería al salir de la pestaña
    */
   stopAR() {
+    this.isStartingAR = false;
+    this.isARActive = false;
+
     if (this.cameraStream) {
       this.cameraStream.getTracks().forEach(track => track.stop());
       this.cameraStream = null;
@@ -125,8 +161,6 @@ export class ARController {
       } catch (e) {}
       this.mindThree = null;
     }
-
-    this.isARActive = false;
   }
 
   /**

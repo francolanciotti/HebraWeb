@@ -28,6 +28,7 @@ export class InkBleedCanvas {
     this.targetMouse = { x: 0.5, y: 0.5 };
     this.lastMouse = { x: 0.5, y: 0.5 };
     this.isHovered = false;
+    this.isPaused = false;
 
     this.animationFrameId = null;
 
@@ -155,15 +156,15 @@ export class InkBleedCanvas {
         // Radio de colmatación y puente líquido entre letras
         float fillRadius = uVolatility * mouseFactor * 0.096;
 
-        // 3. Muestreo de dilatación fluida
+        // 3. Muestreo optimizado de dilatación fluida (10 ángulos x 3 pasos = 30 muestras)
         float fillAlpha = 0.0;
-        
-        for (int i = 0; i < 16; i++) {
-          float angle = float(i) * 0.392699;
+
+        for (int i = 0; i < 10; i++) {
+          float angle = float(i) * 0.6283185; // 2 * PI / 10
           vec2 sampleDir = vec2(cos(angle) / aspect, sin(angle));
 
-          for (int s = 1; s <= 5; s++) {
-            float stepFactor = float(s) * 0.20;
+          for (int s = 1; s <= 3; s++) {
+            float stepFactor = float(s) * 0.333;
             vec2 offset = sampleDir * (fillRadius * stepFactor);
             float sAlpha = texture2D(uTexture, uv - offset).a;
             fillAlpha = max(fillAlpha, sAlpha);
@@ -307,15 +308,34 @@ export class InkBleedCanvas {
   }
 
   startLoop() {
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+    }
     const render = () => {
+      if (this.isPaused) return;
       this.renderFrame();
       this.animationFrameId = requestAnimationFrame(render);
     };
     this.animationFrameId = requestAnimationFrame(render);
   }
 
+  pause() {
+    this.isPaused = true;
+    if (this.animationFrameId) {
+      cancelAnimationFrame(this.animationFrameId);
+      this.animationFrameId = null;
+    }
+  }
+
+  resume() {
+    if (this.isPaused) {
+      this.isPaused = false;
+      this.startLoop();
+    }
+  }
+
   renderFrame() {
-    if (!this.gl) return;
+    if (!this.gl || this.isPaused) return;
 
     const gl = this.gl;
 
