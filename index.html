@@ -12,11 +12,11 @@
     content="Descubre a Hebra en Realidad Aumentada, interactúa con él y explora el portal transmedia de la obra física.">
   <meta name="theme-color" content="#0d0f12">
 
-  <!-- Google Fonts -->
+  <!-- Google Fonts: Epilogue & Outfit -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Outfit:wght@400;600;800&family=Inter:wght@300;400;500;700&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Outfit:wght@400;600;800&display=swap"
     rel="stylesheet">
 
   <!-- Three.js (r128) -->
@@ -32,33 +32,23 @@
 </head>
 
 <body>
-  <!-- VENTANA DE BIENVENIDA CON SANGRADO DE TINTA HEBRA -->
+  <!-- VENTANA DE BIENVENIDA TRANSMEDIA (IN-PLACE FADE SYSTEM) -->
   <div id="welcome-splash-modal" class="welcome-splash-modal">
-    <div class="splash-bg-glow"></div>
-    <div class="welcome-content-card">
-      <div class="welcome-badge">
-        <span class="badge-dot"></span>
-        <span>EXPERIENCIA TRANSMEDIA & AR</span>
+    <!-- Overlay Vector SVG Orgánico de Fondo (Sensible a InkBleed WebGL) -->
+    <div id="splash-svg-bg" class="splash-svg-bg"></div>
+    
+    <div class="splash-slides-container">
+      <!-- PASO 1: HEBRA PRESENTA -->
+      <div id="splash-step-1" class="splash-step active">
+        <div id="ink-title-step1" class="splash-ink-wrapper"></div>
+        <p class="splash-subheading">presenta</p>
       </div>
 
-      <!-- Contenedor WebGL para Título HEBRA con Sangrado de Tinta -->
-      <div id="welcome-ink-wrapper" class="welcome-ink-wrapper"></div>
-
-      <h1 class="welcome-subtitle">Instalación Urbana & Compañero 3D</h1>
-      <p class="welcome-description">
-        Escanea los marcadores de la ciudad para capturar a tu Kencalo, desbloquear indumentarias únicas y explorar la
-        obra.
-      </p>
-
-      <div class="welcome-interaction-hint">
-        <span class="hint-icon">✍️</span>
-        <span>Mueve el cursor o desliza sobre HEBRA para sangrar la tinta</span>
+      <!-- PASO 2: UNA EXPERIENCIA DE KENOSIS -->
+      <div id="splash-step-2" class="splash-step hidden">
+        <p class="splash-subheading">una experiencia de</p>
+        <div id="ink-title-step2" class="splash-ink-wrapper"></div>
       </div>
-
-      <button id="btn-enter-universe" class="btn-enter-universe">
-        <span>EXPLORAR EL UNIVERSO</span>
-        <span class="btn-arrow">→</span>
-      </button>
     </div>
   </div>
 
@@ -92,7 +82,7 @@
             <div class="scanner-corner top-right"></div>
             <div class="scanner-corner bottom-left"></div>
             <div class="scanner-corner bottom-right"></div>
-            <p id="ar-instruction" class="scanner-hint">Apunta la cámara al árbol</p>
+            <p id="ar-instruction" class="scanner-hint">¡Escanea el Árbol!</p>
           </div>
 
           <!-- Acciones de Captura -->
@@ -143,7 +133,7 @@
               Explora la instalación urbana transmedia y descubre a Kencalo en su hábitat natural.
             </p>
             <button id="btn-reopen-welcome" class="btn-primary-sm" style="margin-top: 12px;">
-              <span>✨ Ver Pantalla de Bienvenida (Tinta Líquida)</span>
+              <span>✨ Ver Pantalla de Bienvenida</span>
             </button>
           </div>
 
@@ -264,7 +254,7 @@
           <line x1="2" y1="12" x2="22" y2="12" />
           <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z" />
         </svg>
-        <span class="nav-label">Universo</span>
+        <span class="nav-label">Hebra</span>
       </button>
 
       <button class="nav-item" data-view="backup">

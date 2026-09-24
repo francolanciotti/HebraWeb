@@ -1,13 +1,32 @@
-/* ==========================================================================
-   KENCALO WEB AR & TRANSMEDIA - DESIGN SYSTEM & MAIN STYLES
-   ========================================================================== */
+@font-face {
+  font-family: 'Caoutchouc';
+  src: url('../assets/fonts/Caoutchouc Regular.ttf') format('truetype');
+  font-weight: 400;
+  font-style: normal;
+  font-display: swap;
+}
 
 :root {
-  /* Color Palette - Viscous Dark Bioluminescence */
-  --bg-dark: #07090c;
-  --bg-card: rgba(15, 20, 28, 0.75);
-  --bg-card-border: rgba(255, 255, 255, 0.1);
-  --bg-card-hover: rgba(25, 32, 45, 0.85);
+  /* Wireframe Color Palette */
+  --primary-1: #F5F6FA;
+  --primary-2: #E7E2F4;
+  --secondary-1: #EAF9FC;
+  --secondary-2: #F8F8E7;
+  
+  --accent-1: #112142;
+  --accent-2: #422E8F;
+  --accent-3: #6BC9D9;
+  
+  --navy-deep: #112142;
+  --navy-card: rgba(17, 33, 66, 0.85);
+  --navy-nav: #112142;
+  --navy-border: rgba(107, 201, 217, 0.2);
+
+  --bg-dark: #112142;
+  --bg-light: #F5F6FA;
+  --bg-card: rgba(14, 27, 56, 0.85);
+  --bg-card-border: rgba(255, 255, 255, 0.15);
+  --bg-card-hover: rgba(23, 35, 62, 0.9);
   
   --primary-neon: #00ff8a;
   --primary-glow: rgba(0, 255, 138, 0.35);
@@ -17,12 +36,15 @@
   --accent-pink: #ff007f;
   
   --text-main: #f1f5f9;
+  --text-dark: #0e1b38;
   --text-muted: #94a3b8;
   --text-dim: #64748b;
   
-  /* Fonts */
-  --font-heading: 'Outfit', sans-serif;
-  --font-body: 'Inter', sans-serif;
+  /* Specified Typography */
+  --font-caoutchouc: 'Caoutchouc', sans-serif;
+  --font-epilogue: 'Epilogue', sans-serif;
+  --font-heading: 'Caoutchouc', sans-serif;
+  --font-body: 'Epilogue', sans-serif;
   
   /* Layout Spacing */
   --nav-height: 68px;
@@ -34,6 +56,66 @@
   /* Safe Area for Mobile Notch */
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
+}
+
+/* Base Typography (Celular por defecto) */
+h1, .h1-title {
+  font-family: var(--font-caoutchouc);
+  font-size: 64px;
+  font-weight: 400;
+  line-height: 1.05;
+}
+
+h2, .h2-title {
+  font-family: var(--font-caoutchouc);
+  font-size: 24px;
+  font-weight: 400;
+  line-height: 1.2;
+}
+
+h3, .h3-title {
+  font-family: var(--font-epilogue);
+  font-size: 15px;
+  font-weight: 600;
+  font-style: italic;
+  line-height: 1.3;
+}
+
+h4, .h4-title {
+  font-family: var(--font-epilogue);
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.3;
+}
+
+p, .p-body {
+  font-family: var(--font-epilogue);
+  font-size: 10px;
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+/* Adaptación de Tipografía para PC / Pantallas Mayores */
+@media (min-width: 769px) {
+  h1, .h1-title {
+    font-size: 110px;
+  }
+
+  h2, .h2-title {
+    font-size: 42px;
+  }
+
+  h3, .h3-title {
+    font-size: 22px;
+  }
+
+  h4, .h4-title {
+    font-size: 26px;
+  }
+
+  p, .p-body {
+    font-size: 15px;
+  }
 }
 
 /* Reset & Box Sizing */
@@ -183,17 +265,20 @@ html, body {
 /* Bottom Navigation */
 .bottom-nav {
   position: absolute;
-  bottom: max(10px, var(--sab));
+  bottom: max(12px, var(--sab));
   left: 12px;
   right: 12px;
   height: var(--nav-height);
-  border-radius: var(--radius-lg);
+  background: var(--navy-deep);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 20px;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 0 8px;
+  padding: 4px 8px;
   z-index: 50;
   pointer-events: auto;
+  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
 }
 
 .nav-item {
@@ -204,29 +289,30 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 4px;
-  color: var(--text-muted);
+  gap: 3px;
+  color: rgba(245, 246, 250, 0.65);
   cursor: pointer;
   padding: 8px 12px;
-  border-radius: var(--radius-md);
+  border-radius: 14px;
   transition: all 0.25s ease;
   flex: 1;
   pointer-events: auto;
 }
 
 .nav-item.active {
-  color: var(--primary-neon);
-  background: rgba(0, 255, 138, 0.08);
+  color: #FFFFFF;
+  background: rgba(255, 255, 255, 0.15);
+  box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.2);
 }
 
 .nav-item.active .nav-svg {
-  filter: drop-shadow(0 0 6px var(--primary-neon));
+  stroke: #FFFFFF;
 }
 
 .nav-label {
-  font-size: 0.7rem;
-  font-weight: 600;
-  font-family: var(--font-heading);
+  font-size: 11px;
+  font-weight: 500;
+  font-family: var(--font-epilogue);
 }
 
 /* Buttons System */

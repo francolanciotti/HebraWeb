@@ -60,9 +60,9 @@
 
 .scanner-corner {
   position: absolute;
-  width: 32px;
-  height: 32px;
-  border: 3px solid var(--primary-neon);
+  width: 42px;
+  height: 42px;
+  border: 2px solid var(--navy-deep);
 }
 
 .scanner-corner.top-left {
@@ -70,7 +70,6 @@
   left: 0;
   border-right: none;
   border-bottom: none;
-  border-top-left-radius: var(--radius-md);
 }
 
 .scanner-corner.top-right {
@@ -78,7 +77,6 @@
   right: 0;
   border-left: none;
   border-bottom: none;
-  border-top-right-radius: var(--radius-md);
 }
 
 .scanner-corner.bottom-left {
@@ -86,7 +84,6 @@
   left: 0;
   border-right: none;
   border-top: none;
-  border-bottom-left-radius: var(--radius-md);
 }
 
 .scanner-corner.bottom-right {
@@ -94,18 +91,19 @@
   right: 0;
   border-left: none;
   border-top: none;
-  border-bottom-right-radius: var(--radius-md);
 }
 
 .scanner-hint {
-  font-size: 0.8rem;
-  font-weight: 500;
-  color: var(--text-main);
-  background: rgba(0, 0, 0, 0.65);
-  backdrop-filter: blur(8px);
-  padding: 8px 14px;
-  border-radius: var(--radius-full);
+  font-family: var(--font-epilogue);
+  font-size: 15px;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--navy-deep);
+  background: transparent;
+  padding: 12px 14px;
   text-align: center;
+  position: absolute;
+  bottom: -45px;
 }
 
 /* AR Actions Bar */

@@ -27,47 +27,176 @@ class KencaloApp {
   }
 
   /**
-   * Inicializa la ventana de bienvenida con el motor de sangrado de tinta líquida "HEBRA"
+   * Inicializa la ventana de bienvenida transmedia con reacción de tinta (1s) y transición en el lugar
    */
   initWelcomeModal() {
-    const welcomeWrapper = document.getElementById('welcome-ink-wrapper');
     const welcomeModal = document.getElementById('welcome-splash-modal');
-    const btnEnter = document.getElementById('btn-enter-universe');
+    const step1 = document.getElementById('splash-step-1');
+    const step2 = document.getElementById('splash-step-2');
+    const containerStep1 = document.getElementById('ink-title-step1');
+    const containerStep2 = document.getElementById('ink-title-step2');
+    
+    let currentSplashStep = 1;
+    let isTransitioning = false;
 
-    if (welcomeWrapper) {
-      this.welcomeInkCanvas = new InkBleedCanvas(welcomeWrapper, {
-        text: 'HEBRA',
-        fontFamily: "'Outfit', 'Inter', sans-serif",
-        fontWeight: '800',
-        inkColor: [0.95, 0.96, 1.0],     // Blanco brillante
+    // Inicializar Motor WebGL de Sangrado de Tinta para HEBRA (Paso 1)
+    if (containerStep1) {
+      this.inkCanvasStep1 = new InkBleedCanvas(containerStep1, {
+        text: 'Hebra',
+        fontFamily: "'Caoutchouc', sans-serif",
+        fontWeight: '400',
+        inkColor: [0.96, 0.97, 1.0],
         maxVolatility: 0.85,
-        baseVolatility: 0.0              // Grosor normal en reposo
+        baseVolatility: 0.0
       });
     }
 
-    if (btnEnter && welcomeModal) {
-      btnEnter.addEventListener('click', () => {
-        welcomeModal.classList.add('fade-out');
-
-        setTimeout(() => {
-          welcomeModal.style.display = 'none';
-          if (this.welcomeInkCanvas) {
-            this.welcomeInkCanvas.pause();
-          }
-        }, 750);
+    // Inicializar Motor WebGL de Sangrado de Tinta para KENOSIS (Paso 2)
+    if (containerStep2) {
+      this.inkCanvasStep2 = new InkBleedCanvas(containerStep2, {
+        text: 'KENOSIS',
+        fontFamily: "'Caoutchouc', sans-serif",
+        fontWeight: '400',
+        inkColor: [0.96, 0.97, 1.0],
+        maxVolatility: 0.85,
+        baseVolatility: 0.0
       });
+    }
+
+    // Inicializar Motor WebGL de Sangrado de Tinta para el Vector Orgánico de Fondo (file.svg)
+    const containerVector = document.getElementById('splash-svg-bg');
+    if (containerVector && welcomeModal) {
+      this.inkCanvasVector = new InkBleedCanvas(containerVector, {
+        imageSrc: 'assets/file.svg',
+        inkColor: [0.96, 0.97, 1.0],
+        maxVolatility: 0.85,
+        baseVolatility: 0.0,
+        eventTarget: welcomeModal,
+        positionXMobile: 0.45,
+        positionYMobile: 0.80,
+        positionXDesktop: 0.50,
+        positionYDesktop: 0.67,
+        scaleMultiplier: 1.0
+      });
+    }
+
+    // Función para manejar la transición por scroll/gesto con 1 segundo de dilatación de tinta en el lugar
+    const handleScrollTrigger = () => {
+      if (isTransitioning || !welcomeModal || welcomeModal.classList.contains('fade-out')) return;
+      isTransitioning = true;
+
+      if (currentSplashStep === 1) {
+        // 1. Activar reacción intensa de tinta en HEBRA y el Vector de fondo durante 1 segundo
+        if (this.inkCanvasStep1) {
+          this.inkCanvasStep1.targetVolatility = 0.85;
+        }
+        if (this.inkCanvasVector) {
+          this.inkCanvasVector.targetVolatility = 0.85;
+        }
+
+        // 2. Tras 1 segundo de dilatación, cambiar en el lugar hacia el Paso 2 (KENOSIS)
+        setTimeout(() => {
+          currentSplashStep = 2;
+          if (step1) {
+            step1.classList.remove('active');
+            step1.classList.add('hidden');
+          }
+          if (step2) {
+            step2.classList.remove('hidden');
+            step2.classList.add('active');
+          }
+          if (this.inkCanvasStep2) {
+            this.inkCanvasStep2.resize();
+            this.inkCanvasStep2.resume();
+          }
+          setTimeout(() => { isTransitioning = false; }, 400);
+        }, 1000);
+
+      } else if (currentSplashStep === 2) {
+        // 1. Activar reacción intensa de tinta en KENOSIS y el Vector de fondo durante 1 segundo
+        if (this.inkCanvasStep2) {
+          this.inkCanvasStep2.targetVolatility = 0.85;
+        }
+        if (this.inkCanvasVector) {
+          this.inkCanvasVector.targetVolatility = 0.85;
+        }
+
+        // 2. Tras 1 segundo de dilatación, desvanecer en el lugar para entrar a la App
+        setTimeout(() => {
+          welcomeModal.classList.add('fade-out');
+          setTimeout(() => {
+            welcomeModal.style.display = 'none';
+            if (this.inkCanvasStep1) this.inkCanvasStep1.pause();
+            if (this.inkCanvasStep2) this.inkCanvasStep2.pause();
+            if (this.inkCanvasVector) this.inkCanvasVector.pause();
+            isTransitioning = false;
+          }, 700);
+        }, 1000);
+      }
+    };
+
+    if (welcomeModal) {
+      // Rueda del ratón en PC (Solo scroll hacia abajo / mover contenido hacia arriba)
+      welcomeModal.addEventListener('wheel', (e) => {
+        if (e.deltaY > 10) {
+          handleScrollTrigger();
+        }
+      }, { passive: true });
+
+      // Gestos de toque o arrastre táctil en celular (Solo hacia arriba, Umbral 100px)
+      const TOUCH_SCROLL_THRESHOLD = 100;
+      let touchStartY = 0;
+
+      welcomeModal.addEventListener('touchstart', (e) => {
+        if (e.touches.length > 0) {
+          touchStartY = e.touches[0].clientY;
+        }
+      }, { passive: true });
+
+      welcomeModal.addEventListener('touchmove', (e) => {
+        if (e.touches.length > 0) {
+          const deltaY = touchStartY - e.touches[0].clientY;
+          // Exclusivamente deslizar el dedo hacia arriba superando los 100px
+          if (deltaY > TOUCH_SCROLL_THRESHOLD) {
+            handleScrollTrigger();
+          }
+        }
+      }, { passive: true });
+
+      // Clic directo como método secundario
+      welcomeModal.addEventListener('click', handleScrollTrigger);
     }
 
     const btnReopen = document.getElementById('btn-reopen-welcome');
     if (btnReopen && welcomeModal) {
       btnReopen.addEventListener('click', () => {
+        currentSplashStep = 1;
+        isTransitioning = false;
+
+        if (step2) {
+          step2.classList.remove('active');
+          step2.classList.add('hidden');
+        }
+        if (step1) {
+          step1.classList.remove('hidden');
+          step1.classList.add('active');
+        }
+
         welcomeModal.style.display = 'flex';
-        // Forzar reflow para reiniciar la animación CSS de fade-in
         void welcomeModal.offsetWidth;
         welcomeModal.classList.remove('fade-out');
-        if (this.welcomeInkCanvas) {
-          this.welcomeInkCanvas.resume();
-          this.welcomeInkCanvas.resize();
+
+        if (this.inkCanvasStep1) {
+          this.inkCanvasStep1.resume();
+          this.inkCanvasStep1.resize();
+        }
+        if (this.inkCanvasStep2) {
+          this.inkCanvasStep2.resume();
+          this.inkCanvasStep2.resize();
+        }
+        if (this.inkCanvasVector) {
+          this.inkCanvasVector.resume();
+          this.inkCanvasVector.resize();
         }
       });
     }

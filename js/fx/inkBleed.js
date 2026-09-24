@@ -9,12 +9,24 @@ export class InkBleedCanvas {
    */
   constructor(container, options = {}) {
     this.container = container;
-    this.text = options.text || 'HEBRA';
+    this.text = options.text || null;
     this.fontFamily = options.fontFamily || "'Outfit', 'Inter', sans-serif";
     this.fontWeight = options.fontWeight || '800';
     this.fontSize = options.fontSize || 120;
     this.inkColor = options.inkColor || [0.95, 0.96, 1.0]; // RGB normalizado (blanco platino)
     this.bgColor = options.bgColor || [0.0, 0.0, 0.0, 0.0]; // Transparente por defecto
+
+    // Opciones para imágenes y vectores SVG
+    this.imageSrc = options.imageSrc || null;
+    this.eventTarget = options.eventTarget || null;
+    this.positionX = options.positionX !== undefined ? options.positionX : 0.5;
+    this.positionY = options.positionY !== undefined ? options.positionY : 0.5;
+    this.positionXMobile = options.positionXMobile;
+    this.positionYMobile = options.positionYMobile;
+    this.positionXDesktop = options.positionXDesktop;
+    this.positionYDesktop = options.positionYDesktop;
+    this.scaleMultiplier = options.scaleMultiplier !== undefined ? options.scaleMultiplier : 1.0;
+    this.imgLoaded = false;
 
     // Parámetros de física y distorsión fluida
     this.speed = options.speed !== undefined ? options.speed : 1.0;
@@ -32,6 +44,16 @@ export class InkBleedCanvas {
 
     this.animationFrameId = null;
 
+    if (this.imageSrc) {
+      this.img = new Image();
+      this.img.onload = () => {
+        this.imgLoaded = true;
+        this.renderOffscreenText();
+        this.updateTexture();
+      };
+      this.img.src = this.imageSrc;
+    }
+
     this.initCanvas();
     this.initWebGL();
     this.renderOffscreenText();
@@ -39,8 +61,13 @@ export class InkBleedCanvas {
     this.bindEvents();
     this.startLoop();
 
-    // Re-rasterizar cuando las fuentes de Google (Outfit/Inter) terminen de cargar
-    if (document.fonts && document.fonts.ready) {
+    // Re-rasterizar cuando la fuente personalizada Caoutchouc o Google Fonts termine de cargar
+    if (document.fonts) {
+      document.fonts.load(`400 64px ${this.fontFamily}`).then(() => {
+        this.renderOffscreenText();
+        this.updateTexture();
+      }).catch(() => {});
+
       document.fonts.ready.then(() => {
         this.renderOffscreenText();
         this.updateTexture();
@@ -53,26 +80,22 @@ export class InkBleedCanvas {
     this.canvas.className = 'ink-bleed-canvas';
     this.container.appendChild(this.canvas);
 
-    // Offscreen Canvas para rasterizar el texto en 2D con alta nitidez
+    // Offscreen Canvas para rasterizar el texto en 2D con ultra nitidez
     this.offscreenCanvas = document.createElement('canvas');
-    this.offCtx = this.offscreenCanvas.getContext('2d');
+    this.offCtx = this.offscreenCanvas.getContext('2d', { alpha: true, willReadFrequently: false });
 
     this.resize();
   }
 
   resize() {
     const rect = this.container.getBoundingClientRect();
-    this.isMobile = ('ontouchstart' in window) || (window.innerWidth < 768);
+    const dpr = Math.max(window.devicePixelRatio || 1, 2.5);
 
-    // En pantallas móviles limitamos el DPR a 1.25x para reducir la carga de GPU manteniendo nitidez
-    const maxDpr = this.isMobile ? 1.25 : 2.0;
-    const dpr = Math.min(window.devicePixelRatio || 1, maxDpr);
+    this.width = Math.max(Math.floor(rect.width), 320);
+    this.height = Math.max(Math.floor(rect.height), 120);
 
-    this.width = Math.floor(rect.width || 600);
-    this.height = Math.floor(rect.height || 300);
-
-    this.canvas.width = this.width * dpr;
-    this.canvas.height = this.height * dpr;
+    this.canvas.width = Math.floor(this.width * dpr);
+    this.canvas.height = Math.floor(this.height * dpr);
 
     this.offscreenCanvas.width = this.canvas.width;
     this.offscreenCanvas.height = this.canvas.height;
@@ -93,17 +116,60 @@ export class InkBleedCanvas {
     if (w === 0 || h === 0) return;
 
     this.offCtx.clearRect(0, 0, w, h);
+    this.offCtx.imageSmoothingEnabled = true;
+    this.offCtx.imageSmoothingQuality = 'high';
 
-    // Calcular tamaño de fuente proporcional de alta definición
-    const calculatedFontSize = Math.floor(Math.min(w * 0.20, h * 0.52));
+    // 1. Renderizado de imagen/vector SVG con algoritmo idéntico a CSS background-position y background-size
+    if (this.imageSrc && this.imgLoaded && this.img) {
+      const isMobile = window.innerWidth <= 768;
+      const imgW = this.img.naturalWidth || 723;
+      const imgH = this.img.naturalHeight || 1113;
 
-    this.offCtx.fillStyle = '#ffffff';
-    this.offCtx.font = `${this.fontWeight} ${calculatedFontSize}px ${this.fontFamily}`;
-    this.offCtx.textAlign = 'center';
-    this.offCtx.textBaseline = 'middle';
+      let drawW, drawH, drawX, drawY;
+      let posX, posY;
 
-    // Texto nítido de alta precisión
-    this.offCtx.fillText(this.text, w / 2, h / 2);
+      if (isMobile) {
+        // En celular: background-size: 180%, background-position: 45% 80%
+        posX = this.positionXMobile !== undefined ? this.positionXMobile : (this.positionX !== undefined ? this.positionX : 0.45);
+        posY = this.positionYMobile !== undefined ? this.positionYMobile : (this.positionY !== undefined ? this.positionY : 0.80);
+
+        drawW = w * 1.8 * this.scaleMultiplier;
+        drawH = drawW * (imgH / imgW);
+
+        // Fórmula CSS estándar para background-position: X% Y% -> (width_contenedor - width_imagen) * X%
+        drawX = (w - drawW) * posX;
+        drawY = (h - drawH) * posY;
+      } else {
+        // En PC: background-size: cover, background-position: center 67% (50% 67%)
+        posX = this.positionXDesktop !== undefined ? this.positionXDesktop : (this.positionX !== undefined ? this.positionX : 0.50);
+        posY = this.positionYDesktop !== undefined ? this.positionYDesktop : (this.positionY !== undefined ? this.positionY : 0.67);
+
+        const scale = Math.max(w / imgW, h / imgH) * this.scaleMultiplier;
+        drawW = imgW * scale;
+        drawH = imgH * scale;
+
+        // Fórmula CSS estándar para background-position: X% Y% -> (width_contenedor - width_imagen) * X%
+        drawX = (w - drawW) * posX;
+        drawY = (h - drawH) * posY;
+      }
+
+      this.offCtx.drawImage(this.img, drawX, drawY, drawW, drawH);
+    }
+
+    // 2. Renderizado de texto
+    if (this.text) {
+      const isMobile = window.innerWidth <= 768;
+      const baseFontSize = isMobile ? 64 : 110;
+      const dpr = Math.max(window.devicePixelRatio || 1, 2.5);
+      const targetFontSize = Math.floor(baseFontSize * dpr);
+
+      this.offCtx.fillStyle = '#ffffff';
+      this.offCtx.font = `${this.fontWeight} ${targetFontSize}px ${this.fontFamily}`;
+      this.offCtx.textAlign = 'center';
+      this.offCtx.textBaseline = 'middle';
+
+      this.offCtx.fillText(this.text, w / 2, h / 2);
+    }
   }
 
   initWebGL() {
@@ -114,6 +180,8 @@ export class InkBleedCanvas {
     }
 
     const gl = this.gl;
+    gl.enable(gl.BLEND);
+    gl.blendFunc(gl.SRC_ALPHA, gl.ONE_MINUS_SRC_ALPHA);
 
     // Shaders
     const vsSource = `
@@ -139,50 +207,49 @@ export class InkBleedCanvas {
       void main() {
         vec2 uv = vUv;
 
-        // 1. Núcleo base nítido (NUNCA genera vacío ni huecos dentro del texto)
+        // 1. Núcleo base nítido (Textura original 100% limpia sin modificar en reposo)
         float coreAlpha = texture2D(uTexture, uv).a;
 
-        // 2. Corrección de Aspect Ratio (1:1 real en píxeles de pantalla)
+        if (uVolatility <= 0.001) {
+          gl_FragColor = vec4(uInkColor, coreAlpha);
+          return;
+        }
+
+        // 2. Corrección de Aspect Ratio
         float aspect = uResolution.x / uResolution.y;
         vec2 aspectUv = vec2(uv.x * aspect, uv.y);
         vec2 aspectMouse = vec2(uMouse.x * aspect, uMouse.y);
 
-        vec2 mouseVec = aspectUv - aspectMouse;
-        float mouseDist = length(mouseVec);
+        float mouseDist = length(aspectUv - aspectMouse);
+        float mouseFactor = smoothstep(0.30, 0.0, mouseDist);
 
-        // Radio de acción ajustado y equilibrado del cursor (0.23)
-        float mouseFactor = smoothstep(0.23, 0.0, mouseDist);
+        // Radio de dilatación líquida según volatilidad y cursor
+        float fillRadius = uVolatility * mouseFactor * 0.095;
 
-        // Radio de colmatación y puente líquido entre letras
-        float fillRadius = uVolatility * mouseFactor * 0.096;
-
-        // 3. Muestreo optimizado de dilatación fluida (10 ángulos x 3 pasos = 30 muestras)
+        // 3. Muestreo de expansión líquida de alta precisión (12 ángulos x 4 pasos)
         float fillAlpha = 0.0;
 
-        for (int i = 0; i < 10; i++) {
-          float angle = float(i) * 0.6283185; // 2 * PI / 10
+        for (int i = 0; i < 12; i++) {
+          float angle = float(i) * 0.5235987; // 2 * PI / 12
           vec2 sampleDir = vec2(cos(angle) / aspect, sin(angle));
 
-          for (int s = 1; s <= 3; s++) {
-            float stepFactor = float(s) * 0.333;
+          for (int s = 1; s <= 4; s++) {
+            float stepFactor = float(s) * 0.25;
             vec2 offset = sampleDir * (fillRadius * stepFactor);
             float sAlpha = texture2D(uTexture, uv - offset).a;
             fillAlpha = max(fillAlpha, sAlpha);
           }
         }
 
-        // 4. Tensión Superficial Líquida - Enganche y Fusión Notoria (Snap Attraction)
-        float edgeProximity = pow(fillAlpha, 1.12);
-        
-        // Umbral de Enganche Rápido "Snap": En cuanto dos bordes se acercan, la tensión los engancha
-        float liquidAlpha = smoothstep(0.06, 0.42, edgeProximity);
+        // 4. Alpha Sólido Opaco (100% Blanco Opaco en toda la masa de tinta dilatada)
+        float dilatedAlpha = smoothstep(0.01, 0.15, fillAlpha);
 
-        // Relieve y brillo pronunciado en el cuello del menisco de unión
-        float bridgeHighlight = smoothstep(0.10, 0.40, liquidAlpha) * (1.0 - smoothstep(0.40, 0.86, liquidAlpha));
-        vec3 color = uInkColor + vec3(0.10, 0.12, 0.16) * bridgeHighlight * 0.70;
+        // Brillo y relieve sutil en el borde de fusión del fluido
+        float highlight = smoothstep(0.08, 0.30, dilatedAlpha) * (1.0 - smoothstep(0.30, 0.85, dilatedAlpha));
+        vec3 color = uInkColor + vec3(0.08, 0.10, 0.14) * highlight * uVolatility;
 
-        // Alpha final: Conserva el texto limpio y engancha fuertemente bordes cercanos
-        float totalAlpha = max(coreAlpha, liquidAlpha * 0.99);
+        // Alpha final: 100% Sólido opaco tanto en el núcleo como en la tinta expandida
+        float totalAlpha = max(coreAlpha, dilatedAlpha);
 
         gl_FragColor = vec4(color, totalAlpha);
       }
@@ -263,6 +330,8 @@ export class InkBleedCanvas {
     this.onResize = () => this.resize();
     window.addEventListener('resize', this.onResize);
 
+    const targetEl = this.eventTarget || this.canvas;
+
     const updateMousePos = (clientX, clientY) => {
       const rect = this.canvas.getBoundingClientRect();
       const x = (clientX - rect.left) / rect.width;
@@ -275,7 +344,7 @@ export class InkBleedCanvas {
       const dy = this.targetMouse.y - this.lastMouse.y;
       const speed = Math.hypot(dx, dy);
 
-      // Al pasar o mover el puntero sobre las letras, la dilatación de tinta responde de inmediato
+      // Al pasar o mover el puntero sobre la superficie, la dilatación responde de inmediato
       const activeImpulse = 0.65 + Math.min(speed * 8.0, 0.35);
       this.targetVolatility = Math.min(activeImpulse, this.maxVolatility);
 
@@ -283,25 +352,32 @@ export class InkBleedCanvas {
       this.lastMouse.y = this.targetMouse.y;
     };
 
-    this.canvas.addEventListener('mousemove', (e) => {
+    targetEl.addEventListener('mousemove', (e) => {
       this.isHovered = true;
       updateMousePos(e.clientX, e.clientY);
     });
 
-    this.canvas.addEventListener('mouseleave', () => {
+    targetEl.addEventListener('mouseleave', () => {
       this.isHovered = false;
       this.targetVolatility = this.baseVolatility;
     });
 
     // Soporte para gestos táctiles en pantallas móviles
-    this.canvas.addEventListener('touchmove', (e) => {
+    targetEl.addEventListener('touchstart', (e) => {
       if (e.touches.length > 0) {
         this.isHovered = true;
         updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
       }
     }, { passive: true });
 
-    this.canvas.addEventListener('touchend', () => {
+    targetEl.addEventListener('touchmove', (e) => {
+      if (e.touches.length > 0) {
+        this.isHovered = true;
+        updateMousePos(e.touches[0].clientX, e.touches[0].clientY);
+      }
+    }, { passive: true });
+
+    targetEl.addEventListener('touchend', () => {
       this.isHovered = false;
       this.targetVolatility = this.baseVolatility;
     });
@@ -335,7 +411,16 @@ export class InkBleedCanvas {
   }
 
   renderFrame() {
-    if (!this.gl || this.isPaused) return;
+    if (this.isPaused) return;
+
+    if (!this.gl) {
+      const ctx = this.canvas.getContext('2d');
+      if (ctx) {
+        ctx.clearRect(0, 0, this.canvas.width, this.canvas.height);
+        ctx.drawImage(this.offscreenCanvas, 0, 0);
+      }
+      return;
+    }
 
     const gl = this.gl;
 
