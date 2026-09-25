@@ -47,7 +47,8 @@ class KencaloApp {
         fontWeight: '400',
         inkColor: [0.96, 0.97, 1.0],
         maxVolatility: 0.85,
-        baseVolatility: 0.0
+        baseVolatility: 0.0,
+        eventTarget: welcomeModal
       });
     }
 
@@ -59,7 +60,8 @@ class KencaloApp {
         fontWeight: '400',
         inkColor: [0.96, 0.97, 1.0],
         maxVolatility: 0.85,
-        baseVolatility: 0.0
+        baseVolatility: 0.0,
+        eventTarget: welcomeModal
       });
     }
 
@@ -70,6 +72,8 @@ class KencaloApp {
         imageSrc: 'assets/file.svg',
         inkColor: [0.96, 0.97, 1.0],
         maxVolatility: 0.85,
+        maxVolatilityMobile: 0.38,
+        maxVolatilityDesktop: 0.85,
         baseVolatility: 0.0,
         eventTarget: welcomeModal,
         positionXMobile: 0.45,
@@ -85,16 +89,21 @@ class KencaloApp {
       if (isTransitioning || !welcomeModal || welcomeModal.classList.contains('fade-out')) return;
       isTransitioning = true;
 
-      if (currentSplashStep === 1) {
-        // 1. Activar reacción intensa de tinta en HEBRA y el Vector de fondo durante 1 segundo
-        if (this.inkCanvasStep1) {
-          this.inkCanvasStep1.targetVolatility = 0.85;
-        }
-        if (this.inkCanvasVector) {
-          this.inkCanvasVector.targetVolatility = 0.85;
-        }
+      const isMobile = window.innerWidth <= 768;
+      const vectorMax = isMobile ? 0.38 : 0.85;
 
-        // 2. Tras 1 segundo de dilatación, cambiar en el lugar hacia el Paso 2 (KENOSIS)
+      if (currentSplashStep === 1) {
+        // 1. Activar impulso de tinta en HEBRA y el Vector al tocar (0ms)
+        if (this.inkCanvasStep1) this.inkCanvasStep1.targetVolatility = 0.85;
+        if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = vectorMax;
+
+        // A los 280ms, disparar el rebote rápido para retornar a la normalidad (0.0)
+        setTimeout(() => {
+          if (this.inkCanvasStep1) this.inkCanvasStep1.targetVolatility = 0.0;
+          if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = 0.0;
+        }, 280);
+
+        // 2. Cumplido el 1 segundo de espera, realizar el cambio en el lugar al Paso 2 (KENOSIS)
         setTimeout(() => {
           currentSplashStep = 2;
           if (step1) {
@@ -106,6 +115,8 @@ class KencaloApp {
             step2.classList.add('active');
           }
           if (this.inkCanvasStep2) {
+            this.inkCanvasStep2.targetVolatility = 0.0;
+            this.inkCanvasStep2.volatility = 0.0;
             this.inkCanvasStep2.resize();
             this.inkCanvasStep2.resume();
           }
@@ -113,22 +124,36 @@ class KencaloApp {
         }, 1000);
 
       } else if (currentSplashStep === 2) {
-        // 1. Activar reacción intensa de tinta en KENOSIS y el Vector de fondo durante 1 segundo
-        if (this.inkCanvasStep2) {
-          this.inkCanvasStep2.targetVolatility = 0.85;
-        }
-        if (this.inkCanvasVector) {
-          this.inkCanvasVector.targetVolatility = 0.85;
-        }
+        // 1. Activar impulso de tinta en KENOSIS y el Vector al tocar (0ms)
+        if (this.inkCanvasStep2) this.inkCanvasStep2.targetVolatility = 0.85;
+        if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = vectorMax;
 
-        // 2. Tras 1 segundo de dilatación, desvanecer en el lugar para entrar a la App
+        // A los 280ms, disparar el rebote rápido para retornar a la normalidad (0.0)
+        setTimeout(() => {
+          if (this.inkCanvasStep2) this.inkCanvasStep2.targetVolatility = 0.0;
+          if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = 0.0;
+        }, 280);
+
+        // 2. Cumplido el 1 segundo de espera, desvanecer en el lugar para entrar a la App
         setTimeout(() => {
           welcomeModal.classList.add('fade-out');
           setTimeout(() => {
             welcomeModal.style.display = 'none';
-            if (this.inkCanvasStep1) this.inkCanvasStep1.pause();
-            if (this.inkCanvasStep2) this.inkCanvasStep2.pause();
-            if (this.inkCanvasVector) this.inkCanvasVector.pause();
+            if (this.inkCanvasStep1) {
+              this.inkCanvasStep1.targetVolatility = 0.0;
+              this.inkCanvasStep1.volatility = 0.0;
+              this.inkCanvasStep1.pause();
+            }
+            if (this.inkCanvasStep2) {
+              this.inkCanvasStep2.targetVolatility = 0.0;
+              this.inkCanvasStep2.volatility = 0.0;
+              this.inkCanvasStep2.pause();
+            }
+            if (this.inkCanvasVector) {
+              this.inkCanvasVector.targetVolatility = 0.0;
+              this.inkCanvasVector.volatility = 0.0;
+              this.inkCanvasVector.pause();
+            }
             isTransitioning = false;
           }, 700);
         }, 1000);
@@ -136,34 +161,7 @@ class KencaloApp {
     };
 
     if (welcomeModal) {
-      // Rueda del ratón en PC (Solo scroll hacia abajo / mover contenido hacia arriba)
-      welcomeModal.addEventListener('wheel', (e) => {
-        if (e.deltaY > 10) {
-          handleScrollTrigger();
-        }
-      }, { passive: true });
-
-      // Gestos de toque o arrastre táctil en celular (Solo hacia arriba, Umbral 100px)
-      const TOUCH_SCROLL_THRESHOLD = 100;
-      let touchStartY = 0;
-
-      welcomeModal.addEventListener('touchstart', (e) => {
-        if (e.touches.length > 0) {
-          touchStartY = e.touches[0].clientY;
-        }
-      }, { passive: true });
-
-      welcomeModal.addEventListener('touchmove', (e) => {
-        if (e.touches.length > 0) {
-          const deltaY = touchStartY - e.touches[0].clientY;
-          // Exclusivamente deslizar el dedo hacia arriba superando los 100px
-          if (deltaY > TOUCH_SCROLL_THRESHOLD) {
-            handleScrollTrigger();
-          }
-        }
-      }, { passive: true });
-
-      // Clic directo como método secundario
+      // Transición directa al hacer clic o toque en cualquier parte de la pantalla
       welcomeModal.addEventListener('click', handleScrollTrigger);
     }
 
@@ -187,14 +185,20 @@ class KencaloApp {
         welcomeModal.classList.remove('fade-out');
 
         if (this.inkCanvasStep1) {
+          this.inkCanvasStep1.targetVolatility = 0.0;
+          this.inkCanvasStep1.volatility = 0.0;
           this.inkCanvasStep1.resume();
           this.inkCanvasStep1.resize();
         }
         if (this.inkCanvasStep2) {
+          this.inkCanvasStep2.targetVolatility = 0.0;
+          this.inkCanvasStep2.volatility = 0.0;
           this.inkCanvasStep2.resume();
           this.inkCanvasStep2.resize();
         }
         if (this.inkCanvasVector) {
+          this.inkCanvasVector.targetVolatility = 0.0;
+          this.inkCanvasVector.volatility = 0.0;
           this.inkCanvasVector.resume();
           this.inkCanvasVector.resize();
         }

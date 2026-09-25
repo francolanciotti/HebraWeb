@@ -24,15 +24,11 @@ export class SceneManager {
     );
     this.camera.position.set(0, 0, this.initialZoom);
 
-    // Renderer con soporte de alpha transparente y DPR optimizado para móviles
-    const isMobile = ('ontouchstart' in window) || (window.innerWidth < 768);
-    this.renderer = new THREE.WebGLRenderer({ antialias: !isMobile, alpha: true });
-    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio, isMobile ? 1.25 : 1.5));
+    // Renderer con soporte de alpha transparente y DPR universalmente optimizado
+    this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+    this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.shadowMap.enabled = !isMobile; // Sombras activas en Desktop, desactivadas en móvil para máxima fluidez
-    if (this.renderer.shadowMap.enabled) {
-      this.renderer.shadowMap.type = THREE.PCFSoftShadowMap;
-    }
+    this.renderer.shadowMap.enabled = false; // Desactivar sombras pesadas universalmente para rendimiento ultra fluido
 
     this.container.appendChild(this.renderer.domElement);
     this.isVisible = true;

@@ -33,6 +33,8 @@ export class InkBleedCanvas {
     this.volatility = 0.0;
     this.targetVolatility = 0.0;
     this.maxVolatility = options.maxVolatility || 0.85;
+    this.maxVolatilityMobile = options.maxVolatilityMobile !== undefined ? options.maxVolatilityMobile : 0.45;
+    this.maxVolatilityDesktop = options.maxVolatilityDesktop !== undefined ? options.maxVolatilityDesktop : (options.maxVolatility || 0.85);
     this.baseVolatility = options.baseVolatility || 0.0; // 0.0 en reposo
 
     // Estado del Mouse / Touch con seguimiento suave 1er orden
@@ -89,7 +91,7 @@ export class InkBleedCanvas {
 
   resize() {
     const rect = this.container.getBoundingClientRect();
-    const dpr = Math.max(window.devicePixelRatio || 1, 2.5);
+    const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
     this.width = Math.max(Math.floor(rect.width), 320);
     this.height = Math.max(Math.floor(rect.height), 120);
@@ -160,7 +162,7 @@ export class InkBleedCanvas {
     if (this.text) {
       const isMobile = window.innerWidth <= 768;
       const baseFontSize = isMobile ? 64 : 110;
-      const dpr = Math.max(window.devicePixelRatio || 1, 2.5);
+      const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
       const targetFontSize = Math.floor(baseFontSize * dpr);
 
       this.offCtx.fillStyle = '#ffffff';
@@ -173,7 +175,7 @@ export class InkBleedCanvas {
   }
 
   initWebGL() {
-    this.gl = this.canvas.getContext('webgl', { alpha: true, antialias: true, premultipliedAlpha: false });
+    this.gl = this.canvas.getContext('webgl', { alpha: true, antialias: false, premultipliedAlpha: false });
     if (!this.gl) {
       console.warn('WebGL no disponible para InkBleedCanvas, utilizando fallback 2D.');
       return;
@@ -226,29 +228,35 @@ export class InkBleedCanvas {
         // Radio de dilatación líquida según volatilidad y cursor
         float fillRadius = uVolatility * mouseFactor * 0.095;
 
-        // 3. Muestreo de expansión líquida de alta precisión (12 ángulos x 4 pasos)
+        // Desplazamiento hacia adentro (Inward Offset Bias ~5px) para que el sangrado nazca bien desde el interior del cuerpo del texto
+        float inwardBias = uVolatility * 0.0075;
+
+        // 3. Muestreo optimizado de expansión líquida desde el interior sólido
         float fillAlpha = 0.0;
 
-        for (int i = 0; i < 12; i++) {
-          float angle = float(i) * 0.5235987; // 2 * PI / 12
+        for (int i = 0; i < 8; i++) {
+          float angle = float(i) * 0.785398; // 2 * PI / 8
           vec2 sampleDir = vec2(cos(angle) / aspect, sin(angle));
 
-          for (int s = 1; s <= 4; s++) {
-            float stepFactor = float(s) * 0.25;
-            vec2 offset = sampleDir * (fillRadius * stepFactor);
+          for (int s = 1; s <= 2; s++) {
+            float stepFactor = float(s) * 0.5;
+            vec2 offset = sampleDir * (inwardBias + fillRadius * stepFactor);
             float sAlpha = texture2D(uTexture, uv - offset).a;
-            fillAlpha = max(fillAlpha, sAlpha);
+
+            // Considerar únicamente píxeles del interior sólido (> 0.45)
+            float solidSample = smoothstep(0.45, 0.85, sAlpha);
+            fillAlpha = max(fillAlpha, solidSample);
           }
         }
 
-        // 4. Alpha Sólido Opaco (100% Blanco Opaco en toda la masa de tinta dilatada)
-        float dilatedAlpha = smoothstep(0.01, 0.15, fillAlpha);
+        // 4. Alpha Suave y Anti-Aliased para contornos líquidos completamente lisos sin píxeles duros
+        float dilatedAlpha = smoothstep(0.10, 0.85, fillAlpha);
 
         // Brillo y relieve sutil en el borde de fusión del fluido
-        float highlight = smoothstep(0.08, 0.30, dilatedAlpha) * (1.0 - smoothstep(0.30, 0.85, dilatedAlpha));
+        float highlight = smoothstep(0.12, 0.40, dilatedAlpha) * (1.0 - smoothstep(0.40, 0.85, dilatedAlpha));
         vec3 color = uInkColor + vec3(0.08, 0.10, 0.14) * highlight * uVolatility;
 
-        // Alpha final: 100% Sólido opaco tanto en el núcleo como en la tinta expandida
+        // Alpha final: Transición sedosa y suave entre el núcleo y la tinta dilatada
         float totalAlpha = max(coreAlpha, dilatedAlpha);
 
         gl_FragColor = vec4(color, totalAlpha);
@@ -340,16 +348,12 @@ export class InkBleedCanvas {
       this.targetMouse.x = Math.max(0, Math.min(1, x));
       this.targetMouse.y = Math.max(0, Math.min(1, y));
 
-      const dx = this.targetMouse.x - this.lastMouse.x;
-      const dy = this.targetMouse.y - this.lastMouse.y;
-      const speed = Math.hypot(dx, dy);
-
-      // Al pasar o mover el puntero sobre la superficie, la dilatación responde de inmediato
-      const activeImpulse = 0.65 + Math.min(speed * 8.0, 0.35);
-      this.targetVolatility = Math.min(activeImpulse, this.maxVolatility);
-
       this.lastMouse.x = this.targetMouse.x;
       this.lastMouse.y = this.targetMouse.y;
+
+      // Mientras haya interacción activa (hover o toque en pantalla), mantener la dilatación responsiva según el dispositivo
+      const isMobile = window.innerWidth <= 768;
+      this.targetVolatility = isMobile ? this.maxVolatilityMobile : this.maxVolatilityDesktop;
     };
 
     targetEl.addEventListener('mousemove', (e) => {
@@ -378,6 +382,11 @@ export class InkBleedCanvas {
     }, { passive: true });
 
     targetEl.addEventListener('touchend', () => {
+      this.isHovered = false;
+      this.targetVolatility = this.baseVolatility;
+    });
+
+    targetEl.addEventListener('touchcancel', () => {
       this.isHovered = false;
       this.targetVolatility = this.baseVolatility;
     });
@@ -424,16 +433,17 @@ export class InkBleedCanvas {
 
     const gl = this.gl;
 
-    // 1. Trayectoria de seguimiento directa y suave (Sin inercia de sobrepaso ni rebote al cambiar de dirección)
-    this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.09;
-    this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.09;
+    // 1. Trayectoria de seguimiento directa y suave
+    this.mouse.x += (this.targetMouse.x - this.mouse.x) * 0.08;
+    this.mouse.y += (this.targetMouse.y - this.mouse.y) * 0.08;
 
-    // 2. Transición fluida suave sin rebote elástico (100% progresiva)
-    this.volatility += (this.targetVolatility - this.volatility) * 0.045;
+    // 2. Transición líquida con rebote rápido hacia el reposo
+    const lerpRate = this.targetVolatility < this.volatility ? 0.18 : 0.12;
+    this.volatility += (this.targetVolatility - this.volatility) * lerpRate;
 
-    // Si el puntero sale del canvas, retornar gradualmente y despacio al reposo (0.0)
-    if (!this.isHovered && this.targetVolatility > this.baseVolatility) {
-      this.targetVolatility += (this.baseVolatility - this.targetVolatility) * 0.03;
+    // Si el puntero sale del canvas, retornar de inmediato al reposo (0.0)
+    if (!this.isHovered) {
+      this.targetVolatility = this.baseVolatility;
     }
 
     gl.useProgram(this.program);
