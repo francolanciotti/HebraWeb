@@ -7,38 +7,25 @@
 }
 
 :root {
-  /* Wireframe Color Palette */
-  --primary-1: #F5F6FA;
-  --primary-2: #E7E2F4;
-  --secondary-1: #EAF9FC;
-  --secondary-2: #F8F8E7;
+  /* Figma Color Palette */
+  --primary-bg: #F5F6FA;
+  --primary-card: rgba(245, 246, 250, 0.75);
+  --primary-purple: #E7E2F4;
+  --secondary-cyan: #EAF9FC;
+  --secondary-yellow: #F8F8E7;
   
-  --accent-1: #112142;
-  --accent-2: #422E8F;
-  --accent-3: #6BC9D9;
-  
-  --navy-deep: #112142;
-  --navy-card: rgba(17, 33, 66, 0.85);
-  --navy-nav: #112142;
-  --navy-border: rgba(107, 201, 217, 0.2);
+  --navy-dark: #112142;
+  --purple-accent: #422E8F;
+  --cyan-accent: #6BC9D9;
 
   --bg-dark: #112142;
   --bg-light: #F5F6FA;
-  --bg-card: rgba(14, 27, 56, 0.85);
-  --bg-card-border: rgba(255, 255, 255, 0.15);
-  --bg-card-hover: rgba(23, 35, 62, 0.9);
+  --bg-card: rgba(245, 246, 250, 0.78);
+  --bg-card-border: rgba(255, 255, 255, 0.85);
   
-  --primary-neon: #00ff8a;
-  --primary-glow: rgba(0, 255, 138, 0.35);
-  --secondary-neon: #9d4edd;
-  --secondary-glow: rgba(157, 78, 221, 0.35);
-  --accent-cyan: #00e5ff;
-  --accent-pink: #ff007f;
-  
-  --text-main: #f1f5f9;
-  --text-dark: #0e1b38;
-  --text-muted: #94a3b8;
-  --text-dim: #64748b;
+  --text-dark: #112142;
+  --text-purple: #422E8F;
+  --text-muted: rgba(17, 33, 66, 0.75);
   
   /* Specified Typography */
   --font-caoutchouc: 'Caoutchouc', sans-serif;
@@ -47,11 +34,11 @@
   --font-body: 'Epilogue', sans-serif;
   
   /* Layout Spacing */
-  --nav-height: 68px;
-  --radius-lg: 20px;
-  --radius-md: 14px;
-  --radius-sm: 10px;
-  --radius-full: 9999px;
+  --nav-height: 72px;
+  --radius-lg: 24px;
+  --radius-md: 18px;
+  --radius-sm: 12px;
+  --radius-pill: 50px;
   
   /* Safe Area for Mobile Notch */
   --sat: env(safe-area-inset-top, 0px);
@@ -131,11 +118,32 @@ html, body {
   width: 100%;
   height: 100%;
   overflow: hidden;
-  background-color: var(--bg-dark);
-  color: var(--text-main);
+  background-color: var(--primary-purple);
+  color: var(--text-dark);
   font-family: var(--font-body);
   font-size: 15px;
   line-height: 1.5;
+}
+
+/* Global Organic SVG Vector Background Overlay (Covers Full Screen) */
+.app-organic-bg {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;
+  z-index: 0;
+  pointer-events: none;
+  overflow: hidden;
+  background-color: #E7E2F4;
+}
+
+.bg-vector-full {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  opacity: 0.95;
+  filter: contrast(1.02);
 }
 
 /* Fullscreen 3D Canvas Container */
@@ -163,15 +171,22 @@ html, body {
   pointer-events: none;
 }
 
-/* Glassmorphism Cards & Panels */
+/* Glassmorphism Cards & Panels (Figma Glass Effect: #D9D9D9 20%, Light -45º 80%, Depth 73, Frost 8) */
 .glass-card {
-  background: var(--bg-card);
+  background: rgba(217, 217, 217, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--bg-card-border);
-  box-shadow: 0 8px 32px 0 rgba(0, 0, 0, 0.4);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 16px 40px -8px rgba(17, 33, 66, 0.14),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
+  border-radius: var(--radius-lg);
   will-change: transform;
   transform: translateZ(0);
+  color: var(--text-dark);
 }
 
 /* Notification Banner */
@@ -180,9 +195,9 @@ html, body {
   top: max(16px, var(--sat));
   left: 12px;
   right: 12px;
-  padding: 12px 16px;
-  border-radius: var(--radius-md);
-  border-left: 4px solid var(--secondary-neon);
+  padding: 14px 18px;
+  border-radius: var(--radius-pill);
+  border-left: 5px solid var(--navy-dark);
   display: flex;
   align-items: center;
   justify-content: space-between;
@@ -208,12 +223,12 @@ html, body {
   font-size: 0.65rem;
   font-weight: 800;
   letter-spacing: 1px;
-  color: var(--secondary-neon);
+  color: var(--purple-accent);
 }
 
 .banner-content p {
   font-size: 0.82rem;
-  color: var(--text-main);
+  color: var(--text-dark);
   line-height: 1.3;
 }
 
@@ -254,7 +269,7 @@ html, body {
   overflow-y: auto;
   -webkit-overflow-scrolling: touch;
   padding-top: max(20px, var(--sat));
-  padding-bottom: calc(var(--nav-height) + max(24px, var(--sab)));
+  padding-bottom: calc(var(--nav-height) + max(28px, var(--sab)));
   padding-left: 16px;
   padding-right: 16px;
   height: 100%;
@@ -264,23 +279,22 @@ html, body {
   pointer-events: auto;
 }
 
-/* Bottom Navigation */
+/* Bottom Navigation (Figma Style) */
 .bottom-nav {
   position: absolute;
-  bottom: max(12px, var(--sab));
-  left: 12px;
-  right: 12px;
+  bottom: max(16px, var(--sab));
+  left: 14px;
+  right: 14px;
   height: var(--nav-height);
-  background: var(--navy-deep);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: 20px;
+  background: var(--navy-dark);
+  border-radius: 24px;
   display: flex;
   align-items: center;
   justify-content: space-around;
-  padding: 4px 8px;
+  padding: 6px 8px;
   z-index: 50;
   pointer-events: auto;
-  box-shadow: 0 12px 36px rgba(0, 0, 0, 0.35);
+  box-shadow: 0 12px 32px rgba(17, 33, 66, 0.3);
 }
 
 .nav-item {
@@ -291,24 +305,36 @@ html, body {
   flex-direction: column;
   align-items: center;
   justify-content: center;
-  gap: 3px;
-  color: rgba(245, 246, 250, 0.65);
+  gap: 4px;
+  color: rgba(245, 246, 250, 0.7);
   cursor: pointer;
   padding: 8px 12px;
-  border-radius: 14px;
+  border-radius: 18px;
   transition: all 0.25s ease;
   flex: 1;
+  height: 100%;
   pointer-events: auto;
 }
 
+/* EFECTO GLASS EXACTO FIGMA EN EL BOTÓN SELECCIONADO (Light -45º 80%, Refract 21, Depth 73, Frost 8) */
 .nav-item.active {
   color: #FFFFFF;
-  background: rgba(255, 255, 255, 0.15);
-  box-shadow: inset 0 0 1px rgba(255, 255, 255, 0.2);
+  background: linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.1) 100%);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.55);
+  border-top-color: rgba(255, 255, 255, 0.8);
+  border-left-color: rgba(255, 255, 255, 0.7);
+  border-radius: 18px;
+  box-shadow: 
+    0 8px 24px -4px rgba(0, 0, 0, 0.3),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.8),
+    inset -1px -1px 2px 0 rgba(0, 0, 0, 0.2);
 }
 
 .nav-item.active .nav-svg {
   stroke: #FFFFFF;
+  fill: none;
 }
 
 .nav-label {
@@ -317,65 +343,73 @@ html, body {
   font-family: var(--font-epilogue);
 }
 
-/* Buttons System */
+/* Buttons System (Dark Navy Pill - Figma) */
 button {
-  font-family: var(--font-heading);
+  font-family: var(--font-epilogue);
   cursor: pointer;
+  border-radius: var(--radius-pill);
 }
 
 .view-section.active button {
   pointer-events: auto;
 }
 
+.btn-dark-pill,
 .btn-primary-sm {
-  background: linear-gradient(135deg, var(--primary-neon), #00cc6a);
-  color: #000;
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
+  background: var(--navy-dark);
+  color: #FFFFFF;
+  font-family: var(--font-epilogue);
+  font-weight: 500;
+  font-size: 0.9rem;
+  padding: 10px 24px;
+  border-radius: var(--radius-pill);
   border: none;
-  box-shadow: 0 4px 14px var(--primary-glow);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 4px 14px rgba(17, 33, 66, 0.2);
+  transition: transform 0.2s ease, background-color 0.2s ease;
   white-space: nowrap;
 }
 
+.btn-dark-pill:active,
 .btn-primary-sm:active {
   transform: scale(0.95);
+  background: #0d1a34;
 }
 
 .btn-accent-sm {
-  background: linear-gradient(135deg, var(--secondary-neon), #7b2cbf);
-  color: #fff;
-  font-weight: 700;
-  font-size: 0.8rem;
-  padding: 8px 14px;
-  border-radius: var(--radius-md);
+  background: var(--purple-accent);
+  color: #FFFFFF;
+  font-weight: 500;
+  font-size: 0.85rem;
+  padding: 10px 20px;
+  border-radius: var(--radius-pill);
   border: none;
-  box-shadow: 0 4px 14px var(--secondary-glow);
   transition: transform 0.2s ease;
   white-space: nowrap;
 }
 
 .btn-glow-pulse {
-  background: linear-gradient(135deg, var(--primary-neon), var(--accent-cyan));
-  color: #050b10;
-  font-weight: 800;
-  font-size: 1rem;
-  letter-spacing: 1px;
-  padding: 16px 28px;
-  border-radius: var(--radius-full);
+  background: var(--navy-dark);
+  color: #FFFFFF;
+  font-family: var(--font-epilogue);
+  font-weight: 500;
+  font-size: 0.95rem;
+  padding: 12px 28px;
+  border-radius: var(--radius-pill);
   border: none;
   display: flex;
   align-items: center;
   gap: 10px;
-  box-shadow: 0 0 25px var(--primary-glow);
-  animation: glow-pulse-anim 2s infinite ease-in-out;
+  box-shadow: 0 4px 16px rgba(17, 33, 66, 0.3);
+  transition: transform 0.2s ease;
+}
+
+.btn-glow-pulse:active {
+  transform: scale(0.96);
 }
 
 @keyframes glow-pulse-anim {
-  0%, 100% { box-shadow: 0 0 20px var(--primary-glow); transform: scale(1); }
-  50% { box-shadow: 0 0 35px rgba(0, 255, 138, 0.6); transform: scale(1.04); }
+  0%, 100% { box-shadow: 0 0 20px rgba(107, 201, 217, 0.4); transform: scale(1); }
+  50% { box-shadow: 0 0 35px rgba(66, 46, 143, 0.6); transform: scale(1.03); }
 }
 
 .btn-glow-pulse:active {
@@ -383,15 +417,19 @@ button {
 }
 
 .btn-danger-ghost {
-  background: rgba(255, 0, 85, 0.1);
-  color: #ff3366;
-  border: 1px solid rgba(255, 0, 85, 0.3);
-  padding: 10px 16px;
-  border-radius: var(--radius-md);
+  background: rgba(220, 53, 69, 0.12);
+  color: #dc3545;
+  border: 1px solid rgba(220, 53, 69, 0.3);
+  padding: 12px 20px;
+  border-radius: var(--radius-button);
   font-weight: 600;
   font-size: 0.85rem;
   width: 100%;
   transition: all 0.2s ease;
+}
+
+.btn-danger-ghost:active {
+  background: rgba(220, 53, 69, 0.25);
 }
 
 .btn-danger-ghost:active {

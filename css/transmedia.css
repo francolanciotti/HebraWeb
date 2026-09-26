@@ -11,7 +11,7 @@
   margin: 0 auto;
 }
 
-/* Hero Card */
+/* Hero Card (Figma Glass Effect: #D9D9D9 20%, Light -45º 80%, Depth 73, Frost 8) */
 .hero-card {
   position: relative;
   padding: 24px 20px;
@@ -19,166 +19,238 @@
   overflow: hidden;
   display: flex;
   flex-direction: column;
-  gap: 8px;
-}
-
-.glow-orb {
-  position: absolute;
-  top: -40px;
-  right: -40px;
-  width: 140px;
-  height: 140px;
-  border-radius: 50%;
-  background: radial-gradient(circle, var(--secondary-neon) 0%, transparent 70%);
-  opacity: 0.5;
-  filter: blur(20px);
-  pointer-events: none;
-}
-
-.hero-tag {
-  font-size: 0.65rem;
-  font-weight: 800;
-  letter-spacing: 1.5px;
-  color: var(--secondary-neon);
-}
-
-.hero-card h2 {
-  font-family: var(--font-heading);
-  font-size: 1.5rem;
-  font-weight: 800;
-  color: #fff;
-}
-
-.hero-card p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
-  line-height: 1.5;
-}
-
-/* Links Grid */
-.links-grid {
-  display: flex;
-  flex-direction: column;
   gap: 12px;
+  background: rgba(217, 217, 217, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 16px 40px -8px rgba(17, 33, 66, 0.14),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
 }
 
-.link-card {
-  padding: 16px;
-  border-radius: var(--radius-md);
+/* Tarjetas Desplegables / Collapsible Accordion Styles */
+.collapsible-card .card-header-toggle {
   display: flex;
   align-items: center;
-  gap: 14px;
-  text-decoration: none;
-  color: var(--text-main);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  justify-content: space-between;
+  cursor: pointer;
+  width: 100%;
+  padding-bottom: 2px;
+  user-select: none;
 }
 
-.link-card:active {
-  transform: scale(0.98);
-  border-color: var(--primary-neon);
-}
-
-.link-icon {
-  width: 44px;
-  height: 44px;
-  border-radius: var(--radius-md);
-  display: flex;
-  align-items: center;
-  justify-content: center;
+.collapsible-card .toggle-icon-svg {
+  stroke: var(--navy-dark);
+  transition: transform 0.3s ease;
   flex-shrink: 0;
 }
 
-.instagram-bg {
-  background: linear-gradient(45deg, #f09433 0%, #e6683c 25%, #dc2743 50%, #cc2366 75%, #bc1888 100%);
-  color: #fff;
-  box-shadow: 0 4px 14px rgba(220, 39, 67, 0.4);
+.collapsible-card.expanded .toggle-icon-svg {
+  transform: rotate(180deg);
 }
 
-.link-info {
-  flex: 1;
+.collapsible-card .collapsible-body {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  max-height: 800px;
+  opacity: 1;
+  overflow: hidden;
+  transition: max-height 0.4s cubic-bezier(0, 1, 0, 1), opacity 0.3s ease, margin 0.3s ease;
 }
 
-.link-info h3 {
-  font-family: var(--font-heading);
-  font-size: 0.95rem;
-  font-weight: 700;
+.collapsible-card:not(.expanded) .collapsible-body {
+  max-height: 0;
+  opacity: 0;
+  margin-top: 0;
+  pointer-events: none !important;
 }
 
-.link-info p {
-  font-size: 0.75rem;
-  color: var(--text-muted);
+.hero-card h2 {
+  font-family: var(--font-caoutchouc);
+  font-size: 2.6rem;
+  font-weight: 400;
+  color: var(--navy-dark);
+  margin: 0;
+  line-height: 1.1;
+  letter-spacing: -0.5px;
 }
 
-.link-arrow {
-  font-size: 1.2rem;
-  color: var(--primary-neon);
+.hero-card p {
+  font-size: 1.05rem;
+  color: var(--navy-dark);
+  line-height: 1.5;
+  font-weight: 500;
+  opacity: 1;
+  margin: 4px 0 8px 0;
 }
 
-/* Transmedia Lore Card */
+.hero-card .btn-dark-pill {
+  margin-top: 4px;
+  padding: 10px 36px;
+}
+
+/* Transmedia Lore / Mapa Card (Figma Glass Style) */
 .transmedia-lore {
-  padding: 20px;
+  padding: 24px 20px;
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
-  gap: 10px;
+  gap: 12px;
+  background: rgba(217, 217, 217, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 16px 40px -8px rgba(17, 33, 66, 0.14),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
 }
 
 .transmedia-lore h3 {
-  font-family: var(--font-heading);
-  font-size: 1.1rem;
-  font-weight: 700;
-  color: var(--primary-neon);
+  font-family: var(--font-epilogue);
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--navy-dark);
+  margin: 0;
 }
 
 .transmedia-lore p {
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  font-size: 0.85rem;
+  color: var(--navy-dark);
+  opacity: 0.85;
+  line-height: 1.45;
+  margin: 0;
 }
 
 .trees-status-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
-  gap: 10px;
+  gap: 12px;
   margin-top: 6px;
 }
 
+/* Tree Badge Card (Figma Glass Style) */
 .tree-badge-card {
-  background: rgba(255, 255, 255, 0.03);
-  border: 1px solid rgba(255, 255, 255, 0.08);
-  border-radius: var(--radius-md);
-  padding: 12px;
+  background: rgba(231, 226, 244, 0.45);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1.5px solid var(--purple-accent);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 12px 28px -6px rgba(66, 46, 143, 0.18),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.9),
+    inset -1px -1px 3px 0 rgba(66, 46, 143, 0.12);
+  border-radius: var(--radius-lg);
+  padding: 18px 12px;
   display: flex;
   flex-direction: column;
   align-items: center;
-  gap: 4px;
+  justify-content: center;
+  gap: 6px;
+  text-align: center;
+  transition: transform 0.2s ease, box-shadow 0.2s ease;
 }
 
-.tree-badge-card.unlocked {
-  border-color: var(--primary-neon);
-  background: rgba(0, 255, 138, 0.06);
-}
-
-.tree-icon {
-  font-size: 1.5rem;
+.tree-icon-svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--navy-dark);
+  fill: none;
+  stroke-width: 1.8;
 }
 
 .tree-name {
-  font-size: 0.8rem;
-  font-weight: 700;
+  font-size: 0.88rem;
+  font-weight: 600;
+  font-family: var(--font-epilogue);
+  color: var(--navy-dark);
 }
 
 .tree-state {
-  font-size: 0.7rem;
-  color: var(--text-dim);
+  font-size: 0.78rem;
+  color: var(--purple-accent);
+  font-weight: 500;
+  display: flex;
+  align-items: center;
+  gap: 3px;
 }
 
-.tree-badge-card.unlocked .tree-state {
-  color: var(--primary-neon);
+/* Instagram Card (Figma Glass Style) */
+.link-card-instagram {
+  padding: 24px 20px;
+  border-radius: var(--radius-lg);
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 14px;
+  text-decoration: none;
+  color: var(--navy-dark);
+  transition: transform 0.2s ease;
+  background: rgba(217, 217, 217, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 16px 40px -8px rgba(17, 33, 66, 0.14),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
+}
+
+.link-card-instagram:active {
+  transform: scale(0.98);
+}
+
+.link-instagram-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+}
+
+.link-instagram-info h3 {
+  font-family: var(--font-epilogue);
+  font-size: 1.25rem;
+  font-weight: 600;
+  font-style: italic;
+  color: var(--navy-dark);
+  line-height: 1.3;
+}
+
+.link-instagram-info h3 span.highlight-purple {
+  color: var(--purple-accent);
+  font-style: italic;
+}
+
+.link-instagram-info p {
+  font-size: 0.82rem;
+  color: var(--navy-dark);
+  opacity: 0.85;
+  line-height: 1.4;
+}
+
+.link-arrow-svg {
+  width: 28px;
+  height: 28px;
+  stroke: var(--navy-dark);
+  stroke-width: 2.2;
+  fill: none;
+  flex-shrink: 0;
 }
 
 /* Backup Card */
 .backup-card {
-  padding: 22px 18px;
+  padding: 24px 20px;
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
@@ -197,28 +269,28 @@
 
 .backup-header h2 {
   font-family: var(--font-heading);
-  font-size: 1.3rem;
-  font-weight: 800;
-  color: #fff;
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--accent-2);
 }
 
 .backup-card p {
-  font-size: 0.82rem;
-  color: var(--text-muted);
+  font-size: 0.85rem;
+  color: var(--text-dark);
 }
 
 .token-box {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  background: rgba(0, 0, 0, 0.25);
-  padding: 14px;
-  border-radius: var(--radius-md);
-  border: 1px solid rgba(255, 255, 255, 0.06);
+  background: rgba(255, 255, 255, 0.35);
+  padding: 16px;
+  border-radius: var(--radius-lg);
+  border: 1px solid rgba(255, 255, 255, 0.6);
 }
 
 .token-box label {
-  font-size: 0.75rem;
+  font-size: 0.78rem;
   font-weight: 600;
   color: var(--text-muted);
 }
@@ -230,14 +302,14 @@
 
 .token-input {
   flex: 1;
-  background: rgba(15, 20, 28, 0.9);
-  border: 1px solid var(--bg-card-border);
-  border-radius: var(--radius-md);
-  color: var(--primary-neon);
+  background: #F5F6FA;
+  border: 1px solid var(--navy-border);
+  border-radius: var(--radius-button);
+  color: var(--accent-2);
   font-family: monospace;
-  font-size: 1.1rem;
+  font-size: 1.05rem;
   font-weight: 700;
-  padding: 8px 12px;
+  padding: 10px 16px;
   letter-spacing: 2px;
   outline: none;
 }
@@ -247,12 +319,13 @@
 }
 
 .token-input:focus {
-  border-color: var(--primary-neon);
+  border-color: var(--accent-3);
+  box-shadow: 0 0 10px rgba(107, 201, 217, 0.3);
 }
 
 .feedback-text {
-  font-size: 0.72rem;
-  color: var(--primary-neon);
+  font-size: 0.75rem;
+  color: var(--accent-2);
   font-weight: 600;
 }
 

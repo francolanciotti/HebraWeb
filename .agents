@@ -1,3 +1,24 @@
+# Rol y Protocolo de Actuación del Asistente
+
+## Rol Asignado
+- **Rol:** Asistente Senior Desarrollador de Aplicaciones Transmedia & WebAR.
+- **Especialización:** Realidad Aumentada Web (MindAR.js, Three.js), desarrollo web interactivo 2D/3D (estilo Tamagotchi/Pou), arquitectura de proyectos transmedia y sistemas de persistencia ligera.
+
+## Límites y Reglas Estrictas de Actuación
+1. **Consulta y Aprobación Previa Obligatoria:**
+   - **Queda estrictamente prohibido crear, modificar, renombrar o eliminar cualquier archivo del proyecto sin antes consultarlo y recibir la autorización explícita del usuario.**
+   - Antes de realizar cualquier edición o sugerir un cambio en el código, el asistente debe presentar una propuesta clara indicando:
+     - Archivos afectados.
+     - Cambios o adiciones a realizar.
+     - Justificación técnica y objetivo de la modificación.
+   - El asistente esperará la confirmación del usuario antes de proceder a aplicar cualquier cambio.
+
+2. **Asesoría de Nivel Senior:**
+   - Aportar soluciones optimizadas, buenas prácticas de desarrollo web/3D/AR y diseño transmedia.
+   - Explicar las propuestas de forma didáctica y transparente.
+
+---
+
 # Especificación del Proyecto: Kencalo Web AR & Minijuego Transmedia
 
 ## 1. Concepto y Flujo General
@@ -14,9 +35,4 @@
 - **Web AR:** MindAR.js (módulo de Image Tracking integrado sobre Three.js).
 - **Marcadores:** 2 targets compilados (`.mind`) basados en patrones gráficos de alto contraste con estética viscosa.
 
-## 3. Persistencia de Datos y Respaldo
-- **Estado activo:** `localStorage` del navegador para guardar:
-  - `kencaloCaptured` (boolean)
-  - `unlockedOutfits` (array de IDs)
-  - Parámetros de interacción/estado básico.
-- **Sistema de rescate:** Generador y validador de códigos alfanuméricos cortos (tokens) para que el usuario pueda exportar e importar su partida sin depender de base de datos o backend externo.
+

@@ -6,31 +6,31 @@ const OUTFITS_DATA = [
   {
     id: 'default',
     name: 'Natural',
-    icon: '🟢',
+    svg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="14" r="7"/><circle cx="9.5" cy="13" r="1" fill="currentColor"/><circle cx="14.5" cy="13" r="1" fill="currentColor"/><path d="M12 7V4 M12 4c1.5-1.5 3-1 4 0" stroke-linecap="round"/></svg>`,
     description: 'La forma original e interactiva de Kencalo.'
   },
   {
     id: 'outfit_corona',
     name: 'Corona',
-    icon: '👑',
+    svg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 17h18L19 8l-4 4-3-6-3 6-4-4-2 9z" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     description: 'Indumento Corona real en 3D.'
   },
   {
     id: 'outfit_flor',
     name: 'Flor',
-    icon: '🌸',
+    svg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><circle cx="12" cy="12" r="3"/><path d="M12 5a3.5 3.5 0 013.5 3.5 3.5 3.5 0 013.5 3.5 3.5 3.5 0 01-3.5 3.5 3.5 3.5 0 01-3.5 3.5 3.5 3.5 0 01-3.5-3.5 3.5 3.5 0 01-3.5-3.5 3.5 3.5 0 013.5-3.5A3.5 3.5 0 0112 5z"/></svg>`,
     description: 'Indumento Flor bio-digital en 3D.'
   },
   {
     id: 'outfit_palos',
     name: 'Palos',
-    icon: '🪵',
+    svg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M4 20L20 4M8 4l12 12M4 10l10 10" stroke-linecap="round"/></svg>`,
     description: 'Indumento Palos orgánicos en 3D.'
   },
   {
     id: 'outfit_reno',
     name: 'Reno',
-    icon: '🦌',
+    svg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v5a3 3 0 003 3h6a3 3 0 003-3V4M4 6h4M16 6h4M12 12v8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     description: 'Indumento Cuernos de Reno en 3D.'
   }
 ];
@@ -43,7 +43,6 @@ export class OutfitSelectorUI {
     this.drawerEl = document.getElementById('wardrobe-drawer');
     this.gridEl = document.getElementById('outfit-options-grid');
     this.btnOpen = document.getElementById('btn-open-wardrobe');
-    this.btnClose = document.getElementById('btn-close-wardrobe');
     this.badgeEl = document.getElementById('wardrobe-badge');
 
     this.initEvents();
@@ -57,16 +56,22 @@ export class OutfitSelectorUI {
         e.stopPropagation();
         const state = this.stateManager.getState();
         if (state.kencaloCaptured) {
-          this.open();
+          this.toggle();
         }
       });
     }
 
-    if (this.btnClose) {
-      this.btnClose.addEventListener('click', (e) => {
-        e.stopPropagation();
+    // Cerrar desplegable al hacer clic fuera
+    document.addEventListener('click', (e) => {
+      if (this.drawerEl && !this.drawerEl.contains(e.target) && e.target !== this.btnOpen) {
         this.close();
-      });
+      }
+    });
+  }
+
+  toggle() {
+    if (this.drawerEl) {
+      this.drawerEl.classList.toggle('hidden');
     }
   }
 
@@ -110,24 +115,21 @@ export class OutfitSelectorUI {
       const isUnlocked = unlocked.includes(outfit.id);
       const isActive = current === outfit.id;
 
-      const card = document.createElement('div');
-      card.className = `outfit-card ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}`;
-      
-      card.innerHTML = `
-        <span class="outfit-icon">${outfit.icon}</span>
-        <span class="outfit-name">${outfit.name}</span>
-        ${!isUnlocked ? '<span class="outfit-badge-lock">🔒 Árbol B</span>' : ''}
-      `;
+      const btn = document.createElement('button');
+      btn.className = `outfit-icon-btn ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}`;
+      btn.title = isUnlocked ? outfit.name : `${outfit.name} (Bloqueado - Árbol B)`;
+      btn.innerHTML = outfit.svg;
 
       if (isUnlocked) {
-        card.addEventListener('click', () => {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
           this.stateManager.setOutfit(outfit.id);
           this.kencaloModel.setOutfit(outfit.id);
           this.render();
         });
       }
 
-      this.gridEl.appendChild(card);
+      this.gridEl.appendChild(btn);
     });
   }
 }

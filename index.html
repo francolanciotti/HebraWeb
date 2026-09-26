@@ -12,11 +12,11 @@
     content="Descubre a Hebra en Realidad Aumentada, interactúa con él y explora el portal transmedia de la obra física.">
   <meta name="theme-color" content="#0d0f12">
 
-  <!-- Google Fonts: Epilogue & Outfit -->
+  <!-- Google Fonts: Epilogue -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
   <link
-    href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;1,400;1,600&family=Outfit:wght@400;600;800&display=swap"
+    href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet">
 
   <!-- Three.js (r128) -->
@@ -32,6 +32,11 @@
 </head>
 
 <body>
+  <!-- FONDO ORGÁNICO GLOBAL FLUIDO (FIGMA VECTOR) -->
+  <div class="app-organic-bg">
+    <img src="assets/file.svg" alt="" class="bg-vector-full">
+  </div>
+
   <!-- VENTANA DE BIENVENIDA TRANSMEDIA (IN-PLACE FADE SYSTEM) -->
   <div id="welcome-splash-modal" class="welcome-splash-modal">
     <!-- Overlay Vector SVG Orgánico de Fondo (Sensible a InkBleed WebGL) -->
@@ -61,10 +66,10 @@
     <!-- Banner de Notificación de Nuevo Árbol -->
     <div id="notification-banner" class="notification-banner glass-card hidden">
       <div class="banner-content">
-        <span class="banner-badge">¡NUEVO DISCUBRIMIENTO!</span>
+        <span class="banner-badge">¡NUEVO DESCUBRIMIENTO!</span>
         <p id="banner-message">Se ha detectado el Árbol B cerca. ¡Escanéalo para desbloquear ropa!</p>
       </div>
-      <button id="btn-banner-action" class="btn-primary-sm">Ir a Cámara</button>
+      <button id="btn-banner-action" class="btn-dark-pill">Ir a Cámara</button>
     </div>
 
     <!-- MAIN VIEW CONTAINERS -->
@@ -77,16 +82,18 @@
         </div>
 
         <div class="ar-overlay-ui">
-          <!-- Tarjeta de Solicitud de Permiso de Cámara -->
+          <!-- Tarjeta de Solicitud de Permiso de Cámara (Figma Style) -->
           <div id="ar-permission-card" class="ar-permission-card glass-card">
             <div class="camera-icon-wrapper">
-              <span class="camera-icon">📷</span>
+              <svg viewBox="0 0 24 24" width="34" height="34" fill="#112142">
+                <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />
+                <path fill-rule="evenodd" d="M4 5a2 2 0 00-2 2v10a2 2 0 002 2h16a2 2 0 002-2V7a2 2 0 00-2-2h-3.172a2 2 0 01-1.414-.586l-.828-.828A2 2 0 0013.172 3h-2.344a2 2 0 00-1.414.586l-.828.828A2 2 0 017.172 5H4zm8 12a5 5 0 100-10 5 5 0 000 10z" clip-rule="evenodd" />
+              </svg>
             </div>
             <h3>Realidad Aumentada</h3>
             <p>Activa tu cámara para escanear los árboles y descubrir a Hebra en tu entorno.</p>
-            <button id="btn-request-camera" class="btn-primary-sm btn-glow-pulse">
-              <span class="btn-icon">📹</span>
-              <span id="btn-request-camera-text">Activar Cámara</span>
+            <button id="btn-request-camera" class="btn-dark-pill">
+              Activar cámara
             </button>
             <p id="ar-permission-error" class="ar-permission-error hidden"></p>
           </div>
@@ -101,8 +108,7 @@
 
           <!-- Acciones de Captura -->
           <div id="ar-actions" class="ar-action-bar hidden">
-            <button id="btn-capture-kencalo" class="btn-glow-pulse">
-              <span class="btn-icon">✨</span>
+            <button id="btn-capture-kencalo" class="btn-dark-pill">
               <span>¡CAPTURAR EL KENCALO!</span>
             </button>
           </div>
@@ -112,6 +118,7 @@
             <span class="dev-label">Modo Prueba:</span>
             <button id="btn-sim-tree-a" class="btn-sim">Simular Árbol A</button>
             <button id="btn-sim-tree-b" class="btn-sim">Simular Árbol B</button>
+            <button id="btn-sim-reset" class="btn-sim btn-sim-reset">Reiniciar Progreso</button>
           </div>
         </div>
       </section>
@@ -123,68 +130,92 @@
           <span class="unclaimed-icon">🔍</span>
           <h2>Todavia no capturaste ningun Kencalo</h2>
           <p>Explora la ciudad para encontrar y capturar un Kencalo.</p>
-          <button id="btn-go-ar" class="btn-primary-sm">Ir a Cámara</button>
+          <button id="btn-go-ar" class="btn-dark-pill">Ir a Cámara</button>
         </div>
 
         <div class="companion-hud">
           <div class="companion-controls">
-            <button id="btn-open-wardrobe" class="btn-glass-circle disabled" title="Indumentaria">
-              <span class="circle-icon">👕</span>
+            <!-- Botón Hamburguesa / Desplegable de Indumentaria -->
+            <button id="btn-open-wardrobe" class="btn-glass-circle disabled" title="Indumentaria (Vestimienta)">
+              <svg viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M4 6h16M4 12h16M4 18h16" stroke-linecap="round"/>
+              </svg>
               <span class="badge-count hidden" id="wardrobe-badge">!</span>
             </button>
+
+            <!-- Menú Desplegable Flotante de Solo Íconos -->
+            <div id="wardrobe-drawer" class="wardrobe-dropdown-menu glass-card hidden">
+              <div id="outfit-options-grid" class="outfit-icon-only-grid">
+                <!-- Íconos de indumentaria inyectados dinámicamente -->
+              </div>
+            </div>
           </div>
         </div>
       </section>
 
-      <!-- TAB 3: UNIVERSO TRANSMEDIA -->
+      <!-- TAB 3: UNIVERSO TRANSMEDIA (TARJETAS DESPLEGABLES - FIGMA DESIGN) -->
       <section id="view-transmedia" class="view-section">
         <div class="transmedia-container scrollable">
-          <div class="hero-card glass-card">
-            <div class="glow-orb"></div>
-            <span class="hero-tag">PROYECTO TRANSMEDIA</span>
-            <h2>Hebra</h2>
-            <p>
-              Explora la instalación urbana transmedia y descubre a Kencalo en su hábitat natural.
-            </p>
-            <button id="btn-reopen-welcome" class="btn-primary-sm" style="margin-top: 12px;">
-              <span>✨ Ver Pantalla de Bienvenida</span>
-            </button>
+          
+          <!-- TARJETA 1: HERO HEBRA (DESPLEGABLE) -->
+          <div class="hero-card glass-card collapsible-card expanded">
+            <div class="card-header-toggle">
+              <h2>Hebra</h2>
+              <svg class="toggle-icon-svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="collapsible-body">
+              <p>
+                Explora la instalación urbana transmedia y descubre a los Kencalos en su hábitat natural.
+              </p>
+              <button id="btn-reopen-welcome" class="btn-dark-pill">
+                Inicio
+              </button>
+            </div>
           </div>
 
-          <div class="links-grid">
-            <a href="https://www.instagram.com/hebra.tdm3" target="_blank" rel="noopener noreferrer"
-              class="link-card glass-card">
-              <div class="link-icon instagram-bg">
-                <svg viewBox="0 0 24 24" width="24" height="24" fill="currentColor">
-                  <path
-                    d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z" />
-                </svg>
-              </div>
-              <div class="link-info">
-                <h3>Entérate mas de nuestro universo en Instagram</h3>
-                <p>Contenido exclusivo para tu kencalo, nuevos arboles y mas novedades.</p>
-              </div>
-              <span class="link-arrow">→</span>
-            </a>
-          </div>
-
-          <div class="transmedia-lore glass-card">
-            <h3>Mapa de la Instalación Física</h3>
-            <p>Visita los árboles intervenidos en la ciudad. Cada marcador desbloquea indumentaria única
-              para tu kencalo.</p>
-            <div class="trees-status-grid">
-              <div class="tree-badge-card" id="badge-tree-a">
-                <span class="tree-icon">🌳</span>
-                <span class="tree-name">Árbol A</span>
-                <span class="tree-state" id="state-tree-a">No descubierto</span>
-              </div>
-              <div class="tree-badge-card" id="badge-tree-b">
-                <span class="tree-icon">🌲</span>
-                <span class="tree-name">Árbol B</span>
-                <span class="tree-state" id="state-tree-b">Bloqueado</span>
+          <!-- TARJETA 2: MAPA DE INSTALACIÓN FÍSICA (DESPLEGABLE) -->
+          <div class="transmedia-lore glass-card collapsible-card expanded">
+            <div class="card-header-toggle">
+              <h3>Mapa de la Instalación Física</h3>
+              <svg class="toggle-icon-svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
+                <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/>
+              </svg>
+            </div>
+            <div class="collapsible-body">
+              <p>Visita los árboles intervenidos en la ciudad. Cada marcador desbloquea indumentaria única para tu Kencalo.</p>
+              <div class="trees-status-grid">
+                <div class="tree-badge-card" id="badge-tree-a">
+                  <svg class="tree-icon-svg" viewBox="0 0 24 24">
+                    <path d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V19a2 2 0 002 2h4a2 2 0 002-2v-4.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="tree-name">Árbol A</span>
+                  <span class="tree-state" id="state-tree-a">Descubierto ✓</span>
+                </div>
+                <div class="tree-badge-card" id="badge-tree-b">
+                  <svg class="tree-icon-svg" viewBox="0 0 24 24">
+                    <path d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V19a2 2 0 002 2h4a2 2 0 002-2v-4.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"/>
+                  </svg>
+                  <span class="tree-name">Árbol B</span>
+                  <span class="tree-state" id="state-tree-b">Descubierto ✓</span>
+                </div>
               </div>
             </div>
           </div>
+
+          <!-- TARJETA 3: ENLACE INSTAGRAM -->
+          <a href="https://www.instagram.com/hebra.tdm3" target="_blank" rel="noopener noreferrer"
+            class="link-card-instagram glass-card">
+            <div class="link-instagram-info">
+              <h3>Entérate más de nuestro universo en <span class="highlight-purple">Instagram</span></h3>
+              <p>Contenido exclusivo para tu Kencalo, nuevo árboles y más novedades.</p>
+            </div>
+            <svg class="link-arrow-svg" viewBox="0 0 24 24">
+              <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
+            </svg>
+          </a>
+
         </div>
       </section>
 
@@ -203,7 +234,7 @@
               <label>Tu Código de Respaldo:</label>
               <div class="token-input-group">
                 <input type="text" id="token-display" readonly value="KENC-XXXXX" class="token-input">
-                <button id="btn-copy-token" class="btn-primary-sm">Copiar</button>
+                <button id="btn-copy-token" class="btn-dark-pill">Copiar</button>
               </div>
               <span id="copy-feedback" class="feedback-text hidden">¡Copiado al portapapeles!</span>
             </div>
@@ -212,7 +243,7 @@
               <label>Restaurar o Importar Partida:</label>
               <div class="token-input-group">
                 <input type="text" id="token-import-input" placeholder="Ej: KENC-9A8F2" class="token-input uppercase">
-                <button id="btn-import-token" class="btn-accent-sm">Restaurar</button>
+                <button id="btn-import-token" class="btn-dark-pill">Restaurar</button>
               </div>
             </div>
 
@@ -225,25 +256,12 @@
 
     </main>
 
-    <!-- DRAWER SELECTOR DE INDUMENTARIA -->
-    <div id="wardrobe-drawer" class="drawer glass-card hidden">
-      <div class="drawer-header">
-        <h3>Indumentaria de tu Kencalo</h3>
-        <button id="btn-close-wardrobe" class="btn-close">&times;</button>
-      </div>
-      <div class="drawer-body">
-        <p class="drawer-subtitle">Personaliza a tu Kencalo con las prendas desbloqueadas.</p>
-        <div id="outfit-options-grid" class="outfit-grid">
-          <!-- Opciones inyectadas dinámicamente -->
-        </div>
-      </div>
-    </div>
 
-    <!-- NAVEGACIÓN INFERIOR (BOTTOM NAV) -->
-    <nav class="bottom-nav glass-card">
+
+    <!-- NAVEGACIÓN INFERIOR (FIGMA DESIGN) -->
+    <nav class="bottom-nav">
       <button class="nav-item active" data-view="ar">
-        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
-          stroke-width="2">
+        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8">
           <path d="M23 19a2 2 0 0 1-2 2H3a2 2 0 0 1-2-2V8a2 2 0 0 1 2-2h4l2-3h6l2 3h4a2 2 0 0 1 2 2z" />
           <circle cx="12" cy="13" r="4" />
         </svg>
@@ -251,33 +269,22 @@
       </button>
 
       <button class="nav-item" data-view="companion">
-        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
-          stroke-width="2">
-          <circle cx="12" cy="12" r="10" />
-          <path d="M8 14s1.5 2 4 2 4-2 4-2" />
-          <line x1="9" y1="9" x2="9.01" y2="9" />
-          <line x1="15" y1="9" x2="15.01" y2="9" />
+        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="14" r="7" />
+          <circle cx="9.5" cy="13" r="1" fill="currentColor" />
+          <circle cx="14.5" cy="13" r="1" fill="currentColor" />
+          <path d="M12 7V4 M12 4c1.5-1.5 3-1 4 0" stroke-linecap="round" />
         </svg>
         <span class="nav-label">Kencalo</span>
       </button>
 
       <button class="nav-item" data-view="transmedia">
-        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
-          stroke-width="2">
-          <circle cx="12" cy="12" r="10" />
-          <line x1="2" y1="12" x2="22" y2="12" />
-          <path d="M12 2a15.3 15.3 0 0 1 4 10 15.3 15.3 0 0 1-4 10 15.3 15.3 0 0 1 4-10z" />
+        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor" stroke-width="1.8">
+          <circle cx="12" cy="12" r="9" />
+          <ellipse cx="12" cy="12" rx="4" ry="9" />
+          <line x1="3" y1="12" x2="21" y2="12" />
         </svg>
         <span class="nav-label">Hebra</span>
-      </button>
-
-      <button class="nav-item" data-view="backup">
-        <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"
-          stroke-width="2">
-          <path
-            d="M21 2l-2 2m-7.61 7.61a5.5 5.5 0 1 1-7.778 7.778 5.5 5.5 0 0 1 7.777-7.777zm0 0L15.5 7.5m0 0l3 3L22 7l-3-3m-3.5 3.5L19 4" />
-        </svg>
-        <span class="nav-label">Respaldo</span>
       </button>
     </nav>
 

@@ -23,7 +23,28 @@ export class TransmediaUI {
     this.stateTreeB = document.getElementById('state-tree-b');
 
     this.initEvents();
+    this.initCollapsibleCards();
     this.update();
+  }
+
+  initCollapsibleCards() {
+    const headers = document.querySelectorAll('.card-header-toggle');
+    headers.forEach(header => {
+      header.addEventListener('click', () => {
+        const card = header.closest('.collapsible-card');
+        if (card) {
+          const isExpanded = card.classList.contains('expanded');
+          // Cierra todas las demás tarjetas desplegables
+          document.querySelectorAll('.collapsible-card').forEach(c => {
+            c.classList.remove('expanded');
+          });
+          // Si la tarjeta cliqueada no estaba abierta, la despliega
+          if (!isExpanded) {
+            card.classList.add('expanded');
+          }
+        }
+      });
+    });
   }
 
   initEvents() {

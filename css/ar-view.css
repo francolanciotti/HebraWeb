@@ -123,50 +123,69 @@
   display: flex;
   align-items: center;
   gap: 8px;
-  padding: 8px 14px;
-  border-radius: var(--radius-full);
+  padding: 8px 16px;
+  border-radius: var(--radius-button);
   margin-bottom: 10px;
+  background: var(--bg-card);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1px solid var(--bg-card-border);
 }
 
 .dev-label {
   font-size: 0.7rem;
-  color: var(--text-muted);
+  color: var(--text-dark);
   font-weight: 600;
 }
 
 .btn-sim {
-  background: rgba(255, 255, 255, 0.08);
-  border: 1px solid rgba(255, 255, 255, 0.15);
-  color: var(--text-main);
-  font-size: 0.72rem;
-  padding: 4px 10px;
-  border-radius: var(--radius-sm);
+  background: rgba(17, 33, 66, 0.08);
+  border: 1px solid rgba(17, 33, 66, 0.2);
+  color: var(--text-dark);
+  font-size: 0.75rem;
+  padding: 6px 12px;
+  border-radius: var(--radius-button);
   transition: all 0.2s ease;
 }
 
 .btn-sim:active {
-  background: var(--primary-neon);
-  color: #000;
+  background: var(--accent-3);
+  color: var(--text-light);
 }
 
-/* Tarjeta de Solicitud de Permiso de Cámara */
+.btn-sim-reset {
+  background: rgba(220, 53, 69, 0.12);
+  border-color: rgba(220, 53, 69, 0.25);
+  color: #c92a2a;
+  font-weight: 600;
+}
+
+.btn-sim-reset:active {
+  background: #c92a2a;
+  color: #ffffff;
+}
+
+/* Tarjeta de Solicitud de Permiso de Cámara (Exact Figma Glass Effect) */
 .ar-permission-card {
   display: flex;
   flex-direction: column;
   align-items: center;
   justify-content: center;
   text-align: center;
-  padding: 32px 24px;
+  padding: 36px 26px;
   max-width: 360px;
   width: 90%;
   margin: auto;
   gap: 14px;
   border-radius: var(--radius-lg);
-  background: rgba(17, 33, 66, 0.88);
+  background: rgba(217, 217, 217, 0.2);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.18);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.5);
+  border: 2px solid var(--navy-dark);
+  box-shadow: 
+    0 16px 40px -8px rgba(17, 33, 66, 0.14),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
   z-index: 20;
   will-change: transform;
   transform: translateZ(0);
@@ -185,33 +204,33 @@
   width: 68px;
   height: 68px;
   border-radius: 50%;
-  background: rgba(245, 246, 250, 0.1);
-  border: 1px solid rgba(245, 246, 250, 0.25);
+  background: rgba(107, 201, 217, 0.2);
+  border: 1px solid rgba(107, 201, 217, 0.4);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32px;
-  box-shadow: 0 0 24px rgba(245, 246, 250, 0.15);
+  box-shadow: 0 0 24px rgba(107, 201, 217, 0.25);
 }
 
 .ar-permission-card h3 {
-  font-family: var(--font-epilogue);
-  font-size: 1.35rem;
-  font-weight: 600;
-  color: #F5F6FA;
+  font-family: var(--font-heading);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--accent-2);
   margin: 0;
 }
 
 .ar-permission-card p {
   font-size: 0.9rem;
-  color: rgba(245, 246, 250, 0.82);
+  color: var(--text-dark);
   line-height: 1.45;
   margin: 0;
 }
 
 .ar-permission-error {
   font-size: 0.82rem;
-  color: #ff6b6b;
+  color: #dc3545;
   margin-top: 4px;
 }
 

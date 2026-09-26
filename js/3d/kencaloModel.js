@@ -8,7 +8,7 @@
 
 export const KENCALO_CONFIG = {
   baseScale: 2.2,             // Tamaño de Kencalo (sube a 3.0 para agrandar, baja a 1.5 para achicar)
-  positionOffset: [0, -0.2, 0],  // [X, Y, Z] Posición de Kencalo (ej: [0, -0.5, 0] para bajarlo)
+  positionOffset: [0, -0.2, -1],  // [X, Y, Z] Posición de Kencalo (ej: [0, -0.5, 0] para bajarlo)
   rotationOffset: [0, 0, 0],   // [X, Y, Z] Rotación en radianes (ej: [0, Math.PI, 0] para girar 180°)
   animationFadeDuration: 0.35 // Duración en segundos de la transición suave entre animaciones
 };
@@ -96,12 +96,22 @@ export class KencaloModel {
 
         this.mesh = gltfBase.scene;
 
-        // Bounding Box para calcular tamaño y centrado inicial
-        const box = new THREE.Box3().setFromObject(this.mesh);
-        const center = box.getCenter(new THREE.Vector3());
-        const size = box.getSize(new THREE.Vector3());
+        // Bounding Box para calcular el centro real del cuerpo del Kencalo
+        const bodyBox = new THREE.Box3();
+        this.mesh.traverse((node) => {
+          if (node.isMesh) {
+            node.geometry.computeBoundingBox();
+            bodyBox.expandByObject(node);
+          }
+        });
 
-        this.mesh.position.sub(center);
+        const center = bodyBox.getCenter(new THREE.Vector3());
+        const size = bodyBox.getSize(new THREE.Vector3());
+
+        // Centrar la geometría en su origen corporal exacto (torso)
+        this.mesh.position.set(-center.x, -center.y, -center.z);
+
+        // Aplicar configuraciones de posición
         this.mesh.position.x += KENCALO_CONFIG.positionOffset[0];
         this.mesh.position.y += KENCALO_CONFIG.positionOffset[1];
         this.mesh.position.z += KENCALO_CONFIG.positionOffset[2];

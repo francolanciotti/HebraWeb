@@ -10,7 +10,7 @@
   height: 100%;
 }
 
-/* Unclaimed State Card */
+/* Unclaimed State Card (Figma Glass Effect) */
 .unclaimed-card {
   position: absolute;
   top: 50%;
@@ -18,7 +18,7 @@
   transform: translate(-50%, -50%);
   width: calc(100% - 40px);
   max-width: 380px;
-  padding: 30px 24px;
+  padding: 32px 24px;
   border-radius: var(--radius-lg);
   display: flex;
   flex-direction: column;
@@ -27,6 +27,16 @@
   gap: 12px;
   z-index: 20;
   pointer-events: auto;
+  background: rgba(217, 217, 217, 0.2);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.65);
+  border-top-color: rgba(255, 255, 255, 0.9);
+  border-left-color: rgba(255, 255, 255, 0.85);
+  box-shadow: 
+    0 16px 40px -8px rgba(17, 33, 66, 0.14),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
 }
 
 .unclaimed-card.hidden,
@@ -40,14 +50,14 @@
 
 .unclaimed-card h2 {
   font-family: var(--font-heading);
-  font-size: 1.25rem;
-  font-weight: 800;
-  color: var(--primary-neon);
+  font-size: 1.4rem;
+  font-weight: 400;
+  color: var(--accent-2);
 }
 
 .unclaimed-card p {
-  font-size: 0.85rem;
-  color: var(--text-muted);
+  font-size: 0.88rem;
+  color: var(--text-dark);
 }
 
 .companion-hud {
@@ -81,20 +91,23 @@
 
 .btn-glass-circle {
   position: relative;
-  width: 52px;
-  height: 52px;
+  width: 54px;
+  height: 54px;
   border-radius: 50%;
-  background: var(--bg-card);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid var(--bg-card-border);
+  background: var(--navy-dark);
+  color: #FFFFFF;
+  border: 1px solid rgba(255, 255, 255, 0.3);
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 8px 24px rgba(0,0,0,0.4);
+  box-shadow: 0 8px 24px rgba(17, 33, 66, 0.35);
   will-change: transform;
   transform: translateZ(0);
-  transition: transform 0.2s ease, border-color 0.2s ease;
+  transition: transform 0.2s ease, background-color 0.2s ease;
+}
+
+.btn-glass-circle svg {
+  stroke: #FFFFFF;
 }
 
 .btn-glass-circle.disabled {
@@ -105,7 +118,7 @@
 
 .btn-glass-circle:not(.disabled):active {
   transform: scale(0.92);
-  border-color: var(--primary-neon);
+  background: #0d1a34;
 }
 
 .circle-icon {
@@ -116,135 +129,75 @@
   position: absolute;
   top: -2px;
   right: -2px;
-  width: 18px;
-  height: 18px;
+  width: 20px;
+  height: 20px;
   border-radius: 50%;
-  background: var(--secondary-neon);
-  color: #fff;
+  background: var(--purple-accent);
+  color: var(--text-light);
   font-size: 0.65rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px var(--secondary-neon);
+  box-shadow: 0 0 10px rgba(66, 46, 143, 0.5);
 }
 
 .badge-count.hidden {
   display: none;
 }
 
-/* Wardrobe Drawer Modal */
-.drawer {
-  position: fixed;
-  bottom: 0;
-  left: 0;
+/* Menú Desplegable Flotante de Solo Íconos (Figma Style) */
+.wardrobe-dropdown-menu {
+  position: absolute;
   right: 0;
-  max-height: 70vh;
-  border-top-left-radius: 28px;
-  border-top-right-radius: 28px;
-  padding: 20px;
-  z-index: 100;
-  display: flex;
-  flex-direction: column;
-  gap: 14px;
-  transform: translateY(0);
-  transition: transform 0.35s cubic-bezier(0.175, 0.885, 0.32, 1.275);
-  pointer-events: auto !important;
+  top: 64px;
+  padding: 10px;
+  border-radius: 24px;
+  background: rgba(217, 217, 217, 0.25);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 1px solid rgba(255, 255, 255, 0.75);
+  box-shadow: 
+    0 12px 32px -4px rgba(17, 33, 66, 0.2),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.9);
+  transition: opacity 0.25s ease, transform 0.25s ease;
+  z-index: 90;
 }
 
-.drawer * {
-  pointer-events: auto;
-}
-
-.drawer.hidden {
-  transform: translateY(100%);
+.wardrobe-dropdown-menu.hidden {
+  opacity: 0;
+  transform: translateY(-10px) scale(0.95);
   pointer-events: none !important;
 }
 
-.drawer-header {
+.outfit-icon-only-grid {
   display: flex;
-  align-items: center;
-  justify-content: space-between;
+  flex-direction: column;
+  gap: 8px;
 }
 
-.drawer-header h3 {
-  font-family: var(--font-heading);
-  font-size: 1.2rem;
-  font-weight: 800;
-  color: var(--primary-neon);
-}
-
-.btn-close {
-  background: rgba(255, 255, 255, 0.15);
-  border: 1px solid rgba(255, 255, 255, 0.2);
-  color: #fff;
-  font-size: 1.6rem;
-  width: 36px;
-  height: 36px;
+.outfit-icon-btn {
+  width: 44px;
+  height: 44px;
   border-radius: 50%;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.85);
   display: flex;
   align-items: center;
   justify-content: center;
-  cursor: pointer;
-  pointer-events: auto !important;
-  transition: background 0.2s ease, transform 0.2s ease;
-}
-
-.btn-close:active {
-  background: rgba(255, 0, 85, 0.4);
-  transform: scale(0.9);
-}
-
-.drawer-subtitle {
-  font-size: 0.82rem;
-  color: var(--text-muted);
-}
-
-.outfit-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fill, minmax(100px, 1fr));
-  gap: 12px;
-  margin-top: 8px;
-  max-height: 40vh;
-  overflow-y: auto;
-}
-
-.outfit-card {
-  background: rgba(255, 255, 255, 0.04);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  border-radius: var(--radius-md);
-  padding: 12px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 8px;
+  font-size: 1.35rem;
   cursor: pointer;
   transition: all 0.2s ease;
 }
 
-.outfit-card.active {
-  border-color: var(--primary-neon);
-  background: rgba(0, 255, 138, 0.1);
-  box-shadow: 0 0 16px var(--primary-glow);
+.outfit-icon-btn.active {
+  background: var(--purple-accent);
+  color: #FFFFFF;
+  border-color: #FFFFFF;
+  box-shadow: 0 0 12px rgba(66, 46, 143, 0.4);
 }
 
-.outfit-card.locked {
+.outfit-icon-btn.locked {
   opacity: 0.4;
   cursor: not-allowed;
-}
-
-.outfit-icon {
-  font-size: 2rem;
-}
-
-.outfit-name {
-  font-size: 0.75rem;
-  font-weight: 600;
-  text-align: center;
-}
-
-.outfit-badge-lock {
-  font-size: 0.65rem;
-  color: #ffaa00;
-  font-weight: 700;
 }

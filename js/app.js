@@ -11,7 +11,14 @@ import { TransmediaUI } from './ui/transmediaModal.js';
 import { NotificationUI } from './ui/notificationUI.js';
 import { InkBleedCanvas } from './fx/inkBleed.js';
 
-class KencaloApp {
+// Configuración configurable de la Pantalla de Bienvenida (Splash Screen)
+const SPLASH_CONFIG = {
+  STEP_1_DURATION: 3500, // Duración en milisegundos del Paso 1 ("Hebra")
+  STEP_2_DURATION: 3500, // Duración en milisegundos del Paso 2 ("KENOSIS")
+  ALLOW_CLICK_SKIP: false // Permitir al usuario hacer clic/tocar para saltar inmediatamente
+};
+
+export class KencaloApp {
   constructor() {
     this.currentView = 'ar'; // 'ar' | 'companion' | 'transmedia' | 'backup'
     this.isKencaloSpawnedInAR = false;
@@ -27,7 +34,7 @@ class KencaloApp {
   }
 
   /**
-   * Inicializa la ventana de bienvenida transmedia con reacción de tinta (1s) y transición en el lugar
+   * Inicializa la ventana de bienvenida transmedia con transición automática por temporizadores configurables
    */
   initWelcomeModal() {
     const welcomeModal = document.getElementById('welcome-splash-modal');
@@ -35,9 +42,17 @@ class KencaloApp {
     const step2 = document.getElementById('splash-step-2');
     const containerStep1 = document.getElementById('ink-title-step1');
     const containerStep2 = document.getElementById('ink-title-step2');
-    
+
     let currentSplashStep = 1;
     let isTransitioning = false;
+    let stepTimer = null;
+
+    const clearSplashTimer = () => {
+      if (stepTimer) {
+        clearTimeout(stepTimer);
+        stepTimer = null;
+      }
+    };
 
     // Inicializar Motor WebGL de Sangrado de Tinta para HEBRA (Paso 1)
     if (containerStep1) {
@@ -84,90 +99,124 @@ class KencaloApp {
       });
     }
 
-    // Función para manejar la transición por scroll/gesto con 1 segundo de dilatación de tinta en el lugar
-    const handleScrollTrigger = () => {
-      if (isTransitioning || !welcomeModal || welcomeModal.classList.contains('fade-out')) return;
+    // Transición del Paso 1 ("Hebra") al Paso 2 ("KENOSIS")
+    const advanceStep1ToStep2 = () => {
+      if (isTransitioning || currentSplashStep !== 1) return;
       isTransitioning = true;
+      clearSplashTimer();
 
       const isMobile = window.innerWidth <= 768;
       const vectorMax = isMobile ? 0.38 : 0.85;
 
-      if (currentSplashStep === 1) {
-        // 1. Activar impulso de tinta en HEBRA y el Vector al tocar (0ms)
-        if (this.inkCanvasStep1) this.inkCanvasStep1.targetVolatility = 0.85;
-        if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = vectorMax;
+      // 1. Activar impulso de tinta en HEBRA y el Vector
+      if (this.inkCanvasStep1) this.inkCanvasStep1.targetVolatility = 0.85;
+      if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = vectorMax;
 
-        // A los 280ms, disparar el rebote rápido para retornar a la normalidad (0.0)
-        setTimeout(() => {
-          if (this.inkCanvasStep1) this.inkCanvasStep1.targetVolatility = 0.0;
-          if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = 0.0;
-        }, 280);
+      setTimeout(() => {
+        if (this.inkCanvasStep1) this.inkCanvasStep1.targetVolatility = 0.0;
+        if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = 0.0;
+      }, 280);
 
-        // 2. Cumplido el 1 segundo de espera, realizar el cambio en el lugar al Paso 2 (KENOSIS)
+      // 2. Transición al Paso 2 (KENOSIS)
+      setTimeout(() => {
+        currentSplashStep = 2;
+        if (step1) {
+          step1.classList.remove('active');
+          step1.classList.add('hidden');
+        }
+        if (step2) {
+          step2.classList.remove('hidden');
+          step2.classList.add('active');
+        }
+        if (this.inkCanvasStep2) {
+          this.inkCanvasStep2.targetVolatility = 0.0;
+          this.inkCanvasStep2.volatility = 0.0;
+          this.inkCanvasStep2.resize();
+          this.inkCanvasStep2.resume();
+        }
+        isTransitioning = false;
+
+        // Iniciar temporizador para el Paso 2
+        scheduleStep2Completion();
+      }, 800);
+    };
+
+    // Transición del Paso 2 ("KENOSIS") hacia la App principal
+    const advanceStep2ToApp = () => {
+      if (isTransitioning || currentSplashStep !== 2) return;
+      isTransitioning = true;
+      clearSplashTimer();
+
+      const isMobile = window.innerWidth <= 768;
+      const vectorMax = isMobile ? 0.38 : 0.85;
+
+      // 1. Activar impulso de tinta en KENOSIS y el Vector
+      if (this.inkCanvasStep2) this.inkCanvasStep2.targetVolatility = 0.85;
+      if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = vectorMax;
+
+      setTimeout(() => {
+        if (this.inkCanvasStep2) this.inkCanvasStep2.targetVolatility = 0.0;
+        if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = 0.0;
+      }, 280);
+
+      // 2. Desvanecer Splash Screen para entrar a la App
+      setTimeout(() => {
+        welcomeModal.classList.add('fade-out');
         setTimeout(() => {
-          currentSplashStep = 2;
-          if (step1) {
-            step1.classList.remove('active');
-            step1.classList.add('hidden');
-          }
-          if (step2) {
-            step2.classList.remove('hidden');
-            step2.classList.add('active');
+          welcomeModal.style.display = 'none';
+          if (this.inkCanvasStep1) {
+            this.inkCanvasStep1.targetVolatility = 0.0;
+            this.inkCanvasStep1.volatility = 0.0;
+            this.inkCanvasStep1.pause();
           }
           if (this.inkCanvasStep2) {
             this.inkCanvasStep2.targetVolatility = 0.0;
             this.inkCanvasStep2.volatility = 0.0;
-            this.inkCanvasStep2.resize();
-            this.inkCanvasStep2.resume();
+            this.inkCanvasStep2.pause();
           }
-          setTimeout(() => { isTransitioning = false; }, 400);
-        }, 1000);
+          if (this.inkCanvasVector) {
+            this.inkCanvasVector.targetVolatility = 0.0;
+            this.inkCanvasVector.volatility = 0.0;
+            this.inkCanvasVector.pause();
+          }
+          isTransitioning = false;
+        }, 700);
+      }, 800);
+    };
 
-      } else if (currentSplashStep === 2) {
-        // 1. Activar impulso de tinta en KENOSIS y el Vector al tocar (0ms)
-        if (this.inkCanvasStep2) this.inkCanvasStep2.targetVolatility = 0.85;
-        if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = vectorMax;
+    const scheduleStep1Completion = () => {
+      clearSplashTimer();
+      stepTimer = setTimeout(() => {
+        advanceStep1ToStep2();
+      }, SPLASH_CONFIG.STEP_1_DURATION);
+    };
 
-        // A los 280ms, disparar el rebote rápido para retornar a la normalidad (0.0)
-        setTimeout(() => {
-          if (this.inkCanvasStep2) this.inkCanvasStep2.targetVolatility = 0.0;
-          if (this.inkCanvasVector) this.inkCanvasVector.targetVolatility = 0.0;
-        }, 280);
-
-        // 2. Cumplido el 1 segundo de espera, desvanecer en el lugar para entrar a la App
-        setTimeout(() => {
-          welcomeModal.classList.add('fade-out');
-          setTimeout(() => {
-            welcomeModal.style.display = 'none';
-            if (this.inkCanvasStep1) {
-              this.inkCanvasStep1.targetVolatility = 0.0;
-              this.inkCanvasStep1.volatility = 0.0;
-              this.inkCanvasStep1.pause();
-            }
-            if (this.inkCanvasStep2) {
-              this.inkCanvasStep2.targetVolatility = 0.0;
-              this.inkCanvasStep2.volatility = 0.0;
-              this.inkCanvasStep2.pause();
-            }
-            if (this.inkCanvasVector) {
-              this.inkCanvasVector.targetVolatility = 0.0;
-              this.inkCanvasVector.volatility = 0.0;
-              this.inkCanvasVector.pause();
-            }
-            isTransitioning = false;
-          }, 700);
-        }, 1000);
-      }
+    const scheduleStep2Completion = () => {
+      clearSplashTimer();
+      stepTimer = setTimeout(() => {
+        advanceStep2ToApp();
+      }, SPLASH_CONFIG.STEP_2_DURATION);
     };
 
     if (welcomeModal) {
-      // Transición directa al hacer clic o toque en cualquier parte de la pantalla
-      welcomeModal.addEventListener('click', handleScrollTrigger);
+      // Opcional: permitir clic/tap para avanzar manualmente sin esperar al temporizador
+      welcomeModal.addEventListener('click', () => {
+        if (!SPLASH_CONFIG.ALLOW_CLICK_SKIP) return;
+        if (currentSplashStep === 1) {
+          advanceStep1ToStep2();
+        } else if (currentSplashStep === 2) {
+          advanceStep2ToApp();
+        }
+      });
     }
+
+    // Arrancar temporizador para Paso 1
+    scheduleStep1Completion();
 
     const btnReopen = document.getElementById('btn-reopen-welcome');
     if (btnReopen && welcomeModal) {
       btnReopen.addEventListener('click', () => {
+        clearSplashTimer();
         currentSplashStep = 1;
         isTransitioning = false;
 
@@ -202,6 +251,8 @@ class KencaloApp {
           this.inkCanvasVector.resume();
           this.inkCanvasVector.resize();
         }
+
+        scheduleStep1Completion();
       });
     }
   }
@@ -289,6 +340,19 @@ class KencaloApp {
     if (btnGoAr) {
       btnGoAr.addEventListener('click', () => {
         this.switchView('ar');
+      });
+    }
+
+    // Botón de debug para reiniciar el progreso (Modo Prueba)
+    const btnSimReset = document.getElementById('btn-sim-reset');
+    if (btnSimReset) {
+      btnSimReset.addEventListener('click', (e) => {
+        e.stopPropagation();
+        if (confirm('¿Reiniciar todo el progreso de la partida?')) {
+          stateManager.resetProgress();
+          this.isKencaloSpawnedInAR = false;
+          NotificationUI.showToast('Progreso reiniciado correctamente', '🔄');
+        }
       });
     }
   }
