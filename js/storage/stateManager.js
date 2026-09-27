@@ -4,9 +4,12 @@
 
 const STORAGE_KEY = 'kencalo_game_state_v1';
 
+const TEXTURES = ['A', 'B', 'C', 'D'];
+const getRandomTexture = () => TEXTURES[Math.floor(Math.random() * TEXTURES.length)];
+
 const defaultState = {
   kencaloCaptured: false,
-  kencaloTexture: 'A', // 'A' | 'B' | 'C' | 'D'
+  kencaloTexture: getRandomTexture(), // 'A' | 'B' | 'C' | 'D'
   discoveredTrees: [], // ['tree_a', 'tree_b']
   unlockedOutfits: ['default'], // Solo 'default'. Las demás se desbloquean al descubrir el Árbol B
   currentOutfit: 'default',
@@ -71,16 +74,15 @@ class StateManager {
   }
 
   // Métodos helper específicos
-  captureKencalo() {
+  captureKencalo(textureKey) {
     if (!this.state.kencaloCaptured) {
-      const textures = ['A', 'B', 'C', 'D'];
-      const randomTex = textures[Math.floor(Math.random() * textures.length)];
-      
       const discovered = new Set(this.state.discoveredTrees);
       discovered.add('tree_a');
 
+      const finalTex = textureKey || this.state.kencaloTexture || 'A';
+
       this.state.kencaloCaptured = true;
-      this.state.kencaloTexture = randomTex;
+      this.state.kencaloTexture = finalTex;
       this.state.discoveredTrees = Array.from(discovered);
       if (!this.state.unlockedOutfits || this.state.unlockedOutfits.length === 0) {
         this.state.unlockedOutfits = ['default'];
@@ -117,7 +119,10 @@ class StateManager {
   }
 
   resetProgress() {
-    this.state = { ...defaultState };
+    this.state = {
+      ...defaultState,
+      kencaloTexture: getRandomTexture()
+    };
     this.saveState();
   }
 }

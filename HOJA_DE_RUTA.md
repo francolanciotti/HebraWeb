@@ -17,13 +17,12 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 ---
 
 ## 🟡 Fase 2: Calibración y Pruebas WebAR en Entorno Real
-> **Estado:** En Curso / Siguiente Fase Próxima 🚀
+> **Estado:** En Progreso Avanzado (90%) 🚀
 
-- [ ] **Pruebas de Marcadores (`targets.mind`):** Evaluación de tasa de detección y estabilidad del Image Tracking bajo diferentes condiciones de luz solar y sombra urbana.
-- [ ] **Anclaje Físico sobre Troncos de Árboles:** Ajuste de escala, orientación y oclusión del modelo 3D de Kencalo para que aparezca anclado de forma realista al tronco.
-- [ ] **Flujo de Transición AR → Companion:** Animación fluida de captura al tocar a Kencalo sobre la cámara, con efecto de partículas y transferencia directa al visor 3D Companion.
-- [ ] **Optimización Rendimiento Móvil:** Asegurar 60 FPS en el renderizado de la cámara y canvas WebGL en iOS (Safari) y Android (Chrome).
-
+- [x] **Motor MindAR Local y ES Modules:** Integración auto-alojada sin dependencias CDN externas con soporte nativo de WASM/Feature Detection.
+- [x] **Variación Aleatoria de Texturas por Persona:** Generación única y aleatoria de texturas (`'A'`, `'B'`, `'C'`, `'D'`) por persona/dispositivo en AR, preservada exactamente en la captura.
+- [x] **Flujo de Transición AR → Companion:** Animación alegre de captura al tocar a Kencalo, des-congelamiento inmediato del visor y transferencia directa al visor 3D Companion.
+- [ ] **Pruebas de Marcadores (`targets.mind`) en Troncos Reales:** Evaluación de estabilidad del Image Tracking bajo luz solar/sombra urbana en celulares reales.
 ---
 
 ## 🔵 Fase 3: Expansión del Lore y Sección Transmedia ("Hebra")

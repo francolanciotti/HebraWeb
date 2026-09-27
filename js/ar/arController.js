@@ -2,6 +2,9 @@
  * ARController - Gestor de Realidad Aumentada con cámara en vivo, MindAR y modo simulador
  */
 
+import { NotificationUI } from '../ui/notificationUI.js';
+import { MindARThree } from '../lib/mindar-image-three.prod.js';
+
 export class ARController {
   constructor(options = {}) {
     this.onTargetFoundA = options.onTargetFoundA || (() => {});
@@ -24,7 +27,6 @@ export class ARController {
   async startAR(containerElement) {
     if (!containerElement) return;
 
-    // Evitar ejecuciones simultáneas o duplicadas (Guard Lock)
     if (this.isARActive || this.isStartingAR) {
       return;
     }
@@ -32,52 +34,86 @@ export class ARController {
     this.isStartingAR = true;
 
     try {
-      // 1. Iniciar la cámara en vivo del dispositivo
-      await this.startLiveCamera(containerElement);
-
-      // Si stopAR() fue llamado mientras la cámara iniciaba, cancelar
-      if (!this.isStartingAR) {
-        this.stopAR();
-        return;
-      }
-
-      if (this.cameraStream) {
-        this.hasPermission = true;
-      }
-
-      // 2. Si MindAR está disponible y existe targets.mind, inicializar Image Tracking
-      if (window.MINDAR && window.MINDAR.IMAGE) {
+      // 1. Inicializar MindARThree módulo ES nativo
+      if (MindARThree) {
         try {
-          const res = await fetch('./assets/targets/targets.mind', { method: 'HEAD' }).catch(() => null);
-          if (res && res.ok && this.isStartingAR) {
-            this.mindThree = new window.MINDAR.IMAGE.MindARThree({
-              container: containerElement,
-              imageTargetSrc: './assets/targets/targets.mind'
-            });
-
-            const { renderer, scene, camera } = this.mindThree;
-
-            const anchorA = this.mindThree.addAnchor(0);
-            anchorA.onTargetFound = () => this.onTargetFoundA();
-            anchorA.onTargetLost = () => this.onTargetLost();
-
-            const anchorB = this.mindThree.addAnchor(1);
-            anchorB.onTargetFound = () => this.onTargetFoundB();
-            anchorB.onTargetLost = () => this.onTargetLost();
-
-            await this.mindThree.start();
-            renderer.setAnimationLoop(() => {
-              if (this.isARActive) {
-                renderer.render(scene, camera);
-              }
-            });
-            console.log('MindAR Image Tracking iniciado.');
+          if (this.mindThree) {
+            try { this.mindThree.stop(); } catch (e) {}
+            this.mindThree = null;
           }
+
+          this.mindThree = new MindARThree({
+            container: containerElement,
+            imageTargetSrc: './assets/targets/targets.mind',
+            maxTrack: 2,
+            uiLoading: 'no',
+            uiScanning: 'no'
+          });
+
+          const { renderer, scene, camera } = this.mindThree;
+
+          // Añadir luces a la escena 3D de MindAR
+          const ambientLight = new THREE.AmbientLight(0xffffff, 1.4);
+          scene.add(ambientLight);
+
+          const dirLight = new THREE.DirectionalLight(0xffffff, 1.0);
+          dirLight.position.set(1, 2, 3);
+          scene.add(dirLight);
+
+          this.anchorA = this.mindThree.addAnchor(0);
+
+          this.anchorA.onTargetFound = () => {
+            console.log('Target 0 (Árbol A) detectado por MindAR');
+            const arInstruction = document.getElementById('ar-instruction');
+            if (arInstruction) {
+              arInstruction.textContent = '¡ÁRBOL A DETECTADO! Tócalo para capturar';
+            }
+            this.onTargetFoundA();
+          };
+          this.anchorA.onTargetLost = () => {
+            console.log('Target 0 perdido');
+            this.onTargetLost();
+          };
+
+          this.anchorB = this.mindThree.addAnchor(1);
+
+          this.anchorB.onTargetFound = () => {
+            console.log('Target 1 (Árbol B) detectado por MindAR');
+            const arInstruction = document.getElementById('ar-instruction');
+            if (arInstruction) {
+              arInstruction.textContent = '¡ÁRBOL B DETECTADO!';
+            }
+            this.onTargetFoundB();
+          };
+          this.anchorB.onTargetLost = () => {
+            console.log('Target 1 perdido');
+            this.onTargetLost();
+          };
+
+          await this.mindThree.start();
+
+          renderer.setAnimationLoop((time) => {
+            if (this.isARActive && this.mindThree) {
+              if (this.onRenderCallback) this.onRenderCallback(time);
+              renderer.render(scene, camera);
+            }
+          });
+
+          this.hasPermission = true;
+          this.isARActive = true;
+          return;
         } catch (e) {
-          console.warn('Error al iniciar MindAR:', e);
+          console.error('Error al iniciar MindAR:', e);
+          NotificationUI.showToast('Error en motor AR: ' + e.message, '⚠️');
         }
       }
-      this.isARActive = true;
+
+      // 2. Fallback: cámara estándar si MindAR no está disponible
+      await this.startLiveCamera(containerElement);
+      if (this.cameraStream) {
+        this.hasPermission = true;
+        this.isARActive = true;
+      }
     } catch (err) {
       console.warn('Error en startAR:', err);
     } finally {
@@ -85,16 +121,12 @@ export class ARController {
     }
   }
 
-  /**
-   * Solicita permisos y muestra la transmisión en vivo de la cámara
-   */
   async startLiveCamera(containerElement) {
     if (this.cameraStream && this.videoElement) {
-      return; // Ya está corriendo
+      return;
     }
 
     if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-      console.warn('getUserMedia no soportado en este entorno/navegador.');
       return;
     }
 
@@ -110,7 +142,6 @@ export class ARController {
 
       const stream = await navigator.mediaDevices.getUserMedia(constraints);
 
-      // Si stopAR fue invocado mientras esperábamos la cámara, cerrar el stream
       if (!this.isStartingAR) {
         stream.getTracks().forEach(track => track.stop());
         return;
@@ -118,7 +149,6 @@ export class ARController {
 
       this.cameraStream = stream;
 
-      // Buscar si ya existe un elemento de video previo para evitar nodos duplicados
       const existingVideo = containerElement.querySelector('.ar-camera-video');
       if (existingVideo) {
         this.videoElement = existingVideo;
@@ -134,15 +164,11 @@ export class ARController {
 
       this.videoElement.srcObject = stream;
       await this.videoElement.play().catch(err => console.warn('Autoplay video error:', err));
-      console.log('Cámara en vivo activada.');
     } catch (err) {
-      console.warn('No se pudo acceder a la cámara o el usuario denegó el permiso:', err);
+      console.warn('No se pudo acceder a la cámara:', err);
     }
   }
 
-  /**
-   * Detiene la cámara y el visor AR para ahorrar batería al salir de la pestaña
-   */
   stopAR() {
     this.isStartingAR = false;
     this.isARActive = false;
@@ -162,15 +188,15 @@ export class ARController {
 
     if (this.mindThree) {
       try {
+        if (this.mindThree.renderer) {
+          this.mindThree.renderer.setAnimationLoop(null);
+        }
         this.mindThree.stop();
       } catch (e) {}
       this.mindThree = null;
     }
   }
 
-  /**
-   * Inicializa los botones de simulación para pruebas de desarrollo
-   */
   initSimButtons() {
     const btnSimA = document.getElementById('btn-sim-tree-a');
     const btnSimB = document.getElementById('btn-sim-tree-b');
@@ -178,7 +204,6 @@ export class ARController {
     if (btnSimA) {
       btnSimA.addEventListener('click', (e) => {
         e.stopPropagation();
-        console.log('Simulando detección de Árbol A...');
         this.onTargetFoundA();
       });
     }
@@ -186,9 +211,14 @@ export class ARController {
     if (btnSimB) {
       btnSimB.addEventListener('click', (e) => {
         e.stopPropagation();
-        console.log('Simulando detección de Árbol B...');
         this.onTargetFoundB();
       });
     }
+  }
+
+  getAnchorGroup(index = 0) {
+    if (index === 0 && this.anchorA) return this.anchorA.group;
+    if (index === 1 && this.anchorB) return this.anchorB.group;
+    return null;
   }
 }

@@ -19,9 +19,28 @@
     href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
     rel="stylesheet">
 
-  <!-- Three.js (r128) -->
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/three.js/r128/three.min.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/three@0.128.0/examples/js/loaders/GLTFLoader.js"></script>
+  <!-- Import Map para resolución de Módulos ES (Local Self-Hosted) -->
+  <script type="importmap">
+  {
+    "imports": {
+      "three": "./js/lib/three.module.js",
+      "three/addons/renderers/CSS3DRenderer.js": "./js/lib/renderers/CSS3DRenderer.js",
+      "three/addons/": "./js/lib/"
+    }
+  }
+  </script>
+  <script type="module">
+    import * as THREE from 'three';
+    import { GLTFLoader } from './js/lib/GLTFLoader.module.js';
+    import { CSS3DRenderer, CSS3DObject } from './js/lib/renderers/CSS3DRenderer.js';
+
+    window.THREE = {
+      ...THREE,
+      GLTFLoader,
+      CSS3DRenderer,
+      CSS3DObject
+    };
+  </script>
 
   <!-- Stylesheets -->
   <link rel="stylesheet" href="css/main.css">
@@ -103,7 +122,8 @@
             <div class="scanner-corner top-right"></div>
             <div class="scanner-corner bottom-left"></div>
             <div class="scanner-corner bottom-right"></div>
-            <p id="ar-instruction" class="scanner-hint">¡Escanea el Árbol!</p>
+            <div class="scanner-line"></div>
+            <p id="ar-instruction" class="scanner-hint">Apunta la cámara al árbol dentro del recuadro</p>
           </div>
 
           <!-- Acciones de Captura -->

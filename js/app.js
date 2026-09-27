@@ -351,6 +351,7 @@ export class KencaloApp {
         if (confirm('¿Reiniciar todo el progreso de la partida?')) {
           stateManager.resetProgress();
           this.isKencaloSpawnedInAR = false;
+          this.currentEncounterTexture = null;
           NotificationUI.showToast('Progreso reiniciado correctamente', '🔄');
         }
       });
@@ -361,12 +362,21 @@ export class KencaloApp {
    * Captura a Kencalo, dispara su animación alegre y pasa a la vista Companion
    */
   captureCurrentKencalo() {
-    const captured = stateManager.captureKencalo();
+    const captured = stateManager.captureKencalo(this.currentEncounterTexture);
     if (captured) {
       this.isKencaloSpawnedInAR = false;
 
       const arActions = document.getElementById('ar-actions');
       if (arActions) arActions.classList.add('hidden');
+
+      // Re-vincular Kencalo al canvas 3D global inmediatamente para evitar congelamiento en la cámara
+      if (this.sceneManager && this.kencaloModel && this.kencaloModel.group) {
+        this.sceneManager.scene.add(this.kencaloModel.group);
+        this.kencaloModel.group.position.set(0, -0.2, -1);
+        this.kencaloModel.group.rotation.set(0, 0, 0);
+        this.kencaloModel.group.scale.set(1, 1, 1);
+        this.kencaloModel.group.visible = true;
+      }
 
       NotificationUI.showToast('¡Has capturado a Kencalo!', '✨');
       this.kencaloModel.triggerTouchReaction();
@@ -383,6 +393,11 @@ export class KencaloApp {
       onTargetFoundB: () => this.handleTargetFoundB(),
       onTargetLost: () => this.handleTargetLost()
     });
+    this.arController.onRenderCallback = (time) => {
+      if (this.kencaloModel) {
+        this.kencaloModel.update(time);
+      }
+    };
   }
 
   handleTargetFoundA() {
@@ -394,15 +409,34 @@ export class KencaloApp {
 
     this.isKencaloSpawnedInAR = true;
 
-    // Hacer visible a Kencalo flotando en la escena AR
-    if (this.kencaloModel && this.kencaloModel.group) {
-      this.kencaloModel.group.visible = true;
+    // Asignar variación aleatoria única de textura para esta persona/encuentro (preservada al capturar)
+    if (!this.currentEncounterTexture) {
+      const textures = ['A', 'B', 'C', 'D'];
+      this.currentEncounterTexture = textures[Math.floor(Math.random() * textures.length)];
     }
 
-    const root3D = document.getElementById('companion-3d-root');
-    if (root3D) {
-      root3D.style.pointerEvents = 'auto';
-      root3D.style.opacity = '1';
+    if (this.kencaloModel) {
+      this.kencaloModel.setTexture(this.currentEncounterTexture);
+    }
+
+    // Vincular Kencalo al anclaje AR de MindAR si la cámara real está activa
+    const anchorGroup = this.arController.getAnchorGroup(0);
+    if (anchorGroup && this.kencaloModel && this.kencaloModel.group) {
+      anchorGroup.add(this.kencaloModel.group);
+      this.kencaloModel.group.position.set(0, -0.2, -1);
+      this.kencaloModel.group.rotation.set(0, 0, 0);
+      this.kencaloModel.group.scale.set(1, 1, 1);
+      this.kencaloModel.group.visible = true;
+    } else {
+      // Fallback para modo de simulación sin MindAR
+      if (this.kencaloModel && this.kencaloModel.group) {
+        this.kencaloModel.group.visible = true;
+      }
+      const root3D = document.getElementById('companion-3d-root');
+      if (root3D) {
+        root3D.style.pointerEvents = 'auto';
+        root3D.style.opacity = '1';
+      }
     }
 
     const arActions = document.getElementById('ar-actions');
@@ -491,6 +525,10 @@ export class KencaloApp {
 
     if (this.sceneManager) {
       this.sceneManager.setVisible(shouldShow3D);
+      if (viewName === 'companion' && this.kencaloModel && this.kencaloModel.group) {
+        this.sceneManager.scene.add(this.kencaloModel.group);
+        this.kencaloModel.group.position.set(0, 0, 0);
+      }
     }
 
     // Gestiones específicas de cámara AR
