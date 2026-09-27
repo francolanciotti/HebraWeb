@@ -2,6 +2,8 @@
  * OutfitSelectorUI - Drawer e interfaz para la selección de indumentaria desbloqueada
  */
 
+import { soundManager } from '../audio/audioManager.js';
+
 const OUTFITS_DATA = [
   {
     id: 'default',
@@ -123,6 +125,7 @@ export class OutfitSelectorUI {
       if (isUnlocked) {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
+          soundManager.playOutfitNav();
           this.stateManager.setOutfit(outfit.id);
           this.kencaloModel.setOutfit(outfit.id);
           this.render();

@@ -10,6 +10,7 @@ import { OutfitSelectorUI } from './ui/outfitSelector.js';
 import { TransmediaUI } from './ui/transmediaModal.js';
 import { NotificationUI } from './ui/notificationUI.js';
 import { InkBleedCanvas } from './fx/inkBleed.js';
+import { soundManager } from './audio/audioManager.js';
 
 // Configuración configurable de la Pantalla de Bienvenida (Splash Screen)
 const SPLASH_CONFIG = {
@@ -281,6 +282,7 @@ export class KencaloApp {
 
       // Si estamos en la vista Companion y ya fue capturado
       if (this.currentView === 'companion' && state.kencaloCaptured) {
+        soundManager.playKencaloInteract();
         this.kencaloModel.triggerTouchReaction();
       }
     });
@@ -364,6 +366,7 @@ export class KencaloApp {
   captureCurrentKencalo() {
     const captured = stateManager.captureKencalo(this.currentEncounterTexture);
     if (captured) {
+      soundManager.playKencaloInteract();
       this.isKencaloSpawnedInAR = false;
 
       const arActions = document.getElementById('ar-actions');
@@ -401,6 +404,7 @@ export class KencaloApp {
   }
 
   handleTargetFoundA() {
+    soundManager.playScanSuccess();
     const state = stateManager.getState();
     if (state.kencaloCaptured) {
       NotificationUI.showToast('¡Árbol A detectado! (Ya capturaste a Kencalo)', '🌳');
@@ -454,6 +458,7 @@ export class KencaloApp {
   }
 
   handleTargetFoundB() {
+    soundManager.playScanSuccess();
     const isNew = stateManager.discoverTreeB();
 
     NotificationUI.showToast('¡Marcador B del Árbol B reconocido!', '🌲');
@@ -488,6 +493,9 @@ export class KencaloApp {
   }
 
   switchView(viewName) {
+    if (this.currentView !== viewName) {
+      soundManager.playOutfitNav();
+    }
     this.currentView = viewName;
 
     // Actualizar items de la barra de navegación

@@ -4,6 +4,7 @@
 
 import { TokenManager } from '../storage/tokenManager.js';
 import { NotificationUI } from './notificationUI.js';
+import { soundManager } from '../audio/audioManager.js';
 
 export class TransmediaUI {
   constructor(stateManager) {
@@ -40,6 +41,7 @@ export class TransmediaUI {
           });
           // Si la tarjeta cliqueada no estaba abierta, la despliega
           if (!isExpanded) {
+            soundManager.playOutfitNav();
             card.classList.add('expanded');
           }
         }
