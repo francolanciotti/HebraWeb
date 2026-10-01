@@ -16,21 +16,20 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 
 ---
 
-## 🟡 Fase 2: Calibración y Pruebas WebAR en Entorno Real
-> **Estado:** En Progreso Avanzado (90%) 🚀
+## 🟢 Fase 2: Calibración y Pruebas WebAR en Entorno Real (COMPLETADA)
+> **Estado:** Finalizada ✓
 
 - [x] **Motor MindAR Local y ES Modules:** Integración auto-alojada sin dependencias CDN externas con soporte nativo de WASM/Feature Detection.
 - [x] **Variación Aleatoria de Texturas por Persona:** Generación única y aleatoria de texturas (`'A'`, `'B'`, `'C'`, `'D'`) por persona/dispositivo en AR, preservada exactamente en la captura.
 - [x] **Flujo de Transición AR → Companion:** Animación alegre de captura al tocar a Kencalo, des-congelamiento inmediato del visor y transferencia directa al visor 3D Companion.
-- [ ] **Pruebas de Marcadores (`targets.mind`) en Troncos Reales:** Evaluación de estabilidad del Image Tracking bajo luz solar/sombra urbana en celulares reales.
+- [x] **Integración de Marcador Real (`targets.mind`):** Compilación e integración de la imagen del árbol real para el Image Tracking WebAR.
 ---
 
 ## 🔵 Fase 3: Expansión del Lore y Sección Transmedia ("Hebra")
 > **Estado:** Planificada
 
-- [ ] **Galería Multimedia Transmedia:** Integración de reproductores de audio, galerías fotográficas y cápsulas de video con el universo narrativo Kenosis.
+- [ ] **Traductor de glifos:** Integración de traductor de glifos para desbloquear coordenadas de los árboles.
 - [ ] **Mapa Interactivo de Árboles Urbanos:** Mapa visual o geolocalizado de la instalación física para guiar al espectador entre los árboles intervenidos en la ciudad.
-- [ ] **Secciones Desplegables de Lore:** Ampliación del acordeón interactivo con historias sobre el origen de los Kencalos y la trama de Hebra.
 
 ---
 
@@ -47,8 +46,7 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 > **Estado:** Futura
 
 - [ ] **Entorno 3D Interactivo:** Desarrollo de un hábitat/escenario tridimensional completo para Kencalo en la vista Companion (terreno, vegetación, iluminación ambiental).
-- [ ] **Física y Partículas:** Efectos de hojas flotantes, partículas de tinta y luz reactiva al mover la cámara.
-- [ ] **Interacciones Avanzadas:** Nuevas animaciones de caricias, alimentación, minijuegos y reacciones emocionales de Kencalo.
+- [ ] **Física y Partículas:** Efectos de partículas y luz al capturar el kencalo.
 
 ---
 

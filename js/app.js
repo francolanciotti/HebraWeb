@@ -4,7 +4,7 @@
 
 import { stateManager } from './storage/stateManager.js';
 import { SceneManager } from './3d/sceneManager.js';
-import { KencaloModel } from './3d/kencaloModel.js';
+import { KencaloModel, KENCALO_CONFIG } from './3d/kencaloModel.js';
 import { ARController } from './ar/arController.js';
 import { OutfitSelectorUI } from './ui/outfitSelector.js';
 import { TransmediaUI } from './ui/transmediaModal.js';
@@ -375,9 +375,9 @@ export class KencaloApp {
       // Re-vincular Kencalo al canvas 3D global inmediatamente para evitar congelamiento en la cámara
       if (this.sceneManager && this.kencaloModel && this.kencaloModel.group) {
         this.sceneManager.scene.add(this.kencaloModel.group);
-        this.kencaloModel.group.position.set(0, -0.2, -1);
-        this.kencaloModel.group.rotation.set(0, 0, 0);
-        this.kencaloModel.group.scale.set(1, 1, 1);
+        this.kencaloModel.applyCompanionTransform();
+        this.sceneManager.setInteractiveRotationEnabled(true);
+        this.sceneManager.setInitialRotation(this.kencaloModel.group.rotation.y, this.kencaloModel.group.rotation.x);
         this.kencaloModel.group.visible = true;
       }
 
@@ -427,13 +427,17 @@ export class KencaloApp {
     const anchorGroup = this.arController.getAnchorGroup(0);
     if (anchorGroup && this.kencaloModel && this.kencaloModel.group) {
       anchorGroup.add(this.kencaloModel.group);
-      this.kencaloModel.group.position.set(0, -0.2, -1);
-      this.kencaloModel.group.rotation.set(0, 0, 0);
-      this.kencaloModel.group.scale.set(1, 1, 1);
+      this.kencaloModel.applyARTransform();
+      if (this.sceneManager) {
+        this.sceneManager.setInteractiveRotationEnabled(false);
+      }
       this.kencaloModel.group.visible = true;
     } else {
       // Fallback para modo de simulación sin MindAR
-      if (this.kencaloModel && this.kencaloModel.group) {
+      if (this.sceneManager && this.kencaloModel && this.kencaloModel.group) {
+        this.sceneManager.scene.add(this.kencaloModel.group);
+        this.kencaloModel.applyARTransform();
+        this.sceneManager.setInteractiveRotationEnabled(false);
         this.kencaloModel.group.visible = true;
       }
       const root3D = document.getElementById('companion-3d-root');
@@ -496,7 +500,22 @@ export class KencaloApp {
     if (this.currentView !== viewName) {
       soundManager.playOutfitNav();
     }
+
+    const previousView = this.currentView;
     this.currentView = viewName;
+
+    // Si salimos de la vista AR sin haber capturado a Kencalo, desvincular del anclaje de cámara AR
+    if (previousView === 'ar' && viewName !== 'ar') {
+      const state = stateManager.getState();
+      if (!state.kencaloCaptured) {
+        this.isKencaloSpawnedInAR = false;
+        const arActions = document.getElementById('ar-actions');
+        if (arActions) arActions.classList.add('hidden');
+      }
+      if (this.sceneManager && this.kencaloModel && this.kencaloModel.group) {
+        this.sceneManager.scene.add(this.kencaloModel.group);
+      }
+    }
 
     // Actualizar items de la barra de navegación
     document.querySelectorAll('.nav-item').forEach(item => {
@@ -516,10 +535,10 @@ export class KencaloApp {
       }
     });
 
-    // Visibilidad del canvas 3D global según vista
+    // Visibilidad del canvas 3D global según vista (exclusivo para Companion)
     const state = stateManager.getState();
     const root3D = document.getElementById('companion-3d-root');
-    const shouldShow3D = (viewName === 'companion' && state.kencaloCaptured) || (viewName === 'ar' && this.isKencaloSpawnedInAR && !state.kencaloCaptured);
+    const shouldShow3D = (viewName === 'companion' && state.kencaloCaptured);
 
     if (root3D) {
       if (shouldShow3D) {
@@ -533,9 +552,13 @@ export class KencaloApp {
 
     if (this.sceneManager) {
       this.sceneManager.setVisible(shouldShow3D);
-      if (viewName === 'companion' && this.kencaloModel && this.kencaloModel.group) {
+      if (viewName === 'companion' && state.kencaloCaptured && this.kencaloModel && this.kencaloModel.group) {
         this.sceneManager.scene.add(this.kencaloModel.group);
-        this.kencaloModel.group.position.set(0, 0, 0);
+        this.kencaloModel.applyCompanionTransform();
+        this.sceneManager.setInteractiveRotationEnabled(true);
+        this.sceneManager.setInitialRotation(this.kencaloModel.group.rotation.y, this.kencaloModel.group.rotation.x);
+      } else if (viewName === 'ar') {
+        this.sceneManager.setInteractiveRotationEnabled(false);
       }
     }
 

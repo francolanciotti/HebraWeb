@@ -7,10 +7,13 @@
 // ============================================================================
 
 export const KENCALO_CONFIG = {
-  baseScale: 2.2,             // Tamaño de Kencalo (sube a 3.0 para agrandar, baja a 1.5 para achicar)
-  positionOffset: [0, -0.2, -1],  // [X, Y, Z] Posición de Kencalo (ej: [0, -0.5, 0] para bajarlo)
-  rotationOffset: [0, 0, 0],   // [X, Y, Z] Rotación en radianes (ej: [0, Math.PI, 0] para girar 180°)
-  animationFadeDuration: 0.35 // Duración en segundos de la transición suave entre animaciones
+  baseScale: 2.2,                             // Tamaño general de Kencalo
+  pivotOffset: [0, -0.2, -1],               // [X, Y, Z] Punto de pivote/enfoque de cámara (para que al hacer zoom enfoque la cara/torso y no la cola)
+  arPositionOffset: [0, 0, 0],          // [X, Y, Z] Posición exclusiva sobre el árbol en la cámara AR
+  arRotationOffset: [0, 1, 0.3],              // [X, Y, Z] Rotación exclusiva en la cámara AR
+  companionPositionOffset: [0, 0, 0],         // [X, Y, Z] Posición exclusiva en la pantalla 3D Companion
+  companionRotationOffset: [0, 0, 0],         // [X, Y, Z] Rotación exclusiva en la pantalla 3D Companion
+  animationFadeDuration: 0.35                 // Duración de transición entre animaciones
 };
 
 export const OUTFIT_GLB_MAP = {
@@ -108,17 +111,10 @@ export class KencaloModel {
         const center = bodyBox.getCenter(new THREE.Vector3());
         const size = bodyBox.getSize(new THREE.Vector3());
 
-        // Centrar la geometría en su origen corporal exacto (torso)
-        this.mesh.position.set(-center.x, -center.y, -center.z);
-
-        // Aplicar configuraciones de posición
-        this.mesh.position.x += KENCALO_CONFIG.positionOffset[0];
-        this.mesh.position.y += KENCALO_CONFIG.positionOffset[1];
-        this.mesh.position.z += KENCALO_CONFIG.positionOffset[2];
-
-        this.mesh.rotation.x += KENCALO_CONFIG.rotationOffset[0];
-        this.mesh.rotation.y += KENCALO_CONFIG.rotationOffset[1];
-        this.mesh.rotation.z += KENCALO_CONFIG.rotationOffset[2];
+        // Centrar la geometría en su punto de pivote exacto (cara/torso)
+        const pivot = KENCALO_CONFIG.pivotOffset || [0, 0, 0];
+        this.mesh.position.set(-center.x + pivot[0], -center.y + pivot[1], -center.z + pivot[2]);
+        this.mesh.rotation.set(0, 0, 0);
 
         const maxDim = Math.max(size.x, size.y, size.z);
         if (maxDim > 0) {
@@ -275,6 +271,29 @@ export class KencaloModel {
         this.outfitObjects[id].visible = (id === outfitId);
       }
     });
+  }
+
+  parseRotation(rotArray) {
+    const rot = rotArray || [0, 0, 0];
+    return rot.map(v => (Math.abs(v) > 6.28318 ? v * (Math.PI / 180) : v));
+  }
+
+  applyARTransform() {
+    if (!this.group) return;
+    const pos = KENCALO_CONFIG.arPositionOffset || [0, -0.2, -1];
+    const rot = this.parseRotation(KENCALO_CONFIG.arRotationOffset);
+    this.group.position.set(pos[0], pos[1], pos[2]);
+    this.group.rotation.set(rot[0], rot[1], rot[2]);
+    this.group.scale.set(1, 1, 1);
+  }
+
+  applyCompanionTransform() {
+    if (!this.group) return;
+    const pos = KENCALO_CONFIG.companionPositionOffset || [0, 0, 0];
+    const rot = this.parseRotation(KENCALO_CONFIG.companionRotationOffset);
+    this.group.position.set(pos[0], pos[1], pos[2]);
+    this.group.rotation.set(rot[0], rot[1], rot[2]);
+    this.group.scale.set(1, 1, 1);
   }
 
   /**

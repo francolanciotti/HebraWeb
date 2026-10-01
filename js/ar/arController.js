@@ -42,6 +42,10 @@ export class ARController {
             this.mindThree = null;
           }
 
+          // Limpiar cualquier canvas o video residual en el contenedor para evitar imágenes congeladas
+          const leftoverElements = containerElement.querySelectorAll('canvas, video');
+          leftoverElements.forEach(el => el.remove());
+
           this.mindThree = new MindARThree({
             container: containerElement,
             imageTargetSrc: './assets/targets/targets.mind',
@@ -194,6 +198,12 @@ export class ARController {
         this.mindThree.stop();
       } catch (e) {}
       this.mindThree = null;
+    }
+
+    const arViewport = document.getElementById('ar-viewport');
+    if (arViewport) {
+      const leftover = arViewport.querySelectorAll('canvas, video');
+      leftover.forEach(el => el.remove());
     }
   }
 

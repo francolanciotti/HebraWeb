@@ -42,6 +42,7 @@ export class SceneManager {
     this.targetRotationX = 0;
     this.currentRotationY = 0;
     this.currentRotationX = 0;
+    this.isInteractiveRotationEnabled = true;
 
     // Raycaster y toques táctiles
     this.raycaster = new THREE.Raycaster();
@@ -209,9 +210,22 @@ export class SceneManager {
     }, { passive: true });
   }
 
+  setInteractiveRotationEnabled(enabled) {
+    this.isInteractiveRotationEnabled = !!enabled;
+  }
+
+  setInitialRotation(rotY = 0, rotX = 0) {
+    this.targetRotationY = rotY;
+    this.currentRotationY = rotY;
+    this.targetRotationX = rotX;
+    this.currentRotationX = rotX;
+  }
+
   resetView() {
     this.targetRotationY = 0;
     this.targetRotationX = 0;
+    this.currentRotationY = 0;
+    this.currentRotationX = 0;
     this.targetZoom = this.initialZoom;
   }
 
@@ -251,8 +265,8 @@ export class SceneManager {
     this.currentZoom += (this.targetZoom - this.currentZoom) * 0.12;
     this.camera.position.z = this.currentZoom;
 
-    // Suavizado fluido de Rotación del modelo (Lerp hacia targetRotation)
-    if (this.targetModel) {
+    // Suavizado fluido de Rotación del modelo (Lerp hacia targetRotation) si está interactivo en Companion
+    if (this.targetModel && this.isInteractiveRotationEnabled) {
       this.currentRotationY += (this.targetRotationY - this.currentRotationY) * 0.12;
       this.currentRotationX += (this.targetRotationX - this.currentRotationX) * 0.12;
       this.targetModel.rotation.y = this.currentRotationY;
