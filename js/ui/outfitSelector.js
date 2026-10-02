@@ -34,6 +34,12 @@ const OUTFITS_DATA = [
     name: 'Reno',
     svg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M6 4v5a3 3 0 003 3h6a3 3 0 003-3V4M4 6h4M16 6h4M12 12v8" stroke-linecap="round" stroke-linejoin="round"/></svg>`,
     description: 'Indumento Cuernos de Reno en 3D.'
+  },
+  {
+    id: 'outfit_pet',
+    name: 'Pet',
+    svg: `<svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2"><path d="M12 21a9 9 0 100-18 9 9 0 000 18z"/><circle cx="9" cy="10" r="1.5" fill="currentColor"/><circle cx="15" cy="10" r="1.5" fill="currentColor"/><path d="M8 15s1.5 2 4 2 4-2 4-2" stroke-linecap="round"/></svg>`,
+    description: 'Compañero místico en 3D.'
   }
 ];
 
@@ -89,7 +95,9 @@ export class OutfitSelectorUI {
   render() {
     const state = this.stateManager.getState();
     const unlocked = state.unlockedOutfits || ['default'];
-    const current = state.currentOutfit || 'default';
+    const currentKencalo = this.stateManager.getCurrentKencalo();
+    const treeId = currentKencalo?.treeId || state.activeKencaloTreeId || 'tree_a';
+    const current = this.stateManager.getOutfitForKencalo(treeId);
 
     // Actualizar botón del armario en HUD
     if (this.btnOpen) {
@@ -126,7 +134,16 @@ export class OutfitSelectorUI {
         btn.addEventListener('click', (e) => {
           e.stopPropagation();
           soundManager.playOutfitNav();
-          this.stateManager.setOutfit(outfit.id);
+          this.stateManager.setOutfit(outfit.id, treeId);
+          this.kencaloModel.setOutfit(outfit.id);
+          this.render();
+        });
+      } else {
+        btn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          soundManager.playOutfitNav();
+          this.stateManager.unlockSpecialEventOutfits();
+          this.stateManager.setOutfit(outfit.id, treeId);
           this.kencaloModel.setOutfit(outfit.id);
           this.render();
         });

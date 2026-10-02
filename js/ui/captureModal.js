@@ -6,24 +6,9 @@
 
 import { NotificationUI } from './notificationUI.js';
 import { soundManager } from '../audio/audioManager.js';
+import { getPolaroidTreeData, getKencaloFullName } from '../config/gameRegistry.js';
 
-const TREE_DATA = {
-  tree_a: {
-    title: 'Árbol de El Bosque',
-    zone: 'Paseo del Bosque • La Plata',
-    coords: "34°54'32\"S 57°55'48\"W"
-  },
-  tree_b: {
-    title: 'Árbol de Plaza San Martín',
-    zone: 'Eje Cívico • Calle 7 y 50',
-    coords: "34°54'52\"S 57°57'14\"W"
-  },
-  tree_c: {
-    title: 'Árbol de Plaza Rocha',
-    zone: 'Diagonal 73 y Plaza Rocha',
-    coords: "34°55'28\"S 57°56'42\"W"
-  }
-};
+const TREE_DATA = getPolaroidTreeData();
 
 export class CaptureStoryUI {
   constructor(stateManager, sceneManager, onContinueCallback = null) {
@@ -266,11 +251,12 @@ export class CaptureStoryUI {
     ctx.fillText('HEBRA', 540, 1265);
     ctx.shadowBlur = 0;
 
-    // Nombre específico del árbol
+    // Nombre específico del Kencalo con preposición gramatical correcta
     ctx.fillStyle = '#6bc9d9';
     ctx.font = '700 32px Epilogue, sans-serif';
     ctx.letterSpacing = '1px';
-    ctx.fillText(treeInfo.title, 540, 1315);
+    const companionDisplayName = getKencaloFullName(treeId);
+    ctx.fillText(companionDisplayName, 540, 1315);
 
     // Zona y Coordenadas
     ctx.fillStyle = 'rgba(255, 255, 255, 0.85)';
@@ -381,9 +367,10 @@ export class CaptureStoryUI {
 
     if (navigator.canShare && navigator.canShare({ files: [file] })) {
       try {
+        const compName = getKencaloFullName(this.currentTreeId);
         await navigator.share({
-          title: `Hebra — ${treeInfo.title}`,
-          text: `Registro de encuentro con Kencalo en ${treeInfo.title}. @hebra.tdm3`,
+          title: `Hebra — ${compName}`,
+          text: `Registro de encuentro con el ${compName}. @hebra.tdm3`,
           files: [file]
         });
         NotificationUI.showToast('¡Compartido con éxito!', '✨');

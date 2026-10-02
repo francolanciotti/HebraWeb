@@ -14,6 +14,7 @@ import { AccountSettingsUI } from './ui/accountSettings.js';
 import { CaptureStoryUI } from './ui/captureModal.js';
 import { InkBleedCanvas } from './fx/inkBleed.js';
 import { soundManager } from './audio/audioManager.js';
+import { getKencaloFullName, getSpeciesForTree, getLocationById } from './config/gameRegistry.js';
 
 // Configuración configurable de la Pantalla de Bienvenida (Splash Screen)
 const SPLASH_CONFIG = {
@@ -224,8 +225,11 @@ export class KencaloApp {
     this.kencaloModel = new KencaloModel(this.sceneManager.scene);
     this.sceneManager.setTargetModel(this.kencaloModel.group);
 
-    // Intentar cargar modelo .glb si existe en la ruta de assets
-    this.kencaloModel.loadGLBModel('./assets/models/kencalo.glb');
+    // Cargar la especie y textura del compañero actualmente activo (o Libélula por defecto)
+    const current = stateManager.getCurrentKencalo();
+    const speciesId = current?.speciesId || 'libelula';
+    const textureKey = current?.texture || 'A';
+    this.kencaloModel.loadSpecies(speciesId, textureKey);
 
     // Registrar malla para toques táctiles
     this.sceneManager.registerInteractiveObject(this.kencaloModel.getInteractiveMesh());
@@ -340,9 +344,31 @@ export class KencaloApp {
           this.isKencaloSpawnedInAR = false;
           this.currentEncounterTreeId = null;
           this.currentEncounterTexture = null;
+          this.currentEncounterSpecies = null;
           const arActions = document.getElementById('ar-actions');
           if (arActions) arActions.classList.add('hidden');
           NotificationUI.showToast('Progreso reiniciado correctamente', '🔄');
+        }
+      });
+    }
+
+    // Botón de debug para desbloquear todos los sombreros / indumentarias (Modo Prueba)
+    const btnSimOutfits = document.getElementById('btn-sim-outfits');
+    if (btnSimOutfits) {
+      btnSimOutfits.addEventListener('click', (e) => {
+        e.stopPropagation();
+        // Si no tiene ningún Kencalo capturado, habilitar uno base para que pueda ver y probar los sombreros en 3D
+        const state = stateManager.getState();
+        if (!state.kencaloCaptured) {
+          stateManager.captureKencaloFromTree('tree_a', 'A', 'libelula');
+        }
+        stateManager.unlockSpecialEventOutfits();
+        NotificationUI.showToast('¡Sombreros desbloqueados! Pruébalos en Mi Kencalo', '👑');
+        if (this.outfitUI) {
+          this.outfitUI.render();
+        }
+        if (this.kencaloSwitcherUI) {
+          this.kencaloSwitcherUI.render();
         }
       });
     }
@@ -361,13 +387,15 @@ export class KencaloApp {
       return;
     }
 
-    const tex = this.currentEncounterTexture || stateManager.getDistinctTextureForTree(treeId);
-    stateManager.captureKencaloFromTree(treeId, tex);
+    const tex = this.currentEncounterTexture || stateManager.getRandomTexture();
+    const speciesId = this.currentEncounterSpecies || stateManager.getRandomUnusedSpecies();
+    stateManager.captureKencaloFromTree(treeId, tex, speciesId);
 
     soundManager.playKencaloInteract();
     this.isKencaloSpawnedInAR = false;
     this.currentEncounterTreeId = null;
     this.currentEncounterTexture = null;
+    this.currentEncounterSpecies = null;
 
     const arActions = document.getElementById('ar-actions');
     if (arActions) arActions.classList.add('hidden');
@@ -381,17 +409,18 @@ export class KencaloApp {
       this.kencaloModel.group.visible = true;
     }
 
-    const treeNames = {
-      tree_a: 'El Bosque',
-      tree_b: 'Plaza San Martín',
-      tree_c: 'Plaza Rocha'
-    };
-    const treeName = treeNames[treeId] || 'Árbol';
+    const fullName = getKencaloFullName(treeId);
 
-    NotificationUI.showToast(`¡Has capturado al Kencalo de ${treeName}!`, '✨');
+    NotificationUI.showToast(`¡Has capturado al ${fullName}!`, '✨');
     if (this.kencaloModel) {
-      this.kencaloModel.setTexture(tex);
-      this.kencaloModel.triggerTouchReaction();
+      if (this.kencaloModel.currentSpeciesId !== speciesId) {
+        this.kencaloModel.loadSpecies(speciesId, tex, () => {
+          this.kencaloModel.triggerTouchReaction();
+        });
+      } else {
+        this.kencaloModel.setTexture(tex);
+        this.kencaloModel.triggerTouchReaction();
+      }
     }
 
     setTimeout(() => {
@@ -417,6 +446,9 @@ export class KencaloApp {
   }
 
   handleTreeEncounter(treeId, treeName, anchorIndex = 0) {
+    const fullName = getKencaloFullName(treeId);
+    const species = getSpeciesForTree(treeId);
+
     // Si este árbol YA fue capturado, no permitir volver a capturarlo
     if (stateManager.isTreeCaptured(treeId)) {
       soundManager.playScanSuccess();
@@ -429,18 +461,25 @@ export class KencaloApp {
       this.isKencaloSpawnedInAR = false;
       this.currentEncounterTreeId = null;
       this.currentEncounterTexture = null;
-      NotificationUI.showToast(`El Kencalo de ${treeName} ya está en tu equipo`, '🌿');
+      NotificationUI.showToast(`El ${fullName} ya está en tu equipo`, '🌿');
       return;
     }
 
     soundManager.playScanSuccess();
 
     this.isKencaloSpawnedInAR = true;
+    if (this.currentEncounterTreeId !== treeId) {
+      this.currentEncounterSpecies = stateManager.getRandomUnusedSpecies();
+      this.currentEncounterTexture = stateManager.getRandomTexture();
+    }
     this.currentEncounterTreeId = treeId;
-    this.currentEncounterTexture = stateManager.getDistinctTextureForTree(treeId);
 
     if (this.kencaloModel) {
-      this.kencaloModel.setTexture(this.currentEncounterTexture);
+      if (this.kencaloModel.currentSpeciesId !== this.currentEncounterSpecies) {
+        this.kencaloModel.loadSpecies(this.currentEncounterSpecies, this.currentEncounterTexture);
+      } else {
+        this.kencaloModel.setTexture(this.currentEncounterTexture);
+      }
     }
 
     // Vincular Kencalo al anclaje AR de MindAR si la cámara real está activa
@@ -472,19 +511,19 @@ export class KencaloApp {
     const btnCapture = document.getElementById('btn-capture-kencalo');
 
     if (arInstruction) {
-      arInstruction.textContent = `¡Kencalo de ${treeName} ha aparecido! Tócalo para capturarlo`;
+      arInstruction.textContent = `¡${fullName} ha aparecido! Tócalo para capturarlo`;
     }
 
     if (btnCapture) {
       const span = btnCapture.querySelector('span') || btnCapture;
-      span.textContent = `¡CAPTURAR KENCALO (${treeName.toUpperCase()})!`;
+      span.textContent = `¡CAPTURAR ${fullName.toUpperCase()}!`;
     }
 
     if (arActions) {
       arActions.classList.remove('hidden');
     }
 
-    NotificationUI.showToast(`¡Kencalo descubierto en ${treeName}!`, '✨');
+    NotificationUI.showToast(`¡${fullName} descubierto!`, '✨');
   }
 
   handleTargetFoundA() {

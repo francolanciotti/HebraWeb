@@ -55,6 +55,8 @@ class FirebaseService {
       discoveredTrees: Array.isArray(state.discoveredTrees) ? [...state.discoveredTrees] : [],
       discoveredCoordinates: Array.isArray(state.discoveredCoordinates) ? [...state.discoveredCoordinates] : [],
       capturedKencalos: state.capturedKencalos && typeof state.capturedKencalos === 'object' ? { ...state.capturedKencalos } : {},
+      capturedSpecies: state.capturedSpecies && typeof state.capturedSpecies === 'object' ? { ...state.capturedSpecies } : {},
+      kencaloOutfits: state.kencaloOutfits && typeof state.kencaloOutfits === 'object' ? { ...state.kencaloOutfits } : {},
       unlockedOutfits: Array.isArray(state.unlockedOutfits) ? [...state.unlockedOutfits] : ['default'],
       currentOutfit: state.currentOutfit || 'default',
       userIdentifier: state.userIdentifier || null,

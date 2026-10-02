@@ -88,12 +88,26 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 
 ---
 
-## 🔴 Fase 6: Sistema Multimodelo de Kencalos y Variantes
-> **Estado:** Futura
+## 🟢 Fase 6: Sistema Multimodelo de Kencalos y Variantes
+> **Estado:** Completada (Base Multimodelo y Registro Modular)
 
-- [ ] **Variantes de Especies Kencalo:** Soporte para cargar diferentes modelos `.glb` con distintas geometrías, patrones de color y comportamientos.
-- [ ] **Selector de Compañero:** Sistema de inventario para alternar entre distintos Kencalos capturados en la ciudad.
-- [ ] **Eventos Temporales:** Aparición de marcadores AR especiales por tiempo limitado con indumentarias exclusivas.
+- [x] **Variantes de Especies Kencalo:**
+  - Soporte y carga dinámica de diferentes modelos `.glb` en tiempo real según la especie:
+    - **Libélula** (especie activa base, `Kencalitas1.glb`)
+    - **Danzante** (`Kencalitas2.glb`)
+    - **Burbuja** (`Kencalitas3.glb`)
+    - **Tapón** (`Kencalitas4.glb`)
+    - **Gatogota** (`Kencalitas5.glb`)
+    - **Manitas** (`Kencalitas6.glb`)
+  - Manejo de cuartetos de textura individuales (A, B, C, D) y animaciones específicas (`Idle` y `Happy`) por especie.
+  - **Sorteo Aleatorio sin Repetición:** Selección 100% aleatoria de textura (A, B, C, D) y de especie entre las no capturadas, garantizando que el jugador nunca capture el mismo modelo dos veces.
+- [x] **Selector de Compañero (Cápsula Rápida):**
+  - Cápsula flotante reactiva en la vista Companion para alternar al instante entre los Kencalos en posesión.
+  - Identificación gramatical natural con preposición en toda la app: *Kencalo del Bosque*, *Kencalo de Plaza San Martín*, *Kencalo de Plaza Rocha*.
+  - Sincronización en caliente del modelo 3D, animación de alegría al cambiar y actualización de estado.
+- [x] **Registro Centralizado de Árboles y Eventos (`gameRegistry.js`):**
+  - Fuente única de la verdad para personalizar y reubicar árboles o crear eventos temporales (coordenadas reales, posición vectorial en el mapa de La Plata, especie asignada, pistas y secuencias de glifos).
+- [ ] **Eventos Temporales en Vivo:** Marcadores AR especiales por tiempo limitado para desbloquear atuendos exclusivos.
 
 ---
 *Hoja de Ruta oficial para el desarrollo del proyecto WebHebra.*

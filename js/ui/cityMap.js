@@ -9,41 +9,9 @@
 import { soundManager } from '../audio/audioManager.js';
 import { NotificationUI } from './notificationUI.js';
 
-export const TREES_MAP_DATA = [
-  {
-    id: 'tree_a',
-    code: 'A',
-    name: 'El Bosque',
-    zone: 'Paseo del Bosque',
-    address: 'Av. Iraola y 120',
-    coords: "34°54'34\"S 57°56'02\"W",
-    x: 435,
-    y: 145,
-    description: 'Bajo el follaje centenario late una pulsación que mira a las estrellas.'
-  },
-  {
-    id: 'tree_b',
-    code: 'B',
-    name: 'Plaza San Martín',
-    zone: 'Eje Monumental',
-    address: 'Av. 7 e/ 50 y 54',
-    coords: "34°54'57\"S 57°56'48\"W",
-    x: 125,
-    y: 230,
-    description: 'En el corazón de la simetría urbana, las raíces guardan la memoria del tilo.'
-  },
-  {
-    id: 'tree_c',
-    code: 'C',
-    name: 'Plaza Rocha',
-    zone: 'Diagonal 73',
-    address: 'Av. 7 y 60',
-    coords: "34°55'42\"S 57°56'30\"W",
-    x: 262.5,
-    y: 393.5,
-    description: 'Vórtice donde convergen las líneas del sur; una frecuencia espera despertar.'
-  }
-];
+import { getMapTreesData } from '../config/gameRegistry.js';
+
+export const TREES_MAP_DATA = getMapTreesData();
 
 export class CityMapUI {
   constructor(stateManager) {

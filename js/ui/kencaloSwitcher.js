@@ -47,9 +47,20 @@ export class KencaloSwitcherUI {
     const nextKencalo = this.stateManager.switchKencalo(direction);
     if (!nextKencalo) return;
 
+    const outfit = this.stateManager.getOutfitForKencalo(nextKencalo.treeId);
+
     if (this.kencaloModel) {
-      this.kencaloModel.setTexture(nextKencalo.texture);
-      this.kencaloModel.triggerTouchReaction();
+      this.kencaloModel.currentOutfitId = outfit;
+      if (nextKencalo.speciesId && this.kencaloModel.currentSpeciesId !== nextKencalo.speciesId) {
+        this.kencaloModel.loadSpecies(nextKencalo.speciesId, nextKencalo.texture, () => {
+          this.kencaloModel.setOutfit(outfit);
+          this.kencaloModel.triggerTouchReaction();
+        });
+      } else {
+        this.kencaloModel.setTexture(nextKencalo.texture);
+        this.kencaloModel.setOutfit(outfit);
+        this.kencaloModel.triggerTouchReaction();
+      }
     }
     this.render();
   }
@@ -71,13 +82,26 @@ export class KencaloSwitcherUI {
     let currentIndex = list.findIndex(k => k.treeId === current.treeId);
     if (currentIndex < 0) currentIndex = 0;
 
-    // Sincronizar textura en el modelo 3D si difiere
-    if (this.kencaloModel && current?.texture && this.kencaloModel.currentTextureKey !== current.texture) {
-      this.kencaloModel.setTexture(current.texture);
+    // Sincronizar especie, textura e indumento en el modelo 3D si difiere
+    const outfit = this.stateManager.getOutfitForKencalo(current?.treeId);
+    if (this.kencaloModel && current) {
+      this.kencaloModel.currentOutfitId = outfit;
+      if (current.speciesId && this.kencaloModel.currentSpeciesId !== current.speciesId) {
+        this.kencaloModel.loadSpecies(current.speciesId, current.texture, () => {
+          this.kencaloModel.setOutfit(outfit);
+        });
+      } else {
+        if (current?.texture && this.kencaloModel.currentTextureKey !== current.texture) {
+          this.kencaloModel.setTexture(current.texture);
+        }
+        if (this.kencaloModel.currentOutfitId !== outfit) {
+          this.kencaloModel.setOutfit(outfit);
+        }
+      }
     }
 
     if (this.nameEl) {
-      this.nameEl.textContent = `Kencalo ${current.name}`;
+      this.nameEl.textContent = current.fullName || `Kencalo ${current.companionTitle || current.name}`;
     }
 
     if (this.tagEl) {

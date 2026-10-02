@@ -21,30 +21,10 @@ export const GLYPHS_DATA = [
   { id: 12, label: 'XII', file: 'assets/glifos/image (45) 13.svg' }
 ];
 
-// Secuencias de glifos que sintonizan las coordenadas de cada árbol
-export const TREE_SECRETS = [
-  {
-    treeId: 'tree_a',
-    name: 'El Bosque',
-    location: 'Paseo del Bosque',
-    sequence: [1, 2, 3, 4],
-    hint: 'Donde el verde se abre a los astros'
-  },
-  {
-    treeId: 'tree_b',
-    name: 'Plaza San Martín',
-    location: 'Eje Cívico',
-    sequence: [5, 6, 7, 8],
-    hint: 'Bajo las sombras del eje monumental'
-  },
-  {
-    treeId: 'tree_c',
-    name: 'Plaza Rocha',
-    location: 'Diagonal 73',
-    sequence: [9, 10, 11, 12],
-    hint: 'La diagonal que converge hacia el sur'
-  }
-];
+import { getGlyphTreeSecrets } from '../config/gameRegistry.js';
+
+// Secuencias de glifos que sintonizan las coordenadas de cada árbol desde el registro central
+export const TREE_SECRETS = getGlyphTreeSecrets();
 
 export class GlyphTranslatorUI {
   constructor(stateManager, onCoordinateUnlocked = null) {

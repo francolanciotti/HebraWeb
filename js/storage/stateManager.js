@@ -3,6 +3,7 @@
  */
 
 import { firebaseService } from './firebaseService.js';
+import { getLocationById, getSpeciesForTree, getKencaloFullName, SPECIES_REGISTRY } from '../config/gameRegistry.js';
 
 const STORAGE_KEY = 'kencalo_game_state_v1';
 
@@ -16,6 +17,8 @@ const defaultState = {
   discoveredTrees: [], // ['tree_a', 'tree_b', 'tree_c']
   discoveredCoordinates: [], // Coordenadas reveladas por glifos ['tree_a', 'tree_b', 'tree_c']
   capturedKencalos: {}, // { tree_a: 'A', tree_b: 'B', tree_c: 'C' }
+  capturedSpecies: {}, // { tree_a: 'libelula', tree_b: 'burbuja', tree_c: 'gatogota' }
+  kencaloOutfits: {}, // { tree_a: 'outfit_corona', tree_b: 'default', tree_c: 'outfit_pet' }
   unlockedOutfits: ['default'], // Solo 'default'. La indumentaria solo se desbloquea en un evento especial
   currentOutfit: 'default',
   lastInteractionTime: null,
@@ -40,6 +43,12 @@ class StateManager {
         if (!parsed.capturedKencalos || typeof parsed.capturedKencalos !== 'object') {
           parsed.capturedKencalos = {};
         }
+        if (!parsed.capturedSpecies || typeof parsed.capturedSpecies !== 'object') {
+          parsed.capturedSpecies = {};
+        }
+        if (!parsed.kencaloOutfits || typeof parsed.kencaloOutfits !== 'object') {
+          parsed.kencaloOutfits = {};
+        }
         // Migración retrocompatible: si ya tenía kencaloCaptured pero no en capturedKencalos
         if (parsed.kencaloCaptured && parsed.discoveredTrees?.includes('tree_a') && !parsed.capturedKencalos.tree_a) {
           parsed.capturedKencalos.tree_a = parsed.kencaloTexture || 'A';
@@ -49,6 +58,15 @@ class StateManager {
         }
         if (parsed.discoveredTrees?.includes('tree_c') && !parsed.capturedKencalos.tree_c) {
           parsed.capturedKencalos.tree_c = 'C';
+        }
+        // Migración retrocompatible para capturedSpecies
+        if (parsed.capturedKencalos) {
+          Object.keys(parsed.capturedKencalos).forEach(tId => {
+            if (!parsed.capturedSpecies[tId]) {
+              const loc = getLocationById(tId);
+              parsed.capturedSpecies[tId] = loc.speciesId || 'libelula';
+            }
+          });
         }
         if (!parsed.activeKencaloTreeId && parsed.discoveredTrees?.length > 0) {
           parsed.activeKencaloTreeId = parsed.discoveredTrees[0];
@@ -100,26 +118,40 @@ class StateManager {
   }
 
   /**
+   * Obtiene una textura aleatoria entre A, B, C y D
+   */
+  getRandomTexture() {
+    return TEXTURES[Math.floor(Math.random() * TEXTURES.length)];
+  }
+
+  /**
+   * Obtiene una especie al azar entre las que el jugador TODAVÍA NO ha capturado
+   * (Garantiza que no se pueda capturar el mismo modelo dos veces)
+   */
+  getRandomUnusedSpecies() {
+    const allSpecies = Object.keys(SPECIES_REGISTRY); // ['libelula', 'burbuja', 'tapon', 'gatogota', 'manitas']
+    const usedSpecies = Object.values(this.state.capturedSpecies || {});
+    const available = allSpecies.filter(s => !usedSpecies.includes(s));
+
+    if (available.length > 0) {
+      return available[Math.floor(Math.random() * available.length)];
+    }
+    // Si ya completó la colección de todas las especies disponibles, sortea entre todas
+    return allSpecies[Math.floor(Math.random() * allSpecies.length)];
+  }
+
+  /**
    * Obtiene una textura que aún no haya sido asignada a otro árbol capturado.
    */
   getDistinctTextureForTree(treeId) {
-    const usedTextures = Object.values(this.state.capturedKencalos || {});
-    // Texturas disponibles que no estén en uso
-    const available = TEXTURES.filter(t => !usedTextures.includes(t));
-    if (available.length > 0) {
-      return available[0];
-    }
-    // Si se agotaron las 4 texturas, asigna de forma determinista según el árbol
-    const treeOrder = ['tree_a', 'tree_b', 'tree_c', 'tree_d'];
-    const idx = Math.max(0, treeOrder.indexOf(treeId));
-    return TEXTURES[idx % TEXTURES.length];
+    return this.getRandomTexture();
   }
 
   /**
    * Captura un Kencalo asociado a un árbol específico de la ciudad.
-   * Regla de juego: Cada árbol otorga siempre un Kencalo con textura distinta.
+   * Regla de juego: Modelo (especie) y textura aleatorios, pero sin repetir modelo previamente capturado.
    */
-  captureKencaloFromTree(treeId = 'tree_a', preferredTexture = null) {
+  captureKencaloFromTree(treeId = 'tree_a', preferredTexture = null, preferredSpecies = null) {
     if (this.isTreeCaptured(treeId)) {
       return false; // Árbol ya capturado previamente. No se puede volver a capturar el mismo árbol.
     }
@@ -135,9 +167,21 @@ class StateManager {
       if (preferredTexture && TEXTURES.includes(preferredTexture)) {
         finalTex = preferredTexture;
       } else {
-        finalTex = this.getDistinctTextureForTree(treeId);
+        finalTex = this.getRandomTexture();
       }
       capturedMap[treeId] = finalTex;
+    }
+
+    const capturedSpeciesMap = { ...(this.state.capturedSpecies || {}) };
+    let finalSpecies = capturedSpeciesMap[treeId];
+
+    if (!finalSpecies) {
+      if (preferredSpecies && SPECIES_REGISTRY[preferredSpecies]) {
+        finalSpecies = preferredSpecies;
+      } else {
+        finalSpecies = this.getRandomUnusedSpecies();
+      }
+      capturedSpeciesMap[treeId] = finalSpecies;
     }
 
     this.state.kencaloCaptured = true;
@@ -145,6 +189,7 @@ class StateManager {
     this.state.kencaloTexture = finalTex; // Actualiza el compañero activo
     this.state.discoveredTrees = Array.from(discovered);
     this.state.capturedKencalos = capturedMap;
+    this.state.capturedSpecies = capturedSpeciesMap;
 
     if (!this.state.unlockedOutfits || this.state.unlockedOutfits.length === 0) {
       this.state.unlockedOutfits = ['default'];
@@ -203,30 +248,37 @@ class StateManager {
    * Obtiene la lista de todos los Kencalos en posesión del usuario
    */
   getPossessedKencalos() {
-    const treeNames = {
-      tree_a: 'El Bosque',
-      tree_b: 'Plaza San Martín',
-      tree_c: 'Plaza Rocha'
-    };
-
     const list = [];
     const discovered = this.state.discoveredTrees || [];
     const capturedMap = this.state.capturedKencalos || {};
+    const capturedSpeciesMap = this.state.capturedSpecies || {};
 
     discovered.forEach((treeId, index) => {
+      const loc = getLocationById(treeId);
       const tex = capturedMap[treeId] || (index === 0 ? this.state.kencaloTexture : 'A');
+      const speciesId = capturedSpeciesMap[treeId] || loc.speciesId || 'libelula';
+      const outfit = this.getOutfitForKencalo(treeId);
       list.push({
         treeId: treeId,
-        name: treeNames[treeId] || `Árbol ${treeId.replace('tree_', '').toUpperCase()}`,
-        texture: tex
+        name: loc.name,
+        companionTitle: loc.companionTitle || `de ${loc.name}`,
+        fullName: `Kencalo ${loc.companionTitle || ('de ' + loc.name)}`,
+        speciesId: speciesId,
+        texture: tex,
+        outfit: outfit
       });
     });
 
     // Fallback si kencaloCaptured es true pero discoveredTrees estuviera vacío
     if (list.length === 0 && this.state.kencaloCaptured) {
+      const loc = getLocationById('tree_a');
+      const speciesId = capturedSpeciesMap.tree_a || loc.speciesId || 'libelula';
       list.push({
         treeId: 'tree_a',
-        name: 'El Bosque',
+        name: loc.name,
+        companionTitle: loc.companionTitle || `de ${loc.name}`,
+        fullName: `Kencalo ${loc.companionTitle || ('de ' + loc.name)}`,
+        speciesId: speciesId,
         texture: this.state.kencaloTexture || 'A'
       });
     }
@@ -269,8 +321,15 @@ class StateManager {
 
     this.state.activeKencaloTreeId = nextKencalo.treeId;
     this.state.kencaloTexture = nextKencalo.texture;
+    const nextOutfit = this.getOutfitForKencalo(nextKencalo.treeId);
+    this.state.currentOutfit = nextOutfit;
     this.saveState();
-    return nextKencalo;
+    return { ...nextKencalo, outfit: nextOutfit };
+  }
+
+  getOutfitForKencalo(treeId) {
+    const targetTreeId = treeId || this.state.activeKencaloTreeId || 'tree_a';
+    return this.state.kencaloOutfits?.[targetTreeId] || 'default';
   }
 
   /**
@@ -278,14 +337,17 @@ class StateManager {
    */
   unlockSpecialEventOutfits() {
     const outfits = new Set(this.state.unlockedOutfits || ['default']);
-    ['outfit_corona', 'outfit_flor', 'outfit_palos', 'outfit_reno'].forEach(id => outfits.add(id));
+    ['outfit_corona', 'outfit_flor', 'outfit_palos', 'outfit_reno', 'outfit_pet'].forEach(id => outfits.add(id));
     this.state.unlockedOutfits = Array.from(outfits);
     this.saveState();
     return true;
   }
 
-  setOutfit(outfitId) {
+  setOutfit(outfitId, treeId = null) {
+    const targetTreeId = treeId || this.state.activeKencaloTreeId || 'tree_a';
     if (this.state.unlockedOutfits.includes(outfitId)) {
+      this.state.kencaloOutfits = this.state.kencaloOutfits || {};
+      this.state.kencaloOutfits[targetTreeId] = outfitId;
       this.state.currentOutfit = outfitId;
       this.saveState();
       return true;
@@ -420,6 +482,10 @@ class StateManager {
       discoveredTrees: [],
       discoveredCoordinates: [],
       capturedKencalos: {},
+      capturedSpecies: {},
+      kencaloOutfits: {},
+      unlockedOutfits: ['default'],
+      currentOutfit: 'default',
       userIdentifier: isLinked ? currentId : null,
       isAccountLinked: isLinked
     };
