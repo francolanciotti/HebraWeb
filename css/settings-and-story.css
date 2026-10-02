@@ -1,0 +1,728 @@
+/* ==========================================================================
+   SETTINGS & INSTAGRAM STORY MODAL STYLES (css/settings-and-story.css)
+   Fase 4: Identificación Ligera, Ajustes y Captura en el Árbol
+   ========================================================================== */
+
+/* --------------------------------------------------------------------------
+   1. BOTÓN SUPERIOR FLOTANTE DE AJUSTES (ARMÓNICO Y UNIVERSAL)
+   -------------------------------------------------------------------------- */
+
+.btn-top-settings {
+  position: fixed;
+  top: max(12px, var(--sat));
+  right: 14px;
+  width: 44px;
+  height: 44px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.65);
+  backdrop-filter: blur(12px);
+  -webkit-backdrop-filter: blur(12px);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  color: var(--navy-dark);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer !important;
+  pointer-events: auto !important;
+  touch-action: manipulation;
+  z-index: 100 !important;
+  box-shadow: 
+    0 8px 24px rgba(17, 33, 66, 0.22),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.95);
+  transition: transform 0.2s cubic-bezier(0.34, 1.56, 0.64, 1), background-color 0.2s ease;
+}
+
+.btn-top-settings:hover {
+  transform: scale(1.08);
+  background: #FFFFFF;
+}
+
+.btn-top-settings:active {
+  transform: scale(0.92);
+}
+
+.btn-top-settings svg {
+  stroke: var(--navy-dark);
+  pointer-events: none;
+}
+
+/* Ajustes de convivencia con cabeceras de otras pantallas */
+#view-transmedia.active .map-hud-header {
+  max-width: calc(100% - 54px);
+  margin-right: auto;
+}
+
+.companion-top-bar {
+  padding-right: 48px !important;
+}
+
+.kencalo-switch-capsule {
+  max-width: calc(100% - 56px) !important;
+}
+
+/* --------------------------------------------------------------------------
+   2. OVERLAY Y DIÁLOGO: MODAL DE AJUSTES DE CUENTA
+   -------------------------------------------------------------------------- */
+
+.settings-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 9999 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: auto !important;
+  touch-action: pan-y;
+}
+
+.settings-modal-overlay.hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.settings-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(13, 15, 18, 0.65);
+  backdrop-filter: blur(6px);
+  -webkit-backdrop-filter: blur(6px);
+  pointer-events: auto !important;
+}
+
+.settings-modal-dialog {
+  position: relative;
+  width: 100%;
+  max-width: 420px;
+  max-height: 90vh;
+  overflow-y: auto;
+  border-radius: var(--radius-lg);
+  padding: 24px 20px;
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(16px);
+  -webkit-backdrop-filter: blur(16px);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 
+    0 24px 50px -12px rgba(17, 33, 66, 0.25),
+    inset 1px 1px 2px rgba(255, 255, 255, 0.9);
+  z-index: 10001;
+  display: flex;
+  flex-direction: column;
+  gap: 18px;
+  pointer-events: auto !important;
+}
+
+.settings-modal-dialog * {
+  pointer-events: auto;
+}
+
+.settings-modal-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+}
+
+.settings-title-group {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.settings-modal-tag {
+  font-size: 0.68rem;
+  font-weight: 700;
+  color: var(--purple-accent);
+  letter-spacing: 1px;
+}
+
+.settings-modal-title {
+  font-family: var(--font-heading);
+  font-size: 1.5rem;
+  color: var(--navy-dark);
+  margin: 0;
+}
+
+.btn-close-settings-modal {
+  background: rgba(17, 33, 66, 0.08);
+  border: none;
+  width: 34px;
+  height: 34px;
+  border-radius: 50%;
+  color: var(--navy-dark);
+  font-size: 1.1rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+}
+
+.btn-close-settings-modal:hover {
+  background: rgba(17, 33, 66, 0.15);
+}
+
+/* Tarjeta de Cuenta dentro del Modal */
+.settings-account-card {
+  padding: 16px;
+  border-radius: 20px;
+  background: rgba(255, 255, 255, 0.65);
+  border: 1px solid rgba(255, 255, 255, 0.9);
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+}
+
+.account-card-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+
+.account-badge {
+  font-size: 0.72rem;
+  font-weight: 800;
+  letter-spacing: 0.6px;
+  padding: 4px 10px;
+  border-radius: 50px;
+}
+
+.account-badge.linked {
+  background: rgba(39, 174, 96, 0.15);
+  color: #1b7a42;
+  border: 1px solid rgba(39, 174, 96, 0.3);
+}
+
+.account-badge.guest {
+  background: rgba(17, 33, 66, 0.1);
+  color: var(--navy-dark);
+}
+
+.account-tag-recommend {
+  font-size: 0.65rem;
+  font-weight: 700;
+  color: var(--purple-accent);
+  background: rgba(66, 46, 143, 0.1);
+  padding: 3px 8px;
+  border-radius: 50px;
+}
+
+.account-user-display {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 10px 14px;
+  background: rgba(255, 255, 255, 0.75);
+  border-radius: 14px;
+  border: 1px solid rgba(255, 255, 255, 0.9);
+}
+
+.account-avatar-icon {
+  font-size: 1.6rem;
+}
+
+.account-user-details {
+  display: flex;
+  flex-direction: column;
+}
+
+.account-id-label {
+  font-size: 0.68rem;
+  color: var(--text-muted);
+  font-weight: 600;
+}
+
+.account-id-value {
+  font-family: var(--font-epilogue);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+}
+
+.account-card-info,
+.account-card-hint {
+  font-size: 0.82rem;
+  color: var(--text-dark);
+  line-height: 1.4;
+  margin: 0;
+}
+
+.account-input-group {
+  display: flex;
+  flex-direction: column;
+  gap: 10px;
+}
+
+.input-glass-pill {
+  width: 100%;
+  padding: 12px 18px;
+  border-radius: 50px;
+  border: 1.5px solid rgba(17, 33, 66, 0.2);
+  background: #FFFFFF;
+  font-family: var(--font-epilogue);
+  font-size: 0.92rem;
+  font-weight: 500;
+  color: var(--navy-dark);
+  outline: none;
+  box-sizing: border-box;
+  transition: border-color 0.2s ease, box-shadow 0.2s ease;
+}
+
+.input-glass-pill:focus {
+  border-color: var(--purple-accent);
+  box-shadow: 0 0 0 3px rgba(66, 46, 143, 0.15);
+}
+
+.input-glass-pill.input-has-error {
+  border-color: #e74c3c !important;
+  box-shadow: 0 0 0 3px rgba(231, 76, 60, 0.15) !important;
+}
+
+.account-error-msg {
+  font-size: 0.76rem;
+  color: #c0392b;
+  font-weight: 600;
+  line-height: 1.3;
+  padding: 6px 10px;
+  background: rgba(231, 76, 60, 0.1);
+  border-radius: 8px;
+  border-left: 3px solid #e74c3c;
+  display: none;
+}
+
+.account-error-msg.visible {
+  display: block;
+}
+
+.btn-link-simple {
+  background: none;
+  border: none;
+  font-family: var(--font-epilogue);
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--purple-accent);
+  cursor: pointer;
+  padding: 4px;
+  text-decoration: underline;
+  text-underline-offset: 3px;
+  align-self: center;
+}
+
+.account-card-actions {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.account-switch-form {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.btn-subtle-pill {
+  background: rgba(255, 255, 255, 0.8);
+  border: 1px solid rgba(17, 33, 66, 0.25);
+  border-radius: 50px;
+  padding: 10px 16px;
+  font-family: var(--font-epilogue);
+  font-size: 0.85rem;
+  font-weight: 600;
+  color: var(--navy-dark);
+  cursor: pointer;
+  transition: all 0.2s ease;
+  text-align: center;
+}
+
+.btn-subtle-pill:hover {
+  background: #FFFFFF;
+  border-color: var(--navy-dark);
+}
+
+.btn-subtle-text {
+  background: none;
+  border: none;
+  font-size: 0.78rem;
+  font-weight: 600;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 4px;
+}
+
+.btn-subtle-text:hover {
+  color: var(--accent-2);
+}
+
+.settings-section {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+}
+
+.settings-section-title {
+  font-size: 0.7rem;
+  font-weight: 700;
+  color: var(--text-muted);
+  letter-spacing: 0.8px;
+}
+
+.btn-settings-row {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 12px 14px;
+  border-radius: 16px;
+  background: rgba(255, 255, 255, 0.6);
+  border: 1px solid rgba(255, 255, 255, 0.85);
+  cursor: pointer;
+  text-align: left;
+  transition: all 0.2s ease;
+}
+
+.btn-settings-row:hover {
+  background: rgba(255, 255, 255, 0.95);
+  transform: translateY(-1px);
+  box-shadow: 0 4px 14px rgba(17, 33, 66, 0.08);
+}
+
+.settings-row-icon {
+  font-size: 1.5rem;
+}
+
+.settings-row-text {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+
+.settings-row-text strong {
+  font-size: 0.9rem;
+  color: var(--navy-dark);
+}
+
+.settings-row-text small {
+  font-size: 0.75rem;
+  color: var(--text-muted);
+}
+
+.settings-row-arrow {
+  font-size: 1.2rem;
+  color: var(--text-muted);
+}
+
+.settings-danger-section {
+  margin-top: 6px;
+  display: flex;
+  justify-content: center;
+}
+
+.btn-danger-ghost {
+  background: none;
+  border: 1px dashed rgba(231, 76, 60, 0.4);
+  border-radius: 50px;
+  padding: 8px 16px;
+  color: #e74c3c;
+  font-family: var(--font-epilogue);
+  font-size: 0.8rem;
+  font-weight: 600;
+  cursor: pointer;
+  transition: all 0.2s ease;
+}
+
+.btn-danger-ghost:hover {
+  background: rgba(231, 76, 60, 0.08);
+  border-color: #e74c3c;
+}
+
+
+/* --------------------------------------------------------------------------
+   3. OVERLAY Y MODAL: POSTAL POLAROID DE HEBRA (GRANDE, LEGIBLE Y ELEGANTE)
+   -------------------------------------------------------------------------- */
+
+.polaroid-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 10000 !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 16px;
+  box-sizing: border-box;
+  pointer-events: auto !important;
+  touch-action: pan-y;
+}
+
+.polaroid-modal-overlay.hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.polaroid-modal-backdrop {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background: rgba(7, 10, 18, 0.85);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  pointer-events: auto !important;
+}
+
+.polaroid-modal-container {
+  position: relative;
+  width: 100%;
+  max-width: 360px;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 14px;
+  z-index: 10001;
+  pointer-events: auto !important;
+  animation: popInScale 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+}
+
+.btn-close-polaroid {
+  position: absolute;
+  top: -46px;
+  right: 0;
+  width: 38px;
+  height: 38px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.22);
+  backdrop-filter: blur(10px);
+  -webkit-backdrop-filter: blur(10px);
+  border: 1px solid rgba(255, 255, 255, 0.45);
+  color: #FFFFFF;
+  font-size: 1.15rem;
+  font-weight: 700;
+  cursor: pointer;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  transition: all 0.2s ease;
+  z-index: 10002;
+}
+
+.btn-close-polaroid:hover {
+  background: rgba(255, 255, 255, 0.38);
+  transform: scale(1.08);
+}
+
+.polaroid-preview-wrapper {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  position: relative;
+}
+
+.polaroid-preview-img {
+  width: auto;
+  max-width: 100%;
+  max-height: 68vh;
+  aspect-ratio: 9 / 16;
+  object-fit: contain;
+  border-radius: 20px;
+  box-shadow: 
+    0 24px 60px rgba(0, 0, 0, 0.75),
+    0 0 35px rgba(107, 201, 217, 0.25);
+  border: 1.5px solid rgba(255, 255, 255, 0.3);
+  display: block;
+  background: #070a12;
+  transition: transform 0.2s ease;
+}
+
+.polaroid-loading-spinner {
+  position: absolute;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 10px;
+  color: #6bc9d9;
+  font-size: 0.84rem;
+  font-weight: 600;
+}
+
+.polaroid-loading-spinner.hidden {
+  display: none !important;
+}
+
+.spinner-ring {
+  width: 32px;
+  height: 32px;
+  border: 3px solid rgba(107, 201, 217, 0.2);
+  border-top-color: #6bc9d9;
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+
+@keyframes spin {
+  to { transform: rotate(360deg); }
+}
+
+@keyframes popInScale {
+  from {
+    opacity: 0;
+    transform: scale(0.92) translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
+}
+
+.polaroid-actions-row {
+  width: 100%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 12px;
+}
+
+.btn-polaroid-share {
+  flex: 1.4;
+  padding: 12px 18px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 8px;
+  background: linear-gradient(135deg, #112142 0%, #422e8f 100%) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.4) !important;
+  color: #FFFFFF !important;
+  font-size: 0.92rem !important;
+  font-weight: 700;
+  box-shadow: 0 8px 24px rgba(66, 46, 143, 0.45);
+  cursor: pointer;
+}
+
+.btn-polaroid-share:hover {
+  background: linear-gradient(135deg, #182e5b 0%, #5239b0 100%) !important;
+  transform: translateY(-1px);
+}
+
+.btn-polaroid-save {
+  flex: 1;
+  padding: 12px 16px !important;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  background: rgba(255, 255, 255, 0.16) !important;
+  border: 1.5px solid rgba(255, 255, 255, 0.35) !important;
+  color: #FFFFFF !important;
+  font-size: 0.9rem !important;
+  font-weight: 600;
+  cursor: pointer;
+}
+
+.btn-polaroid-save:hover {
+  background: rgba(255, 255, 255, 0.28) !important;
+  transform: translateY(-1px);
+}
+
+/* --------------------------------------------------------------------------
+   4. CARTEL / BANNER DE RECOMENDACIÓN DE VINCULACIÓN (DESDE INVITADO)
+   -------------------------------------------------------------------------- */
+
+.account-recommend-banner {
+  position: fixed;
+  top: max(68px, calc(var(--sat) + 58px));
+  left: 14px;
+  right: 14px;
+  max-width: 440px;
+  margin: 0 auto;
+  padding: 12px 16px;
+  border-radius: var(--radius-md);
+  background: rgba(255, 255, 255, 0.92);
+  backdrop-filter: blur(14px);
+  -webkit-backdrop-filter: blur(14px);
+  border: 1.5px solid rgba(255, 255, 255, 0.95);
+  box-shadow: 0 12px 30px rgba(17, 33, 66, 0.18);
+  z-index: 60;
+  pointer-events: auto !important;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
+  transition: transform 0.3s cubic-bezier(0.34, 1.56, 0.64, 1), opacity 0.3s ease;
+}
+
+.account-recommend-banner.hidden {
+  display: none !important;
+  pointer-events: none !important;
+}
+
+.recommend-banner-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  flex: 1;
+}
+
+.recommend-badge-row {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+}
+
+.recommend-badge-spark {
+  color: var(--purple-accent);
+  font-size: 0.85rem;
+}
+
+.recommend-badge-text {
+  font-size: 0.65rem;
+  font-weight: 800;
+  letter-spacing: 1px;
+  color: var(--purple-accent);
+}
+
+.recommend-banner-content p {
+  font-size: 0.8rem;
+  color: var(--navy-dark);
+  line-height: 1.3;
+  margin: 0;
+}
+
+.recommend-banner-content p strong {
+  color: var(--purple-accent);
+}
+
+.recommend-banner-actions {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  flex-shrink: 0;
+}
+
+.btn-mini-pill {
+  padding: 8px 14px !important;
+  font-size: 0.78rem !important;
+  white-space: nowrap;
+}
+
+.btn-close-mini {
+  background: none;
+  border: none;
+  font-size: 1.1rem;
+  color: var(--text-muted);
+  cursor: pointer;
+  padding: 6px;
+  line-height: 1;
+  transition: color 0.2s ease;
+}
+
+.btn-close-mini:hover {
+  color: var(--navy-dark);
+}

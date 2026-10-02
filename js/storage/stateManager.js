@@ -2,6 +2,8 @@
  * StateManager - Control de almacenamiento local y reactividad del estado de Kencalo
  */
 
+import { firebaseService } from './firebaseService.js';
+
 const STORAGE_KEY = 'kencalo_game_state_v1';
 
 const TEXTURES = ['A', 'B', 'C', 'D'];
@@ -16,7 +18,9 @@ const defaultState = {
   capturedKencalos: {}, // { tree_a: 'A', tree_b: 'B', tree_c: 'C' }
   unlockedOutfits: ['default'], // Solo 'default'. La indumentaria solo se desbloquea en un evento especial
   currentOutfit: 'default',
-  lastInteractionTime: null
+  lastInteractionTime: null,
+  userIdentifier: null, // Identificador de usuario libre (el que la persona elija)
+  isAccountLinked: false
 };
 
 class StateManager {
@@ -60,6 +64,13 @@ class StateManager {
   saveState() {
     try {
       localStorage.setItem(STORAGE_KEY, JSON.stringify(this.state));
+      // Si la cuenta está vinculada, mantener actualizado su respaldo en el almacén de cuentas
+      if (this.state.isAccountLinked && this.state.userIdentifier) {
+        const key = `kencalo_account_${this.state.userIdentifier.toLowerCase()}`;
+        localStorage.setItem(key, JSON.stringify(this.state));
+        // Sincronización en la nube con Firestore
+        firebaseService.saveAccountToCloud(this.state.userIdentifier, this.state);
+      }
       this.notifyListeners();
     } catch (e) {
       console.error('Error al guardar estado:', e);
@@ -282,14 +293,135 @@ class StateManager {
     return false;
   }
 
+  /**
+   * Normaliza un identificador de usuario (libre, el que la persona elija)
+   */
+  normalizeIdentifier(raw) {
+    if (!raw || typeof raw !== 'string') return '';
+    return raw.trim();
+  }
+
+  /**
+   * Registra y guarda por primera vez la cuenta del usuario invitado (CERO MERGE).
+   * Limitado exclusivamente a una cuenta de invitado creando cuenta por primera vez.
+   * Guarda localmente y en Firestore Database.
+   */
+  async createAccount(username) {
+    if (this.state.isAccountLinked && this.state.userIdentifier) {
+      return { 
+        success: false, 
+        message: `Ya tienes la cuenta "${this.state.userIdentifier}" activa. Desvincula primero para registrar otra.` 
+      };
+    }
+
+    const cleanId = this.normalizeIdentifier(username);
+    if (!cleanId) return { success: false, message: 'Ingresa un nombre de usuario válido' };
+
+    // 1. Verificación local
+    const key = `kencalo_account_${cleanId.toLowerCase()}`;
+    const existingLocal = localStorage.getItem(key);
+    if (existingLocal) {
+      return { success: false, message: `El usuario "${cleanId}" ya existe localmente. Carga tu partida o elige otro nombre.` };
+    }
+
+    // 2. Verificación en la nube (Firestore)
+    if (firebaseService.isAvailable()) {
+      const cloudCheck = await firebaseService.checkAccountExists(cleanId);
+      if (cloudCheck.exists) {
+        return { success: false, message: `El usuario "${cleanId}" ya existe en la nube. Carga tu partida o elige otro nombre.` };
+      }
+    }
+
+    this.state.userIdentifier = cleanId;
+    this.state.isAccountLinked = true;
+    this.saveState();
+
+    // Guardado inicial en Firestore
+    if (firebaseService.isAvailable()) {
+      await firebaseService.createAccountInCloud(cleanId, this.state);
+    }
+
+    return { success: true, message: `¡Cuenta creada y respaldada como "${cleanId}"!` };
+  }
+
+  // Compatibilidad con linkAccount
+  async linkAccount(username) {
+    const res = await this.createAccount(username);
+    return res.success;
+  }
+
+  /**
+   * Carga directamente la partida de un usuario existente (SIN MERGE / SIN FUSIONES).
+   * Intenta recuperar desde Firestore en la nube primero, o desde localStorage como respaldo.
+   */
+  async restoreAccount(username) {
+    const cleanId = this.normalizeIdentifier(username);
+    if (!cleanId) return { success: false, message: 'Ingresa un nombre de usuario válido' };
+
+    try {
+      // 1. Intentar cargar desde Firestore en la nube
+      if (firebaseService.isAvailable()) {
+        const cloudResult = await firebaseService.loadAccountFromCloud(cleanId);
+        if (cloudResult.success && cloudResult.state) {
+          // REEMPLAZO LIMPIO DIRECTO: CERO MERGE
+          this.state = {
+            ...defaultState,
+            ...cloudResult.state,
+            userIdentifier: cleanId,
+            isAccountLinked: true
+          };
+
+          this.saveState();
+          return { success: true, isNew: false, message: `Bienvenido de vuelta, ${cleanId} (Sincronizado desde la nube)` };
+        }
+      }
+
+      // 2. Respaldo: verificar en localStorage del dispositivo
+      const key = `kencalo_account_${cleanId.toLowerCase()}`;
+      const raw = localStorage.getItem(key);
+
+      if (raw) {
+        const stored = JSON.parse(raw);
+        // REEMPLAZO LIMPIO DIRECTO: CERO MERGE
+        this.state = {
+          ...defaultState,
+          ...stored,
+          userIdentifier: cleanId,
+          isAccountLinked: true
+        };
+
+        this.saveState();
+        return { success: true, isNew: false, message: `Bienvenido de vuelta, ${cleanId} (Partida local)` };
+      } else {
+        return { success: false, message: `No se encontró ninguna partida con el usuario "${cleanId}".` };
+      }
+    } catch (e) {
+      console.error('Error al restaurar cuenta:', e);
+      return { success: false, message: 'No se pudo recuperar la cuenta' };
+    }
+  }
+
+  /**
+   * Desvincula la cuenta actual (vuelve a modo invitado sin borrar el progreso del dispositivo)
+   */
+  unlinkAccount() {
+    this.state.userIdentifier = null;
+    this.state.isAccountLinked = false;
+    this.saveState();
+  }
+
   resetProgress() {
+    const currentId = this.state.userIdentifier;
+    const isLinked = this.state.isAccountLinked;
     this.state = {
       ...defaultState,
       activeKencaloTreeId: 'tree_a',
       kencaloTexture: getRandomTexture(),
       discoveredTrees: [],
       discoveredCoordinates: [],
-      capturedKencalos: {}
+      capturedKencalos: {},
+      userIdentifier: isLinked ? currentId : null,
+      isAccountLinked: isLinked
     };
     this.saveState();
   }

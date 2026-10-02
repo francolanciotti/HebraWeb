@@ -4,5 +4,6 @@ Thumbs.db
 .vscode/
 .idea/
 
-# Customizations / agent temp
-.agents/
+# Dependencies
+node_modules/
+package-lock.json

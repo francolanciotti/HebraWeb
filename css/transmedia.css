@@ -47,15 +47,14 @@
 }
 
 /* --------------------------------------------------------------------------
-   2. CABECERA HUD DEL MAPA (COMPACTA FIGMA GLASS)
+   2. CABECERA HUD DEL MAPA: TRADUCTOR DE GLIFOS
    -------------------------------------------------------------------------- */
 
 .map-hud-header {
   width: 100%;
   display: flex;
   align-items: center;
-  justify-content: space-between;
-  padding: 8px 14px;
+  padding: 4px;
   border-radius: var(--radius-pill);
   background: rgba(255, 255, 255, 0.45);
   backdrop-filter: blur(12px);
@@ -66,81 +65,52 @@
   flex-shrink: 0;
 }
 
-.map-hud-left {
-  display: flex;
-  flex-direction: column;
-  gap: 1px;
-}
-
-.map-coord-tag {
-  font-size: 0.65rem;
-  font-weight: 700;
-  color: var(--purple-accent);
-  letter-spacing: 0.8px;
-  text-transform: uppercase;
-}
-
-.map-hud-title {
-  font-family: var(--font-caoutchouc);
-  font-size: 1.35rem;
-  font-weight: 400;
-  color: var(--navy-dark);
-  margin: 0;
-  line-height: 1;
-}
-
-.map-hud-right {
+.btn-glyph-header-full {
+  width: 100%;
   display: flex;
   align-items: center;
-  gap: 8px;
-}
-
-/* Botón Sintonizar Glifos (Toggle hacia Overlay) */
-.btn-glyph-toggle {
-  display: flex;
-  align-items: center;
-  gap: 6px;
-  padding: 7px 14px;
+  justify-content: space-between;
+  padding: 8px 18px;
   border-radius: var(--radius-pill);
-  background: linear-gradient(135deg, #112142 0%, #2A1B6B 100%);
+  background: linear-gradient(135deg, rgba(17, 33, 66, 0.95) 0%, rgba(42, 27, 107, 0.95) 100%);
   color: #FFFFFF;
   border: 1.5px solid rgba(107, 201, 217, 0.5);
-  font-family: var(--font-epilogue);
-  font-size: 0.82rem;
-  font-weight: 600;
   cursor: pointer;
-  box-shadow: 0 4px 14px rgba(42, 27, 107, 0.35);
+  box-shadow: 0 4px 16px rgba(42, 27, 107, 0.3);
   transition: all 0.22s cubic-bezier(0.34, 1.56, 0.64, 1);
+  box-sizing: border-box;
 }
 
-.btn-glyph-toggle:hover {
-  transform: translateY(-2px) scale(1.03);
-  box-shadow: 0 6px 18px rgba(66, 46, 143, 0.45);
+.btn-glyph-header-full:hover {
+  transform: translateY(-1px) scale(1.01);
+  box-shadow: 0 6px 20px rgba(66, 46, 143, 0.45);
   border-color: #6BC9D9;
 }
 
-.btn-glyph-toggle:active {
-  transform: scale(0.96);
+.btn-glyph-header-full:active {
+  transform: scale(0.98);
 }
 
-.glyph-btn-icon {
-  font-size: 0.95rem;
-  line-height: 1;
-}
-
-.glyph-btn-text {
-  letter-spacing: 0.3px;
+.glyph-header-title {
+  font-family: var(--font-heading);
+  font-size: 1.05rem;
+  font-weight: 700;
+  color: #FFFFFF;
+  margin: 0;
+  line-height: 1.2;
 }
 
 .glyph-btn-dot {
   color: #6BC9D9;
-  font-size: 0.75rem;
+  font-size: 1rem;
+  display: inline-block;
+  line-height: 1;
   animation: glyph-dot-pulse 2.2s infinite ease-in-out;
 }
 
 @keyframes glyph-dot-pulse {
   0%, 100% { opacity: 0.4; transform: scale(0.85); }
-  50% { opacity: 1; transform: scale(1.25); filter: drop-shadow(0 0 4px #6BC9D9); }
+  50% { opacity: 1; transform: scale(1.3); filter: drop-shadow(0 0 6px #6BC9D9); }
 }
 
 .map-counter-pill {
@@ -389,55 +359,7 @@
   50% { transform: scale(1.15); opacity: 1; }
 }
 
-/* Niebla de Exploración */
-.map-fog-overlay {
-  position: absolute;
-  inset: 0;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  background: rgba(17, 33, 66, 0.35);
-  backdrop-filter: blur(5px);
-  -webkit-backdrop-filter: blur(5px);
-  padding: 16px;
-  z-index: 10;
-}
 
-.map-fog-overlay.hidden {
-  display: none !important;
-}
-
-.fog-message-card {
-  text-align: center;
-  padding: 18px 16px;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  gap: 6px;
-  max-width: 280px;
-  background: rgba(255, 255, 255, 0.92);
-  border-radius: var(--radius-lg);
-  box-shadow: 0 12px 30px rgba(17, 33, 66, 0.18);
-}
-
-.fog-symbol {
-  font-size: 1.6rem;
-  color: var(--purple-accent);
-}
-
-.fog-message-card h4 {
-  font-size: 1rem;
-  font-weight: 700;
-  color: var(--navy-dark);
-  margin: 0;
-}
-
-.fog-message-card p {
-  font-size: 0.78rem;
-  color: rgba(17, 33, 66, 0.8);
-  line-height: 1.35;
-  margin: 0;
-}
 
 /* Popup de Detalles de Árbol en el Mapa */
 .map-tree-details-popup {
@@ -925,108 +847,6 @@
   filter: drop-shadow(0 1px 2px rgba(17, 33, 66, 0.2));
 }
 
-/* --------------------------------------------------------------------------
-   6. TAB 4: RESPALDO Y TOKEN (ESTILOS PERSISTENTES)
-   -------------------------------------------------------------------------- */
-
-.backup-container {
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  max-width: 500px;
-  width: 100%;
-  margin: 0 auto;
-  box-sizing: border-box;
-  height: 100%;
-}
-
-.backup-card {
-  padding: 24px 20px;
-  border-radius: var(--radius-lg);
-  display: flex;
-  flex-direction: column;
-  gap: 16px;
-  background: rgba(217, 217, 217, 0.2);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  box-shadow: 0 16px 40px -8px rgba(17, 33, 66, 0.14);
-}
-
-.backup-header {
-  display: flex;
-  align-items: center;
-  gap: 10px;
-}
-
-.backup-icon {
-  font-size: 1.6rem;
-}
-
-.backup-header h2 {
-  font-family: var(--font-heading);
-  font-size: 1.4rem;
-  font-weight: 400;
-  color: var(--navy-dark);
-}
-
-.backup-card p {
-  font-size: 0.85rem;
-  color: var(--text-dark);
-}
-
-.token-box {
-  display: flex;
-  flex-direction: column;
-  gap: 8px;
-  background: rgba(255, 255, 255, 0.35);
-  padding: 16px;
-  border-radius: var(--radius-lg);
-  border: 1px solid rgba(255, 255, 255, 0.6);
-}
-
-.token-box label {
-  font-size: 0.78rem;
-  font-weight: 600;
-  color: var(--text-muted);
-}
-
-.token-input-group {
-  display: flex;
-  gap: 8px;
-}
-
-.token-input {
-  flex: 1;
-  background: #F5F6FA;
-  border: 1px solid rgba(17, 33, 66, 0.3);
-  border-radius: 50px;
-  color: var(--navy-dark);
-  font-family: monospace;
-  font-size: 1.05rem;
-  font-weight: 700;
-  padding: 10px 16px;
-  letter-spacing: 2px;
-  outline: none;
-}
-
-.token-input.uppercase {
-  text-transform: uppercase;
-}
-
-.feedback-text {
-  font-size: 0.75rem;
-  color: var(--purple-accent);
-  font-weight: 600;
-}
-
-.feedback-text.hidden {
-  display: none;
-}
-
-.reset-box {
-  margin-top: 8px;
-}
 
 /* --------------------------------------------------------------------------
    7. MICRO-ANIMACIONES

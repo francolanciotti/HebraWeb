@@ -10,6 +10,8 @@ import { OutfitSelectorUI } from './ui/outfitSelector.js';
 import { KencaloSwitcherUI } from './ui/kencaloSwitcher.js';
 import { TransmediaUI } from './ui/transmediaModal.js';
 import { NotificationUI } from './ui/notificationUI.js';
+import { AccountSettingsUI } from './ui/accountSettings.js';
+import { CaptureStoryUI } from './ui/captureModal.js';
 import { InkBleedCanvas } from './fx/inkBleed.js';
 import { soundManager } from './audio/audioManager.js';
 
@@ -22,7 +24,7 @@ const SPLASH_CONFIG = {
 
 export class KencaloApp {
   constructor() {
-    this.currentView = 'ar'; // 'ar' | 'companion' | 'transmedia' | 'backup'
+    this.currentView = 'ar'; // 'ar' | 'companion' | 'transmedia'
     this.isKencaloSpawnedInAR = false;
 
     this.initWelcomeModal();
@@ -256,6 +258,30 @@ export class KencaloApp {
     this.kencaloSwitcherUI = new KencaloSwitcherUI(stateManager, this.kencaloModel);
     this.transmediaUI = new TransmediaUI(stateManager);
 
+    // Inicializar generador de captura para Instagram (Historia 9:16)
+    this.captureStoryUI = new CaptureStoryUI(
+      stateManager,
+      this.sceneManager,
+      () => { this.switchView('companion'); },
+      () => { if (this.accountSettingsUI) this.accountSettingsUI.open(); }
+    );
+
+    // Inicializar modal y botón flotante de Ajustes de Cuenta
+    this.accountSettingsUI = new AccountSettingsUI(stateManager);
+
+    // Botón en el HUD de Companion para compartir la historia 9:16 de forma directa (sin ventana redundante)
+    const btnCompanionShare = document.getElementById('btn-companion-share-story');
+    if (btnCompanionShare) {
+      btnCompanionShare.addEventListener('click', (e) => {
+        e.stopPropagation();
+        const current = stateManager.getCurrentKencalo();
+        const treeId = current ? current.treeId : 'tree_a';
+        if (this.captureStoryUI) {
+          this.captureStoryUI.openCapture(treeId);
+        }
+      });
+    }
+
     // Botón para solicitar acceso a la cámara de forma explícita
     const btnRequestCamera = document.getElementById('btn-request-camera');
     const permissionCard = document.getElementById('ar-permission-card');
@@ -362,7 +388,7 @@ export class KencaloApp {
     };
     const treeName = treeNames[treeId] || 'Árbol';
 
-    NotificationUI.showToast(`¡Has capturado al Kencalo de ${treeName}! (Textura ${tex})`, '✨');
+    NotificationUI.showToast(`¡Has capturado al Kencalo de ${treeName}!`, '✨');
     if (this.kencaloModel) {
       this.kencaloModel.setTexture(tex);
       this.kencaloModel.triggerTouchReaction();
@@ -370,6 +396,9 @@ export class KencaloApp {
 
     setTimeout(() => {
       this.switchView('companion');
+      if (this.captureStoryUI) {
+        this.captureStoryUI.openCapture(treeId);
+      }
     }, 700);
   }
 

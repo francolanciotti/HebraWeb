@@ -51,7 +51,6 @@ export class CityMapUI {
 
     this.container = document.getElementById('city-map-container');
     this.popupContainer = document.getElementById('map-tree-details-popup');
-    this.treesCounter = document.getElementById('map-trees-counter');
     this.fogNotice = document.getElementById('map-fog-notice');
 
     this.renderMap();
@@ -143,15 +142,6 @@ export class CityMapUI {
           <!-- Capa de Marcadores de Árboles Reactivos -->
           <g id="map-tree-markers-layer"></g>
         </svg>
-
-        <!-- Indicador de Niebla de Exploración si no hay árboles revelados -->
-        <div id="map-fog-overlay" class="map-fog-overlay hidden">
-          <div class="fog-message-card glass-card">
-            <span class="fog-symbol">✦</span>
-            <h4>Frecuencias Ocultas</h4>
-            <p>Sintoniza los glifos para despertar las coordenadas de la ciudad.</p>
-          </div>
-        </div>
       </div>
     `;
   }
@@ -217,24 +207,11 @@ export class CityMapUI {
       }
     });
 
-    // Actualizar contador de exploración
-    if (this.treesCounter) {
-      this.treesCounter.textContent = `${visibleCount} / ${totalTrees}`;
-    }
     const subtitle = document.getElementById('map-trees-subtitle');
     if (subtitle) {
       subtitle.textContent = `${visibleCount} de ${totalTrees} Árboles Descubiertos`;
     }
 
-    // Niebla de exploración
-    const fogOverlay = document.getElementById('map-fog-overlay');
-    if (fogOverlay) {
-      if (visibleCount === 0) {
-        fogOverlay.classList.remove('hidden');
-      } else {
-        fogOverlay.classList.add('hidden');
-      }
-    }
   }
 
   openTreeDetails(tree, isCaptured, textureKey) {
@@ -256,7 +233,7 @@ export class CityMapUI {
         <div class="tree-popup-actions">
           <span class="tree-address-minimal">📍 ${tree.address}</span>
           ${isCaptured ? `
-            <span class="tree-badge-texture">Textura ${textureKey || 'A'}</span>
+            <span class="tree-badge-texture">Purificado</span>
           ` : `
             <button class="btn-dark-pill btn-mini-go-camera" id="btn-popup-go-camera">Rastrear en AR</button>
           `}

@@ -446,7 +446,7 @@ button {
   display: flex;
   flex-direction: column;
   gap: 8px;
-  z-index: 100;
+  z-index: 20000 !important;
   pointer-events: none;
   width: calc(100% - 32px);
   max-width: 400px;

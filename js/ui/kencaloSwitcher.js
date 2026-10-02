@@ -81,7 +81,7 @@ export class KencaloSwitcherUI {
     }
 
     if (this.tagEl) {
-      this.tagEl.textContent = `Textura ${current.texture} • ${currentIndex + 1} de ${list.length}`;
+      this.tagEl.textContent = `Compañero • ${currentIndex + 1} de ${list.length}`;
     }
 
     // Si tiene 1 solo Kencalo, deshabilitar flechas

@@ -38,12 +38,45 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 
 ---
 
-## 🟣 Fase 4: Autenticación, Usuarios y Persistencia en la Nube
-> **Estado:** Planificada
+## 🟢 Fase 4: Identificación Ligera, Ajustes y Captura en el Árbol (COMPLETADA)
+> **Estado:** Finalizada ✓
 
-- [ ] **Evolución del Sistema de Tokens:** Transición del código de respaldo local a un sistema de Login ligero (Firebase / Supabase / Backend REST).
-- [ ] **Sincronización en la Nube:** Guardado automático de indumentarias desbloqueadas, logros y árboles visitados en la cuenta del usuario.
-- [ ] **Perfil de Explortador:** Estadísticas de captura, tiempo de interacción y registro histórico.
+- [x] **1. Identificación Opcional y Recomendada (Sin Bloqueo / Cero Fricción):**
+  - **No obligatorio:** El usuario puede jugar libremente en modo invitado sin necesidad de registrarse.
+  - **Llamado amistoso:** Mensaje pedagógico sutil (*"Crea tu nombre de usuario para guardar tus Kencalos y no perder tu progreso"*).
+  - **Nombre de usuario libre:** Cualquier nombre o apodo que el usuario desee registrar (sin dependencia ni obligación de Instagram o celular).
+  - **Cero Merge / Registro Único:** Limitado estrictamente a cuentas de invitado creando su cuenta por primera vez; al cargar otra cuenta existente se carga limpiamente su estado sin fusiones ni conflictos.
+
+- [x] **2. Botón Superior de Ajustes de Cuenta con Integración Armónica:**
+  - **Convivencia visual en todas las pantallas:**
+    - *En Cámara AR (`view-ar`):* Botón Glass circular (⚙️) en la esquina superior derecha, con margen seguro respecto al visor.
+    - *En Kencalo Companion (`view-companion`):* Integración en el área superior coordinada con la cápsula del selector de Kencalos (ancho flexible para evitar solapamientos en pantallas angostas).
+    - *En Hebra Transmedia (`view-transmedia`):* Integrado elegantemente junto a la cabecera del mapa (`.map-hud-header`), sin romper el diseño de Figma y sin badges numéricos residuales.
+  - **Modal Glassmorphism de Ajustes:**
+    - Estado de cuenta: Muestra si es *Invitado* (con input para crear y guardar cuenta) o si ya está identificado con su usuario activo.
+    - Carga directa: Opción para restaurar partida en otro dispositivo ingresando el nombre de usuario (reemplazo limpio, sin merge).
+    - Opciones para desvincular el dispositivo o reiniciar progreso local.
+
+- [x] **3. Modal de Postal Polaroid al Capturar en el Árbol (Historia 9:16):**
+  - **Visualización Grande y Legible:** La imagen que se va a subir en la red social se muestra en un tamaño destacado y nítido para que el usuario pueda verla y leerla perfectamente antes de compartirla o guardarla.
+  - **Formato Polaroid con Estética del Universo Hebra:**
+    - Marco de reliquia fotográfica espacial/mística en formato Polaroid (con apertura cuadrada 1:1 para el render 3D de Kencalo).
+    - Pie del Polaroid con tipografía limpia: Título **HEBRA**, árbol descubierto (*El Bosque*, *Plaza San Martín*, *Plaza Rocha*), coordenadas de La Plata, insignia del explorador con su nombre de usuario, y sello oficial `@hebra.tdm3`.
+    - **Regla estricta:** **Sin mención de texturas** en ningún lugar del arte ni de la interfaz.
+  - **Botones Limpios y sin Fricción:**
+    - Botón **"Compartir"**: invoca la hoja nativa para subir a Instagram Stories u otras redes.
+    - Botón **"⬇️ Guardar"**: descarga la postal en alta resolución a la galería del dispositivo.
+    - Botón **Cruz ("✕")**: para cerrar cómodamente la vista previa y continuar con el juego.
+    - Acceso permanente desde el botón de cámara en el HUD de Companion.
+
+- [x] **4. Integración de Base de Datos en la Nube (Firebase Firestore):**
+  - **Arquitectura Local-First con Sincronización Cloud:**
+    - Persistencia inmediata en `localStorage` (sin latencia y resistente a pérdida de señal en la ciudad).
+    - Sincronización automática en segundo plano con Firestore Database (`accounts/{username}`).
+  - **Cero Merge en la Nube:**
+    - Al crear cuenta de invitado: valida que el usuario no exista previamente en la nube y registra su progreso actual.
+    - Al cargar partida: descarga el estado exacto guardado en Firestore y reemplaza limpiamente la sesión sin fusiones.
+
 
 ---
 

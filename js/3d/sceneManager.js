@@ -24,11 +24,16 @@ export class SceneManager {
     );
     this.camera.position.set(0, 0, this.initialZoom);
 
-    // Renderer con soporte de alpha transparente y DPR universalmente optimizado
-    this.renderer = new THREE.WebGLRenderer({ antialias: false, alpha: true, powerPreference: 'high-performance' });
+    // Renderer con soporte de alpha transparente, buffer preservado para capturas y DPR optimizado
+    this.renderer = new THREE.WebGLRenderer({
+      antialias: false,
+      alpha: true,
+      powerPreference: 'high-performance',
+      preserveDrawingBuffer: true
+    });
     this.renderer.setPixelRatio(Math.min(window.devicePixelRatio || 1, 1.25));
     this.renderer.setSize(window.innerWidth, window.innerHeight);
-    this.renderer.shadowMap.enabled = false; // Desactivar sombras pesadas universalmente para rendimiento ultra fluido
+    this.renderer.shadowMap.enabled = false;
 
     this.container.appendChild(this.renderer.domElement);
     this.isVisible = true;
@@ -103,8 +108,13 @@ export class SceneManager {
 
     // 1. POINTER DOWN
     window.addEventListener('pointerdown', (e) => {
+      // Ignorar si hay algún modal abierto en pantalla
+      if (document.querySelector('.settings-modal-overlay:not(.hidden), .capture-modal-overlay:not(.hidden), .glyph-modal-overlay:not(.hidden)')) {
+        return;
+      }
+
       // Ignorar si el usuario tocó sobre controles 2D de la interfaz
-      if (e.target && e.target.closest('button, input, a, .nav-item, .drawer, .token-box, .glass-card, .btn-glass-circle, .link-card, .scanner-frame')) {
+      if (e.target && e.target.closest('button, input, a, .nav-item, .drawer, .glass-card, .btn-glass-circle, .btn-top-settings, .link-card, .scanner-frame, .settings-modal-dialog, .capture-modal-dialog, .account-recommend-banner')) {
         return;
       }
 
@@ -202,7 +212,7 @@ export class SceneManager {
 
     // 4. ZOOM CON RUEDA DEL MOUSE (para pruebas en Desktop)
     window.addEventListener('wheel', (e) => {
-      if (e.target && e.target.closest('.scrollable, .drawer, .transmedia-container, .backup-container')) {
+      if (e.target && e.target.closest('.scrollable, .drawer, .transmedia-container')) {
         return;
       }
       const zoomDelta = e.deltaY * 0.003;
@@ -276,5 +286,15 @@ export class SceneManager {
     this.updateCallbacks.forEach(cb => cb(time));
 
     this.renderer.render(this.scene, this.camera);
+  }
+
+  getSnapshotDataURL() {
+    try {
+      this.renderer.render(this.scene, this.camera);
+      return this.renderer.domElement.toDataURL('image/png');
+    } catch (e) {
+      console.warn('Error al obtener captura 3D:', e);
+      return null;
+    }
   }
 }
