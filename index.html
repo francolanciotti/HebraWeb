@@ -138,6 +138,7 @@
             <span class="dev-label">Modo Prueba:</span>
             <button id="btn-sim-tree-a" class="btn-sim">Simular Árbol A</button>
             <button id="btn-sim-tree-b" class="btn-sim">Simular Árbol B</button>
+            <button id="btn-sim-tree-c" class="btn-sim">Simular Árbol C</button>
             <button id="btn-sim-reset" class="btn-sim btn-sim-reset">Reiniciar Progreso</button>
           </div>
         </div>
@@ -154,6 +155,28 @@
         </div>
 
         <div class="companion-hud">
+          <!-- SELECTOR DE KENCALOS EN POSESIÓN (FIGMA GLASS CAPSULE) -->
+          <div class="companion-top-bar">
+            <div id="kencalo-switch-capsule" class="kencalo-switch-capsule glass-card hidden">
+              <button id="btn-prev-kencalo" class="btn-switch-arrow" title="Kencalo anterior">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M15 18l-6-6 6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+
+              <div class="kencalo-current-info" id="kencalo-current-info">
+                <span class="kencalo-pill-name" id="kencalo-pill-name">Kencalo</span>
+                <span class="kencalo-pill-tag" id="kencalo-pill-tag">Textura A • 1 de 1</span>
+              </div>
+
+              <button id="btn-next-kencalo" class="btn-switch-arrow" title="Kencalo siguiente">
+                <svg viewBox="0 0 24 24" width="20" height="20" fill="none" stroke="currentColor" stroke-width="2.5">
+                  <path d="M9 18l6-6-6-6" stroke-linecap="round" stroke-linejoin="round"/>
+                </svg>
+              </button>
+            </div>
+          </div>
+
           <div class="companion-controls">
             <!-- Botón Hamburguesa / Desplegable de Indumentaria -->
             <button id="btn-open-wardrobe" class="btn-glass-circle disabled" title="Indumentaria (Vestimienta)">
@@ -173,69 +196,95 @@
         </div>
       </section>
 
-      <!-- TAB 3: UNIVERSO TRANSMEDIA (TARJETAS DESPLEGABLES - FIGMA DESIGN) -->
+      <!-- TAB 3: UNIVERSO TRANSMEDIA (SUB-SECCIONES DINÁMICAS FIGMA GLASS) -->
+      <!-- TAB 3: UNIVERSO TRANSMEDIA (MAPA CARTOGRÁFICO Y SINTONIZADOR DE GLIFOS) -->
       <section id="view-transmedia" class="view-section">
-        <div class="transmedia-container scrollable">
-          
-          <!-- TARJETA 1: HERO HEBRA (DESPLEGABLE) -->
-          <div class="hero-card glass-card collapsible-card expanded">
-            <div class="card-header-toggle">
-              <h2>Hebra</h2>
-              <svg class="toggle-icon-svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+        <div class="transmedia-screen">
+
+          <!-- Cabecera Compacta del Mapa -->
+          <div class="map-hud-header glass-card">
+            <div class="map-hud-left">
+              <span class="map-coord-tag">CARTOGRAFÍA • 34°55'S</span>
+              <h2 class="map-hud-title">La Plata</h2>
             </div>
-            <div class="collapsible-body">
-              <p>
-                Explora la instalación urbana transmedia y descubre a los Kencalos en su hábitat natural.
-              </p>
-              <button id="btn-reopen-welcome" class="btn-dark-pill">
-                Inicio
+            
+            <div class="map-hud-right">
+              <button id="btn-open-translator" class="btn-glyph-toggle" type="button" title="Sintonizar Glifos">
+                <span class="glyph-btn-icon">🔮</span>
+                <span class="glyph-btn-text">Glifos</span>
+                <span class="glyph-btn-dot">✦</span>
               </button>
+              <span class="map-counter-pill" id="map-trees-counter">0 / 3</span>
             </div>
           </div>
 
-          <!-- TARJETA 2: MAPA DE INSTALACIÓN FÍSICA (DESPLEGABLE) -->
-          <div class="transmedia-lore glass-card collapsible-card expanded">
-            <div class="card-header-toggle">
-              <h3>Mapa de la Instalación Física</h3>
-              <svg class="toggle-icon-svg" viewBox="0 0 24 24" width="24" height="24" fill="none" stroke="currentColor" stroke-width="2">
-                <path d="M19 9l-7 7-7-7" stroke-linecap="round" stroke-linejoin="round"/>
-              </svg>
+          <!-- Escenario del Mapa Vectorial (Pantalla Completa) -->
+          <div class="map-stage glass-card">
+            <div id="city-map-container" class="city-map-wrapper">
+              <!-- SVG generado por CityMapUI -->
             </div>
-            <div class="collapsible-body">
-              <p>Visita los árboles intervenidos en la ciudad. Cada marcador desbloquea indumentaria única para tu Kencalo.</p>
-              <div class="trees-status-grid">
-                <div class="tree-badge-card" id="badge-tree-a">
-                  <svg class="tree-icon-svg" viewBox="0 0 24 24">
-                    <path d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V19a2 2 0 002 2h4a2 2 0 002-2v-4.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <span class="tree-name">Árbol A</span>
-                  <span class="tree-state" id="state-tree-a">Descubierto ✓</span>
+
+            <!-- Popup emergente de detalles de árbol -->
+            <div id="map-tree-details-popup" class="map-tree-details-popup hidden">
+              <!-- Inyectado al tocar un árbol -->
+            </div>
+          </div>
+
+          <!-- Pie Enigmático & Enlace Instagram -->
+          <div class="map-hud-footer">
+            <span class="map-lore-quote">«Tres señales ocultas laten en la geometría urbana.»</span>
+            <a href="https://www.instagram.com/hebra.tdm3" target="_blank" rel="noopener noreferrer"
+              class="link-instagram-pill" title="Instagram @hebra.tdm3">
+              <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
+                <path d="M12 2.163c3.204 0 3.584.012 4.85.07 3.252.148 4.771 1.691 4.919 4.919.058 1.265.069 1.645.069 4.849 0 3.205-.012 3.584-.069 4.849-.149 3.225-1.664 4.771-4.919 4.919-1.266.058-1.644.07-4.85.07-3.204 0-3.584-.012-4.849-.07-3.26-.149-4.771-1.699-4.919-4.92-.058-1.265-.07-1.644-.07-4.849 0-3.204.013-3.583.07-4.849.149-3.227 1.664-4.771 4.919-4.919 1.266-.057 1.645-.069 4.849-.069zm0-2.163c-3.259 0-3.667.014-4.947.072-4.358.2-6.78 2.618-6.98 6.98-.059 1.281-.073 1.689-.073 4.948 0 3.259.014 3.668.072 4.948.2 4.358 2.618 6.78 6.98 6.98 1.281.058 1.689.072 4.948.072 3.259 0 3.668-.014 4.948-.072 4.354-.2 6.782-2.618 6.979-6.98.059-1.28.073-1.689.073-4.948 0-3.259-.014-3.667-.072-4.947-.196-4.354-2.617-6.78-6.979-6.98-1.281-.059-1.69-.073-4.949-.073zm0 5.838c-3.403 0-6.162 2.759-6.162 6.162s2.759 6.163 6.162 6.163 6.162-2.759 6.162-6.163c0-3.403-2.759-6.162-6.162-6.162zm0 10.162c-2.209 0-4-1.79-4-4 0-2.209 1.791-4 4-4s4 1.791 4 4c0 2.21-1.791 4-4 4zm6.406-11.845c-.796 0-1.441.645-1.441 1.44s.645 1.44 1.441 1.44c.795 0 1.439-.645 1.439-1.44s-.644-1.44-1.439-1.44z"/>
+              </svg>
+              <span>@hebra.tdm3</span>
+            </a>
+          </div>
+
+        </div>
+
+        <!-- OVERLAY MODAL: SINTONIZADOR DE GLIFOS -->
+        <div id="glyph-translator-overlay" class="glyph-modal-overlay hidden" aria-hidden="true">
+          <div class="glyph-modal-backdrop" id="glyph-modal-backdrop"></div>
+          
+          <div class="glyph-modal-dialog glass-card pop-in">
+            <div class="glyph-modal-header">
+              <div class="glyph-title-group">
+                <span class="glyph-modal-tag">SINTONIZADOR RÚNICO</span>
+                <h3 class="glyph-modal-title">Glifos de Hebra</h3>
+              </div>
+              <button id="btn-close-translator" class="btn-close-glyph-modal" type="button" title="Cerrar">✕</button>
+            </div>
+
+            <div class="glyph-modal-body">
+              <!-- Display de la secuencia activa -->
+              <div class="glyph-display-wrapper">
+                <div class="glyph-sequence-display" id="glyph-sequence-display">
+                  <!-- Glifos seleccionados inyectados dinámicamente -->
                 </div>
-                <div class="tree-badge-card" id="badge-tree-b">
-                  <svg class="tree-icon-svg" viewBox="0 0 24 24">
-                    <path d="M12 2a7 7 0 00-7 7c0 2.38 1.19 4.47 3 5.74V19a2 2 0 002 2h4a2 2 0 002-2v-4.26c1.81-1.27 3-3.36 3-5.74a7 7 0 00-7-7z" stroke-linecap="round" stroke-linejoin="round"/>
-                  </svg>
-                  <span class="tree-name">Árbol B</span>
-                  <span class="tree-state" id="state-tree-b">Descubierto ✓</span>
+                <div class="glyph-display-actions">
+                  <button id="btn-glyph-backspace" class="btn-glyph-action" title="Borrar último glifo">⌫</button>
+                  <button id="btn-glyph-clear" class="btn-glyph-action" title="Limpiar secuencia">Limpiar</button>
+                </div>
+              </div>
+
+              <!-- Mensaje de estado dinámico -->
+              <div id="glyph-status-message" class="glyph-status-message"></div>
+
+              <!-- Botón principal de decodificación -->
+              <button id="btn-glyph-decode" class="btn-dark-pill btn-decode-pill" disabled>
+                <span>Sintonizar Frecuencia</span>
+              </button>
+
+              <!-- Teclado de 12 Glifos (Grid) -->
+              <div class="glyph-keypad-section">
+                <div id="glyph-keypad-grid" class="glyph-keypad-grid">
+                  <!-- Botones de glifos inyectados dinámicamente -->
                 </div>
               </div>
             </div>
           </div>
-
-          <!-- TARJETA 3: ENLACE INSTAGRAM -->
-          <a href="https://www.instagram.com/hebra.tdm3" target="_blank" rel="noopener noreferrer"
-            class="link-card-instagram glass-card">
-            <div class="link-instagram-info">
-              <h3>Entérate más de nuestro universo en <span class="highlight-purple">Instagram</span></h3>
-              <p>Contenido exclusivo para tu Kencalo, nuevo árboles y más novedades.</p>
-            </div>
-            <svg class="link-arrow-svg" viewBox="0 0 24 24">
-              <path d="M5 12h14M12 5l7 7-7 7" stroke-linecap="round" stroke-linejoin="round"/>
-            </svg>
-          </a>
-
         </div>
       </section>
 

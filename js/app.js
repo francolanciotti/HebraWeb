@@ -7,6 +7,7 @@ import { SceneManager } from './3d/sceneManager.js';
 import { KencaloModel, KENCALO_CONFIG } from './3d/kencaloModel.js';
 import { ARController } from './ar/arController.js';
 import { OutfitSelectorUI } from './ui/outfitSelector.js';
+import { KencaloSwitcherUI } from './ui/kencaloSwitcher.js';
 import { TransmediaUI } from './ui/transmediaModal.js';
 import { NotificationUI } from './ui/notificationUI.js';
 import { InkBleedCanvas } from './fx/inkBleed.js';
@@ -213,49 +214,6 @@ export class KencaloApp {
 
     // Arrancar temporizador para Paso 1
     scheduleStep1Completion();
-
-    const btnReopen = document.getElementById('btn-reopen-welcome');
-    if (btnReopen && welcomeModal) {
-      btnReopen.addEventListener('click', () => {
-        clearSplashTimer();
-        currentSplashStep = 1;
-        isTransitioning = false;
-
-        if (step2) {
-          step2.classList.remove('active');
-          step2.classList.add('hidden');
-        }
-        if (step1) {
-          step1.classList.remove('hidden');
-          step1.classList.add('active');
-        }
-
-        welcomeModal.style.display = 'flex';
-        void welcomeModal.offsetWidth;
-        welcomeModal.classList.remove('fade-out');
-
-        if (this.inkCanvasStep1) {
-          this.inkCanvasStep1.targetVolatility = 0.0;
-          this.inkCanvasStep1.volatility = 0.0;
-          this.inkCanvasStep1.resume();
-          this.inkCanvasStep1.resize();
-        }
-        if (this.inkCanvasStep2) {
-          this.inkCanvasStep2.targetVolatility = 0.0;
-          this.inkCanvasStep2.volatility = 0.0;
-          this.inkCanvasStep2.resume();
-          this.inkCanvasStep2.resize();
-        }
-        if (this.inkCanvasVector) {
-          this.inkCanvasVector.targetVolatility = 0.0;
-          this.inkCanvasVector.volatility = 0.0;
-          this.inkCanvasVector.resume();
-          this.inkCanvasVector.resize();
-        }
-
-        scheduleStep1Completion();
-      });
-    }
   }
 
   init3DScene() {
@@ -295,6 +253,7 @@ export class KencaloApp {
 
   initUI() {
     this.outfitUI = new OutfitSelectorUI(stateManager, this.kencaloModel);
+    this.kencaloSwitcherUI = new KencaloSwitcherUI(stateManager, this.kencaloModel);
     this.transmediaUI = new TransmediaUI(stateManager);
 
     // Botón para solicitar acceso a la cámara de forma explícita
@@ -353,7 +312,10 @@ export class KencaloApp {
         if (confirm('¿Reiniciar todo el progreso de la partida?')) {
           stateManager.resetProgress();
           this.isKencaloSpawnedInAR = false;
+          this.currentEncounterTreeId = null;
           this.currentEncounterTexture = null;
+          const arActions = document.getElementById('ar-actions');
+          if (arActions) arActions.classList.add('hidden');
           NotificationUI.showToast('Progreso reiniciado correctamente', '🔄');
         }
       });
@@ -364,36 +326,58 @@ export class KencaloApp {
    * Captura a Kencalo, dispara su animación alegre y pasa a la vista Companion
    */
   captureCurrentKencalo() {
-    const captured = stateManager.captureKencalo(this.currentEncounterTexture);
-    if (captured) {
-      soundManager.playKencaloInteract();
-      this.isKencaloSpawnedInAR = false;
-
+    const treeId = this.currentEncounterTreeId || 'tree_a';
+    if (stateManager.isTreeCaptured(treeId)) {
+      NotificationUI.showToast(`Este árbol ya fue capturado previamente`, '🌿');
       const arActions = document.getElementById('ar-actions');
       if (arActions) arActions.classList.add('hidden');
-
-      // Re-vincular Kencalo al canvas 3D global inmediatamente para evitar congelamiento en la cámara
-      if (this.sceneManager && this.kencaloModel && this.kencaloModel.group) {
-        this.sceneManager.scene.add(this.kencaloModel.group);
-        this.kencaloModel.applyCompanionTransform();
-        this.sceneManager.setInteractiveRotationEnabled(true);
-        this.sceneManager.setInitialRotation(this.kencaloModel.group.rotation.y, this.kencaloModel.group.rotation.x);
-        this.kencaloModel.group.visible = true;
-      }
-
-      NotificationUI.showToast('¡Has capturado a Kencalo!', '✨');
-      this.kencaloModel.triggerTouchReaction();
-
-      setTimeout(() => {
-        this.switchView('companion');
-      }, 700);
+      this.isKencaloSpawnedInAR = false;
+      return;
     }
+
+    const tex = this.currentEncounterTexture || stateManager.getDistinctTextureForTree(treeId);
+    stateManager.captureKencaloFromTree(treeId, tex);
+
+    soundManager.playKencaloInteract();
+    this.isKencaloSpawnedInAR = false;
+    this.currentEncounterTreeId = null;
+    this.currentEncounterTexture = null;
+
+    const arActions = document.getElementById('ar-actions');
+    if (arActions) arActions.classList.add('hidden');
+
+    // Re-vincular Kencalo al canvas 3D global inmediatamente para la vista Companion
+    if (this.sceneManager && this.kencaloModel && this.kencaloModel.group) {
+      this.sceneManager.scene.add(this.kencaloModel.group);
+      this.kencaloModel.applyCompanionTransform();
+      this.sceneManager.setInteractiveRotationEnabled(true);
+      this.sceneManager.setInitialRotation(this.kencaloModel.group.rotation.y, this.kencaloModel.group.rotation.x);
+      this.kencaloModel.group.visible = true;
+    }
+
+    const treeNames = {
+      tree_a: 'El Bosque',
+      tree_b: 'Plaza San Martín',
+      tree_c: 'Plaza Rocha'
+    };
+    const treeName = treeNames[treeId] || 'Árbol';
+
+    NotificationUI.showToast(`¡Has capturado al Kencalo de ${treeName}! (Textura ${tex})`, '✨');
+    if (this.kencaloModel) {
+      this.kencaloModel.setTexture(tex);
+      this.kencaloModel.triggerTouchReaction();
+    }
+
+    setTimeout(() => {
+      this.switchView('companion');
+    }, 700);
   }
 
   initAR() {
     this.arController = new ARController({
       onTargetFoundA: () => this.handleTargetFoundA(),
       onTargetFoundB: () => this.handleTargetFoundB(),
+      onTargetFoundC: () => this.handleTargetFoundC(),
       onTargetLost: () => this.handleTargetLost()
     });
     this.arController.onRenderCallback = (time) => {
@@ -403,28 +387,35 @@ export class KencaloApp {
     };
   }
 
-  handleTargetFoundA() {
-    soundManager.playScanSuccess();
-    const state = stateManager.getState();
-    if (state.kencaloCaptured) {
-      NotificationUI.showToast('¡Árbol A detectado! (Ya capturaste a Kencalo)', '🌳');
+  handleTreeEncounter(treeId, treeName, anchorIndex = 0) {
+    // Si este árbol YA fue capturado, no permitir volver a capturarlo
+    if (stateManager.isTreeCaptured(treeId)) {
+      soundManager.playScanSuccess();
+      const arInstruction = document.getElementById('ar-instruction');
+      if (arInstruction) {
+        arInstruction.textContent = `Este árbol (${treeName}) ya fue purificado. Busca otros árboles en el mapa.`;
+      }
+      const arActions = document.getElementById('ar-actions');
+      if (arActions) arActions.classList.add('hidden');
+      this.isKencaloSpawnedInAR = false;
+      this.currentEncounterTreeId = null;
+      this.currentEncounterTexture = null;
+      NotificationUI.showToast(`El Kencalo de ${treeName} ya está en tu equipo`, '🌿');
       return;
     }
 
-    this.isKencaloSpawnedInAR = true;
+    soundManager.playScanSuccess();
 
-    // Asignar variación aleatoria única de textura para esta persona/encuentro (preservada al capturar)
-    if (!this.currentEncounterTexture) {
-      const textures = ['A', 'B', 'C', 'D'];
-      this.currentEncounterTexture = textures[Math.floor(Math.random() * textures.length)];
-    }
+    this.isKencaloSpawnedInAR = true;
+    this.currentEncounterTreeId = treeId;
+    this.currentEncounterTexture = stateManager.getDistinctTextureForTree(treeId);
 
     if (this.kencaloModel) {
       this.kencaloModel.setTexture(this.currentEncounterTexture);
     }
 
     // Vincular Kencalo al anclaje AR de MindAR si la cámara real está activa
-    const anchorGroup = this.arController.getAnchorGroup(0);
+    const anchorGroup = this.arController.getAnchorGroup(anchorIndex);
     if (anchorGroup && this.kencaloModel && this.kencaloModel.group) {
       anchorGroup.add(this.kencaloModel.group);
       this.kencaloModel.applyARTransform();
@@ -449,34 +440,34 @@ export class KencaloApp {
 
     const arActions = document.getElementById('ar-actions');
     const arInstruction = document.getElementById('ar-instruction');
+    const btnCapture = document.getElementById('btn-capture-kencalo');
 
     if (arInstruction) {
-      arInstruction.textContent = '¡Kencalo ha aparecido! Tócalo para capturarlo';
+      arInstruction.textContent = `¡Kencalo de ${treeName} ha aparecido! Tócalo para capturarlo`;
+    }
+
+    if (btnCapture) {
+      const span = btnCapture.querySelector('span') || btnCapture;
+      span.textContent = `¡CAPTURAR KENCALO (${treeName.toUpperCase()})!`;
     }
 
     if (arActions) {
       arActions.classList.remove('hidden');
     }
 
-    NotificationUI.showToast('¡Kencalo descubierto en el Árbol A!', '✨');
+    NotificationUI.showToast(`¡Kencalo descubierto en ${treeName}!`, '✨');
+  }
+
+  handleTargetFoundA() {
+    this.handleTreeEncounter('tree_a', 'El Bosque', 0);
   }
 
   handleTargetFoundB() {
-    soundManager.playScanSuccess();
-    const isNew = stateManager.discoverTreeB();
+    this.handleTreeEncounter('tree_b', 'Plaza San Martín', 1);
+  }
 
-    NotificationUI.showToast('¡Marcador B del Árbol B reconocido!', '🌲');
-
-    if (isNew) {
-      NotificationUI.showBanner(
-        '¡Has descubierto el Árbol B! Se ha desbloqueado la indumentaria Corona Cyber Neón.',
-        'Ver Armario',
-        () => {
-          this.switchView('companion');
-          this.outfitUI.open();
-        }
-      );
-    }
+  handleTargetFoundC() {
+    this.handleTreeEncounter('tree_c', 'Plaza Rocha', 0);
   }
 
   handleTargetLost() {
@@ -609,8 +600,16 @@ export class KencaloApp {
       this.kencaloModel.setOutfit(state.currentOutfit || 'default');
     }
 
-    // Refrescar la vista actual para actualizar opacidades 3D
-    this.switchView(this.currentView);
+    // Actualizar visibilidad del canvas 3D global
+    const root3D = document.getElementById('companion-3d-root');
+    const shouldShow3D = (this.currentView === 'companion' && isCaptured);
+    if (root3D) {
+      root3D.style.pointerEvents = shouldShow3D ? 'auto' : 'none';
+      root3D.style.opacity = shouldShow3D ? '1' : '0';
+    }
+    if (this.sceneManager) {
+      this.sceneManager.setVisible(shouldShow3D);
+    }
   }
 }
 

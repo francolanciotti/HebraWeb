@@ -25,11 +25,16 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 - [x] **Integración de Marcador Real (`targets.mind`):** Compilación e integración de la imagen del árbol real para el Image Tracking WebAR.
 ---
 
-## 🔵 Fase 3: Expansión del Lore y Sección Transmedia ("Hebra")
-> **Estado:** Planificada
+## 🟢 Fase 3: Expansión del Lore y Sección Transmedia ("Hebra") (COMPLETADA)
+> **Estado:** Finalizada ✓
 
-- [ ] **Traductor de glifos:** Integración de traductor de glifos para desbloquear coordenadas de los árboles.
-- [ ] **Mapa Interactivo de Árboles Urbanos:** Mapa visual o geolocalizado de la instalación física para guiar al espectador entre los árboles intervenidos en la ciudad.
+- [x] **Traductor de Glifos (Reemplazo de Card de Hebra):** Teclado interactivo y decodificador con glifos vectoriales negros SVG de alta definición (`image (45) 2.svg` a `13.svg`), display con slots activos y audio armónico Web Audio API para descifrar secuencias y revelar coordenadas.
+- [x] **Mapa Vectorial de La Plata (Reemplazo de Mapa de Instalación):** Cartografía vectorial SVG estilizada con el trazado geométrico platense (Diagonales 73/74, eje cívico y plazas), ubicando los árboles clave: **Árbol A en El Bosque**, **Árbol B en Plaza San Martín** y **Árbol C en Plaza Rocha**.
+- [x] **Sub-Navegación Segmentada (Adiós a las Cards con Clipping):** Reemplazo del sistema acordeón por una barra de píldoras segmentadas (`[ 🔮 Traductor de Glifos ] [ 🗺️ Mapa de La Plata (0/3) ]`) con paneles de pantalla completa sin desbordamiento ni cortes de altura.
+- [x] **Flujo Unificado de Captura AR para Árboles A, B y C:** Detección y simulación completa para los tres árboles, mostrando siempre el botón de captura en AR con Kencalos y texturas únicas ('A', 'B', 'C', 'D').
+- [x] **Selector de Compañero Kencalo:** Cápsula HUD interactiva con flechas `<` y `>` para alternar en tiempo real entre los Kencalos en posesión, aplicando textura inmediata y reacción alegre al modelo 3D.
+- [x] **Lógica de Visibilidad y Exploración:** En el mapa solo se muestran los árboles cuyas coordenadas fueron descifradas en glifos o cuyo Kencalo ya fue capturado (niebla de exploración interactiva con popups informativos y foco con pulso radar).
+- [x] **Depuración UI:** Retiro definitivo del botón de reinicio de bienvenida (`#btn-reopen-welcome`) para una interfaz minimalista y enfocada.
 
 ---
 

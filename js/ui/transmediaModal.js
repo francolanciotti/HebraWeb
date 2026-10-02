@@ -1,10 +1,13 @@
 /**
- * TransmediaUI - Manejador de la pestaña de universo transmedia y la pantalla de respaldo de token
+ * TransmediaUI - Manejador de la pestaña de universo transmedia (Fase 3: Glifos y Mapa de La Plata)
+ * y la pantalla de respaldo de token
  */
 
 import { TokenManager } from '../storage/tokenManager.js';
 import { NotificationUI } from './notificationUI.js';
 import { soundManager } from '../audio/audioManager.js';
+import { GlyphTranslatorUI } from './glyphTranslator.js';
+import { CityMapUI } from './cityMap.js';
 
 export class TransmediaUI {
   constructor(stateManager) {
@@ -18,38 +21,73 @@ export class TransmediaUI {
     this.btnImportToken = document.getElementById('btn-import-token');
     this.btnReset = document.getElementById('btn-reset-game');
 
-    this.badgeTreeA = document.getElementById('badge-tree-a');
-    this.stateTreeA = document.getElementById('state-tree-a');
-    this.badgeTreeB = document.getElementById('badge-tree-b');
-    this.stateTreeB = document.getElementById('state-tree-b');
+    this.overlayTranslator = document.getElementById('glyph-translator-overlay');
+    this.btnOpenTranslator = document.getElementById('btn-open-translator');
+    this.btnCloseTranslator = document.getElementById('btn-close-translator');
+    this.backdropTranslator = document.getElementById('glyph-modal-backdrop');
+
+    // Inicializar Traductor de Glifos y Mapa de La Plata
+    this.cityMapUI = new CityMapUI(this.stateManager);
+    this.glyphTranslatorUI = new GlyphTranslatorUI(this.stateManager, (unlockedTreeId) => {
+      // Al descifrar una coordenada mediante glifos:
+      // Esperar brevemente para mostrar la señal de éxito, cerrar el modal y enfocar el árbol en el mapa
+      setTimeout(() => {
+        this.closeTranslator();
+        if (this.cityMapUI) {
+          this.cityMapUI.focusTree(unlockedTreeId);
+        }
+      }, 750);
+    });
 
     this.initEvents();
-    this.initCollapsibleCards();
     this.update();
   }
 
-  initCollapsibleCards() {
-    const headers = document.querySelectorAll('.card-header-toggle');
-    headers.forEach(header => {
-      header.addEventListener('click', () => {
-        const card = header.closest('.collapsible-card');
-        if (card) {
-          const isExpanded = card.classList.contains('expanded');
-          // Cierra todas las demás tarjetas desplegables
-          document.querySelectorAll('.collapsible-card').forEach(c => {
-            c.classList.remove('expanded');
-          });
-          // Si la tarjeta cliqueada no estaba abierta, la despliega
-          if (!isExpanded) {
-            soundManager.playOutfitNav();
-            card.classList.add('expanded');
-          }
-        }
-      });
-    });
+  openTranslator() {
+    soundManager.playOutfitNav();
+    if (this.overlayTranslator) {
+      this.overlayTranslator.classList.remove('hidden');
+      this.overlayTranslator.setAttribute('aria-hidden', 'false');
+    }
+  }
+
+  closeTranslator() {
+    if (this.overlayTranslator) {
+      this.overlayTranslator.classList.add('hidden');
+      this.overlayTranslator.setAttribute('aria-hidden', 'true');
+    }
   }
 
   initEvents() {
+    // Abrir y cerrar sintonizador de glifos en overlay
+    if (this.btnOpenTranslator) {
+      this.btnOpenTranslator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.openTranslator();
+      });
+    }
+
+    if (this.btnCloseTranslator) {
+      this.btnCloseTranslator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        soundManager.playOutfitNav();
+        this.closeTranslator();
+      });
+    }
+
+    if (this.backdropTranslator) {
+      this.backdropTranslator.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.closeTranslator();
+      });
+    }
+
+    window.addEventListener('keydown', (e) => {
+      if (e.key === 'Escape' && this.overlayTranslator && !this.overlayTranslator.classList.contains('hidden')) {
+        this.closeTranslator();
+      }
+    });
+
     // Copiar Token
     if (this.btnCopyToken && this.displayTokenInput) {
       this.btnCopyToken.addEventListener('click', () => {
@@ -91,7 +129,7 @@ export class TransmediaUI {
       });
     }
 
-    // Reiniciar
+    // Reiniciar Progreso
     if (this.btnReset) {
       this.btnReset.addEventListener('click', () => {
         if (confirm('¿Estás seguro de reiniciar tu progreso local?')) {
@@ -111,29 +149,6 @@ export class TransmediaUI {
     // Actualizar Token de Respaldo
     if (this.displayTokenInput) {
       this.displayTokenInput.value = TokenManager.generateToken(state);
-    }
-
-    // Actualizar estado de Árboles en la sección Universo
-    const discovered = state.discoveredTrees || [];
-
-    if (this.badgeTreeA && this.stateTreeA) {
-      if (discovered.includes('tree_a')) {
-        this.badgeTreeA.classList.add('unlocked');
-        this.stateTreeA.textContent = 'Descubierto ✓';
-      } else {
-        this.badgeTreeA.classList.remove('unlocked');
-        this.stateTreeA.textContent = 'No descubierto';
-      }
-    }
-
-    if (this.badgeTreeB && this.stateTreeB) {
-      if (discovered.includes('tree_b')) {
-        this.badgeTreeB.classList.add('unlocked');
-        this.stateTreeB.textContent = 'Descubierto ✓';
-      } else {
-        this.badgeTreeB.classList.remove('unlocked');
-        this.stateTreeB.textContent = 'Bloqueado 🔒';
-      }
     }
   }
 }

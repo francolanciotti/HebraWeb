@@ -257,8 +257,15 @@ export class KencaloModel {
 
     this.mesh.traverse((node) => {
       if (node.isMesh && node.material && !node.userData.isOutfit) {
-        node.material.map = texture;
-        node.material.needsUpdate = true;
+        if (Array.isArray(node.material)) {
+          node.material.forEach(mat => {
+            mat.map = texture;
+            mat.needsUpdate = true;
+          });
+        } else {
+          node.material.map = texture;
+          node.material.needsUpdate = true;
+        }
       }
     });
   }

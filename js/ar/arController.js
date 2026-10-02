@@ -9,6 +9,7 @@ export class ARController {
   constructor(options = {}) {
     this.onTargetFoundA = options.onTargetFoundA || (() => {});
     this.onTargetFoundB = options.onTargetFoundB || (() => {});
+    this.onTargetFoundC = options.onTargetFoundC || (() => {});
     this.onTargetLost = options.onTargetLost || (() => {});
 
     this.mindThree = null;
@@ -210,6 +211,7 @@ export class ARController {
   initSimButtons() {
     const btnSimA = document.getElementById('btn-sim-tree-a');
     const btnSimB = document.getElementById('btn-sim-tree-b');
+    const btnSimC = document.getElementById('btn-sim-tree-c');
 
     if (btnSimA) {
       btnSimA.addEventListener('click', (e) => {
@@ -222,6 +224,13 @@ export class ARController {
       btnSimB.addEventListener('click', (e) => {
         e.stopPropagation();
         this.onTargetFoundB();
+      });
+    }
+
+    if (btnSimC) {
+      btnSimC.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.onTargetFoundC();
       });
     }
   }

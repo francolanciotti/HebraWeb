@@ -127,4 +127,31 @@ Todas las tarjetas, modales y paneles flotantes de la interfaz utilizan el efect
 - **Dilatación de Tinta WebGL:** Durante el cambio automático de pantalla, se activa la animación física de sangrado de tinta en los títulos y el vector de fondo.
 
 ---
-*Documento actualizado y alineado con el prototipo de Figma y Phase 1 del proyecto.*
+
+## 11. Traductor de Glifos (`js/ui/glyphTranslator.js`) — Fase 3
+
+- **Ubicación:** Pestaña **Hebra (Transmedia)**, primer módulo colapsable (`#card-glyph-translator`).
+- **Sistema de Glifos:** 12 glifos vectoriales recortados en formato SVG (`assets/glifos/image-Photoroom (15)-Photoroom 1.svg` a `12.svg`).
+- **Display Interactivo:** Ranuras con efecto vidrio donde se visualizan los glifos pulsados con micro-animaciones `popIn`, opción de eliminación individual, botón de borrado (`⌫`) y limpieza total.
+- **Teclado de Glifos (`.glyph-keypad-grid`):** Grid responsivo de botones circulares/píldora con efecto Glass Figma, elevación táctil y audio Web Audio API pentatónico (`soundManager.playGlyphTap()`).
+- **Lógica de Decodificación y Pistas:** Al ingresar y sintonizar la combinación correspondiente a un árbol (ej. `I • VI • XI` para El Bosque, `II • V • VIII` para Plaza San Martín, `III • VII • X` para Plaza Rocha), se revela su coordenada en el mapa de La Plata y se reproduce un acorde celestial ascendente (`soundManager.playDecodeSuccess()`).
+
+---
+
+## 12. Mapa Vectorial de la Ciudad de La Plata (`js/ui/cityMap.js`) — Fase 3
+
+- **Ubicación:** Pestaña **Hebra (Transmedia)**, segundo módulo colapsable (`#card-city-map`).
+- **Trazado Cartográfico Vectorial SVG:**
+  - Circunvalación cuadrada auténtica de la ciudad.
+  - Eje cívico monumental (Avenidas 51 y 53) y Avenida 7.
+  - Trazado de Diagonales 73 y 74.
+  - Pulmones verdes y plazas: **Plaza Moreno** (centro exacto Km 0), **Paseo del Bosque**, **Plaza San Martín**, **Plaza Rocha**, **Plaza Malvinas** y **Parque Saavedra**.
+- **Regla de Juego (Niebla de Exploración):** En el mapa únicamente son visibles los árboles cuyas coordenadas fueron descifradas en glifos O cuyo Kencalo ya fue capturado.
+- **Marcadores Reactivos con Animaciones:**
+  - *Árboles Revelados por Glifos:* Emite onda de radar cian expansiva (`@keyframes radar-pulse`) y badge de coordenada activa.
+  - *Árboles con Kencalo Capturado:* Halo verde esmeralda bioluminiscente (`@keyframes captured-pulse`), pin con checkmark `✓` y miniatura del Kencalo obtenido.
+- **Tarjeta Emergente de Detalles (`.map-tree-details-popup`):** Al tocar cualquier árbol visible, se despliega una ficha Glassmorphism con coordenadas GPS reales de La Plata, descripción del hito, estado del Kencalo y botón directo para activar la cámara AR.
+- **Colección de Kencalos Distintos:** Cada árbol escaneado en la ciudad otorga siempre un Kencalo con textura distinta a la colección del usuario.
+
+---
+*Documento actualizado y alineado con las Fases 1, 2 y 3 del proyecto WebHebra.*
