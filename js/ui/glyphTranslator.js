@@ -36,7 +36,6 @@ export class GlyphTranslatorUI {
     this.displayContainer = document.getElementById('glyph-sequence-display');
     this.keypadContainer = document.getElementById('glyph-keypad-grid');
     this.btnDecode = document.getElementById('btn-glyph-decode');
-    this.btnClear = document.getElementById('btn-glyph-clear');
     this.btnBackspace = document.getElementById('btn-glyph-backspace');
     this.statusText = document.getElementById('glyph-status-message');
 
@@ -76,13 +75,6 @@ export class GlyphTranslatorUI {
       this.btnDecode.addEventListener('click', (e) => {
         e.stopPropagation();
         this.decodeSequence();
-      });
-    }
-
-    if (this.btnClear) {
-      this.btnClear.addEventListener('click', (e) => {
-        e.stopPropagation();
-        this.clearSequence();
       });
     }
 
@@ -190,12 +182,12 @@ export class GlyphTranslatorUI {
 
       if (this.statusText) {
         this.statusText.textContent = isNew
-          ? `✦ Frecuencia descifrada. Coordenada revelada: ${match.name}.`
-          : `✦ Señal ya activa en la cartografía: ${match.name}.`;
+          ? `✦ Éxito: Coordenada revelada: ${match.name}.`
+          : `✦ Éxito: Coordenada ya revelada: ${match.name}.`;
         this.statusText.className = 'glyph-status-message success';
       }
 
-      NotificationUI.showToast(isNew ? `¡Coordenada descifrada: ${match.name}!` : `Coordenada ${match.name} activa`, '🧭');
+      NotificationUI.showToast(isNew ? `¡Éxito! Coordenada revelada: ${match.name}` : `Éxito: Coordenada ${match.name} activa`, '🧭');
 
       if (typeof this.onCoordinateUnlocked === 'function') {
         this.onCoordinateUnlocked(match.treeId);
@@ -216,7 +208,7 @@ export class GlyphTranslatorUI {
       }
 
       if (this.statusText) {
-        this.statusText.textContent = 'Silencio. La frecuencia no encuentra eco en la ciudad.';
+        this.statusText.textContent = '✦ Fracaso: Secuencia de glifos incorrecta.';
         this.statusText.className = 'glyph-status-message error';
       }
     }

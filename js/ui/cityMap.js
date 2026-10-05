@@ -196,12 +196,10 @@ export class CityMapUI {
           <span class="tree-coords-minimal">${tree.coords}</span>
         </div>
 
-        <p class="tree-desc-short">${tree.description}</p>
-
         <div class="tree-popup-actions">
           <span class="tree-address-minimal">📍 ${tree.address}</span>
           ${isCaptured ? `
-            <span class="tree-badge-texture">Purificado</span>
+            <span class="tree-badge-texture">Capturado</span>
           ` : `
             <button class="btn-dark-pill btn-mini-go-camera" id="btn-popup-go-camera">Rastrear en AR</button>
           `}

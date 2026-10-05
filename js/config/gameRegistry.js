@@ -191,7 +191,7 @@ export const LOCATIONS_REGISTRY = [
     mapCoords: { x: 435, y: 145 }, // Coordenadas en el mapa SVG 525x525
     glyphSequence: [1, 2, 3, 4],
     glyphHint: 'Donde el verde se abre a los astros',
-    description: 'Bajo el follaje centenario late una pulsación que mira a las estrellas.',
+    description: '',
     targetIndex: 0
   },
   {
@@ -207,7 +207,7 @@ export const LOCATIONS_REGISTRY = [
     mapCoords: { x: 125, y: 230 }, // Coordenadas en el mapa SVG 525x525
     glyphSequence: [5, 6, 7, 8],
     glyphHint: 'Bajo las sombras del eje monumental',
-    description: 'En el corazón de la simetría urbana, las raíces guardan la memoria del tilo.',
+    description: '',
     targetIndex: 1
   },
   {
@@ -223,7 +223,7 @@ export const LOCATIONS_REGISTRY = [
     mapCoords: { x: 262.5, y: 393.5 }, // Coordenadas en el mapa SVG 525x525
     glyphSequence: [9, 10, 11, 12],
     glyphHint: 'La diagonal que converge hacia el sur',
-    description: 'Vórtice donde convergen las líneas del sur; una frecuencia espera despertar.',
+    description: '',
     targetIndex: 2
   }
 ];

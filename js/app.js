@@ -454,7 +454,7 @@ export class KencaloApp {
       soundManager.playScanSuccess();
       const arInstruction = document.getElementById('ar-instruction');
       if (arInstruction) {
-        arInstruction.textContent = `Este árbol (${treeName}) ya fue purificado. Busca otros árboles en el mapa.`;
+        arInstruction.textContent = `Este árbol (${treeName}) ya fue capturado. Busca otros árboles en el mapa.`;
       }
       const arActions = document.getElementById('ar-actions');
       if (arActions) arActions.classList.add('hidden');
