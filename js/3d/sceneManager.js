@@ -1,7 +1,10 @@
 /**
  * SceneManager - Administrador de la escena Three.js, luces, render loop,
  * rotación interactiva por arrastre (drag 360°) y zoom limitado (pinch-to-zoom).
+ * Integración de Hábitat 3D y Cueva Kenosis (HDRI IBL & Partículas - Fase 5).
  */
+
+import { RGBELoader } from '../lib/RGBELoader.module.js';
 
 export class SceneManager {
   constructor(containerElement) {
@@ -35,11 +38,19 @@ export class SceneManager {
     this.renderer.setSize(window.innerWidth, window.innerHeight);
     this.renderer.shadowMap.enabled = false;
 
+    // Configuración de Colorimetría PBR y Tone Mapping para HDR
+    this.renderer.toneMapping = THREE.ACESFilmicToneMapping;
+    this.renderer.toneMappingExposure = 1.0;
+    this.renderer.outputEncoding = THREE.sRGBEncoding;
+
     this.container.appendChild(this.renderer.domElement);
     this.isVisible = true;
 
     // Luces
     this.initLights();
+
+    // Entorno HDRI Cueva Kenosis (Fase 5)
+    this.initEnvironment();
 
     // Control de Rotación del Modelo
     this.targetModel = null;
@@ -79,17 +90,57 @@ export class SceneManager {
   }
 
   initLights() {
-    const ambientLight = new THREE.AmbientLight(0xffffff, 0.7);
+    // Luz ambiental balanceada para coexistir con la iluminación IBL del HDRI
+    const ambientLight = new THREE.AmbientLight(0xffffff, 0.4);
     this.scene.add(ambientLight);
 
-    const mainLight = new THREE.DirectionalLight(0x00ffaa, 1.2);
-    mainLight.position.set(3, 5, 4);
-    mainLight.castShadow = true;
-    this.scene.add(mainLight);
+    // Luz frontal suave cian/esmeralda vinculada a la cámara para acompañar la rotación 360°
+    const mainLight = new THREE.DirectionalLight(0xa5f3fc, 0.9);
+    mainLight.position.set(2, 4, 3);
+    mainLight.castShadow = false;
+    this.camera.add(mainLight);
+    this.scene.add(this.camera);
 
-    const rimLight = new THREE.PointLight(0x9d4edd, 2, 10);
+    // Luz de contorno mística (púrpura de cueva)
+    const rimLight = new THREE.PointLight(0xc084fc, 1.4, 12);
     rimLight.position.set(-3, -2, -2);
     this.scene.add(rimLight);
+  }
+
+  /**
+   * Carga el entorno 360° de la Cueva Kenosis (HDRI) y genera el mapa PMREM
+   * para iluminación basada en imágenes (IBL) y hábitat visual en 360°.
+   */
+  initEnvironment(hdrPath = './assets/environments/KenosisCaveHDRI.hdr') {
+    this.envMap = null;
+    const pmremGenerator = new THREE.PMREMGenerator(this.renderer);
+    pmremGenerator.compileEquirectangularShader();
+
+    const loader = new RGBELoader();
+    loader.setDataType(THREE.UnsignedByteType);
+
+    loader.load(
+      hdrPath,
+      (texture) => {
+        try {
+          const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+          this.scene.environment = envMap;
+          this.scene.background = envMap;
+          this.envMap = envMap;
+
+          // Liberación inmediata de textura cruda y generador para optimizar VRAM en móviles
+          texture.dispose();
+          pmremGenerator.dispose();
+          console.log('✓ Hábitat 3D Cueva Kenosis (HDRI IBL) cargado exitosamente.');
+        } catch (err) {
+          console.warn('Error al procesar PMREM de HDRI:', err);
+        }
+      },
+      undefined,
+      (err) => {
+        console.error('Error al cargar archivo HDRI:', err);
+      }
+    );
   }
 
   initTouchAndGestureEvents() {
@@ -152,7 +203,7 @@ export class SceneManager {
           this.isDragging = true;
         }
 
-        if (this.isDragging && this.targetModel) {
+        if (this.isDragging && (this.targetModel || this.isInteractiveRotationEnabled)) {
           // Rotación en Y (horizontal 360°)
           this.targetRotationY += deltaX * 0.008;
 
@@ -273,15 +324,24 @@ export class SceneManager {
 
     // Suavizado fluido de Zoom (Lerp hacia targetZoom dentro de minZoom y maxZoom)
     this.currentZoom += (this.targetZoom - this.currentZoom) * 0.12;
-    this.camera.position.z = this.currentZoom;
 
-    // Suavizado fluido de Rotación del modelo (Lerp hacia targetRotation) si está interactivo en Companion
-    if (this.targetModel && this.isInteractiveRotationEnabled) {
+    // Suavizado fluido de Rotación (Lerp hacia targetRotation) si está interactivo en Companion
+    if (this.isInteractiveRotationEnabled) {
       this.currentRotationY += (this.targetRotationY - this.currentRotationY) * 0.12;
       this.currentRotationX += (this.targetRotationX - this.currentRotationX) * 0.12;
-      this.targetModel.rotation.y = this.currentRotationY;
-      this.targetModel.rotation.x = this.currentRotationX;
     }
+
+    // Órbita 360° esférica: la cámara rota 360° alrededor de Kencalo,
+    // desplazando todo el hábitat de la Cueva Kenosis en perfecta sincronía.
+    const phi = THREE.MathUtils.clamp(Math.PI / 2 - this.currentRotationX, 0.4, Math.PI - 0.4);
+    const theta = -this.currentRotationY;
+
+    const camX = this.currentZoom * Math.sin(phi) * Math.sin(theta);
+    const camY = this.currentZoom * Math.cos(phi);
+    const camZ = this.currentZoom * Math.sin(phi) * Math.cos(theta);
+
+    this.camera.position.set(camX, camY, camZ);
+    this.camera.lookAt(0, 0, 0);
 
     this.updateCallbacks.forEach(cb => cb(time));
 

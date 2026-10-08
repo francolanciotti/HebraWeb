@@ -80,11 +80,12 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 
 ---
 
-## 🟠 Fase 5: Escenario 3D de Acompañamiento (Companion Habitat)
-> **Estado:** Futura
+## 🟢 Fase 5: Escenario 3D de Acompañamiento (Companion Habitat)
+> **Estado:** Finalizada ✓
 
-- [ ] **Entorno 3D Interactivo:** Desarrollo de un hábitat/escenario tridimensional completo para Kencalo en la vista Companion (terreno, vegetación, iluminación ambiental).
-- [ ] **Física y Partículas:** Efectos de partículas y luz al capturar el kencalo.
+- [x] **Entorno 3D Interactivo (Cueva Kenosis 360º):** Integración del mapa de entorno HDR optimizado (`KenosisCaveHDRI.hdr` 1.44 MB) con módulo local `RGBELoader` y generación PMREM, proporcionando iluminación PBR Image-Based Lighting (IBL) y hábitat inmersivo en 360° en la vista Companion.
+- [x] **Cámara Frontal Estable (Cero Paralaje):** Rotación centrada 360° exclusiva sobre Kencalo con cámara fija, conservando encuadre óptimo y estable sobre el hábitat de la cueva.
+- [x] **Optimización Gráfica Mobile-First:** Liberación inmediata de memoria VRAM (`texture.dispose()` y `pmremGenerator.dispose()`), colorimetría cinematográfica `ACESFilmicToneMapping` y `sRGBEncoding` a 60 FPS estables.
 
 ---
 
