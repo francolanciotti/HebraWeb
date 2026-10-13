@@ -171,6 +171,60 @@ export const SPECIES_REGISTRY = {
       }
     },
     description: 'Espíritu acogedor que teje lazos místico-orgánicos entre las ramas centenarias.'
+  },
+
+  rino: {
+    id: 'rino',
+    name: 'Rino',
+    modelPath: './assets/species/rino/Kencalitas7.glb',
+    textures: {
+      'A': './assets/species/rino/KencalitaTextura7A.png',
+      'B': './assets/species/rino/KencalitaTextura7B.png',
+      'C': './assets/species/rino/KencalitaTextura7C.png',
+      'D': './assets/species/rino/KencalitaTextura7D.png'
+    },
+    animations: {
+      idle: './assets/species/rino/Kencalitas7_Idle.glb',
+      happy: './assets/species/rino/Kencalitas7_Happy.glb'
+    },
+    baseScale: 2.2,
+    pivotOffset: [0, 0.1, -1],
+    hatAnchor: {
+      pos: [0, 0.23, 0],          // [X, Y, Z] Calibración de sombreros en Rino
+      scale: [1.4, 1.4, 1.4],
+      rot: [0.3, 0, 0],
+      custom: {
+        'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
+      }
+    },
+    description: 'Espíritu noble y firme que custodia las raíces ancestrales con serenidad.'
+  },
+
+  pajaro: {
+    id: 'pajaro',
+    name: 'Pájaro',
+    modelPath: './assets/species/pajaro/Kencalitas8.glb',
+    textures: {
+      'A': './assets/species/pajaro/KencalitaTextura8A.png',
+      'B': './assets/species/pajaro/KencalitaTextura8B.png',
+      'C': './assets/species/pajaro/KencalitaTextura8C.png',
+      'D': './assets/species/pajaro/KencalitaTextura8D.png'
+    },
+    animations: {
+      idle: './assets/species/pajaro/Kencalitas8_Idle.glb',
+      happy: './assets/species/pajaro/Kencalitas8_Happy.glb'
+    },
+    baseScale: 2,
+    pivotOffset: [0, -0.1, -0.7],
+    hatAnchor: {
+      pos: [0, 1.49, 0.24],          // [X, Y, Z] Calibración de sombreros en Pájaro
+      scale: [1.3, 1.3, 1.3],
+      rot: [0.3, 0, 0],
+      custom: {
+        'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
+      }
+    },
+    description: 'Espíritu veloz y curioso que surca las alturas conectando las copas de los árboles.'
   }
 };
 
@@ -184,7 +238,6 @@ export const LOCATIONS_REGISTRY = [
     type: 'tree',
     name: 'El Bosque',
     companionTitle: 'del Bosque', // -> "Kencalo del Bosque"
-    speciesId: 'libelula', // Especie asignada a este árbol
     zone: 'Paseo del Bosque • La Plata',
     address: 'Av. Iraola y 120',
     coords: "34°54'34\"S 57°56'02\"W",
@@ -200,7 +253,6 @@ export const LOCATIONS_REGISTRY = [
     type: 'tree',
     name: 'Plaza San Martín',
     companionTitle: 'Plaza San Martín',
-    speciesId: 'burbuja', // Especie asignada a este árbol
     zone: 'Eje Monumental • Calle 7 y 50',
     address: 'Av. 7 e/ 50 y 54',
     coords: "34°54'57\"S 57°56'48\"W",
@@ -216,7 +268,6 @@ export const LOCATIONS_REGISTRY = [
     type: 'tree',
     name: 'Plaza Rocha',
     companionTitle: 'Plaza Rocha', // -> "Kencalo de Plaza Rocha"
-    speciesId: 'gatogota', // Especie asignada a este árbol
     zone: 'Diagonal 73 y Plaza Rocha',
     address: 'Av. 7 y 60',
     coords: "34°55'42\"S 57°56'30\"W",
@@ -242,7 +293,7 @@ export function getSpeciesById(speciesId) {
 
 export function getSpeciesForTree(treeId) {
   const loc = getLocationById(treeId);
-  return getSpeciesById(loc.speciesId);
+  return loc?.speciesId ? getSpeciesById(loc.speciesId) : null;
 }
 
 /**
@@ -250,7 +301,7 @@ export function getSpeciesForTree(treeId) {
  */
 export function getKencaloFullName(treeId) {
   const loc = getLocationById(treeId);
-  const title = loc.companionTitle || `de ${loc.name}`;
+  const title = loc?.companionTitle || (loc?.name ? `de ${loc.name}` : '');
   return `Kencalo ${title}`;
 }
 
@@ -267,8 +318,7 @@ export function getMapTreesData() {
     coords: loc.coords,
     x: loc.mapCoords.x,
     y: loc.mapCoords.y,
-    description: loc.description,
-    speciesName: getSpeciesById(loc.speciesId).name
+    description: loc.description
   }));
 }
 
@@ -295,8 +345,7 @@ export function getPolaroidTreeData() {
       title: `Árbol de ${loc.name}`,
       companionTitle: loc.companionTitle,
       zone: loc.zone,
-      coords: loc.coords,
-      speciesName: getSpeciesById(loc.speciesId).name
+      coords: loc.coords
     };
   });
   return map;

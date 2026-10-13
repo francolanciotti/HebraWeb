@@ -63,8 +63,7 @@ class StateManager {
         if (parsed.capturedKencalos) {
           Object.keys(parsed.capturedKencalos).forEach(tId => {
             if (!parsed.capturedSpecies[tId]) {
-              const loc = getLocationById(tId);
-              parsed.capturedSpecies[tId] = loc.speciesId || 'libelula';
+              parsed.capturedSpecies[tId] = 'libelula';
             }
           });
         }
@@ -129,7 +128,7 @@ class StateManager {
    * (Garantiza que no se pueda capturar el mismo modelo dos veces)
    */
   getRandomUnusedSpecies() {
-    const allSpecies = Object.keys(SPECIES_REGISTRY); // ['libelula', 'burbuja', 'tapon', 'gatogota', 'manitas']
+    const allSpecies = Object.keys(SPECIES_REGISTRY); // ['libelula', 'danzante', 'burbuja', 'tapon', 'gatogota', 'manitas', 'rino', 'pajaro']
     const usedSpecies = Object.values(this.state.capturedSpecies || {});
     const available = allSpecies.filter(s => !usedSpecies.includes(s));
 
@@ -256,7 +255,7 @@ class StateManager {
     discovered.forEach((treeId, index) => {
       const loc = getLocationById(treeId);
       const tex = capturedMap[treeId] || (index === 0 ? this.state.kencaloTexture : 'A');
-      const speciesId = capturedSpeciesMap[treeId] || loc.speciesId || 'libelula';
+      const speciesId = capturedSpeciesMap[treeId] || 'libelula';
       const outfit = this.getOutfitForKencalo(treeId);
       list.push({
         treeId: treeId,
@@ -272,7 +271,7 @@ class StateManager {
     // Fallback si kencaloCaptured es true pero discoveredTrees estuviera vacío
     if (list.length === 0 && this.state.kencaloCaptured) {
       const loc = getLocationById('tree_a');
-      const speciesId = capturedSpeciesMap.tree_a || loc.speciesId || 'libelula';
+      const speciesId = capturedSpeciesMap.tree_a || 'libelula';
       list.push({
         treeId: 'tree_a',
         name: loc.name,

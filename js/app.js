@@ -448,7 +448,6 @@ export class KencaloApp {
 
   handleTreeEncounter(treeId, treeName, anchorIndex = 0) {
     const fullName = getKencaloFullName(treeId);
-    const species = getSpeciesForTree(treeId);
 
     // Si este árbol YA fue capturado, no permitir volver a capturarlo
     if (stateManager.isTreeCaptured(treeId)) {
