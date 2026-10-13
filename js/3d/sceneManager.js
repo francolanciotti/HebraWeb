@@ -30,7 +30,7 @@ export class SceneManager {
     // Renderer con soporte de alpha transparente, buffer preservado para capturas y DPR optimizado
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
-      alpha: true,
+      alpha: false,
       powerPreference: 'high-performance',
       preserveDrawingBuffer: true
     });
@@ -123,12 +123,16 @@ export class SceneManager {
       hdrPath,
       (texture) => {
         try {
+          // Asigna el mapeo equirrectangular a la textura HDRI cargada
+          texture.mapping = THREE.EquirectangularReflectionMapping;
+
           const envMap = pmremGenerator.fromEquirectangular(texture).texture;
+          
+          // Asigna la textura tanto al fondo como al entorno de iluminación
           this.scene.environment = envMap;
-          this.scene.background = envMap;
+          this.scene.background = envMap; // <-- Ahora se dibujará en el lienzo 3D
           this.envMap = envMap;
 
-          // Liberación inmediata de textura cruda y generador para optimizar VRAM en móviles
           texture.dispose();
           pmremGenerator.dispose();
           console.log('✓ Hábitat 3D Cueva Kenosis (HDRI IBL) cargado exitosamente.');

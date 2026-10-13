@@ -221,8 +221,16 @@
   width: 90%;
   margin: auto;
   gap: 14px;
-  border-radius: var(--radius-lg);
-  background: rgba(217, 217, 217, 0.2);
+  --br-x1: 50%;
+  --br-x2: 37%;
+  --br-x3: 85%;
+  --br-x4: 65%;
+  --br-y1: 25%;
+  --br-y2: 65%;
+  --br-y3: 68%;
+  --br-y4: 82%;
+  border-radius: var(--br-x1) var(--br-x2) var(--br-x3) var(--br-x4) / var(--br-y1) var(--br-y2) var(--br-y3);
+  background: var(--primary-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 2px solid var(--navy-dark);

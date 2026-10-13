@@ -177,6 +177,29 @@ export class KencaloModel {
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
+
+          // CONFIGURACIÓN DE MATERIALES PARA TRANSLUCIDEZ / HDRI
+          if (node.material) {
+            const materials = Array.isArray(node.material) ? node.material : [node.material];
+
+            materials.forEach((mat) => {
+              // Asegura que la intensidad del entorno sea completa
+              mat.envMapIntensity = 1.0;
+
+              // Si el material tiene transparencia o utiliza MeshPhysicalMaterial (efecto cristal/translucidez)
+              if (mat.transparent || mat.isMeshPhysicalMaterial) {
+                mat.depthWrite = true; // Permite escribir en el z-buffer correctamente
+                
+                // Si es un material físico avanzado con transmisión
+                if (mat.isMeshPhysicalMaterial) {
+                  mat.transmission = mat.transmission || 0.85; // Grado de refracción
+                  mat.ior = 1.4;                               // Índice de refracción
+                  mat.thickness = 0.5;                         // Grosor del vidrio
+                }
+              }
+              mat.needsUpdate = true;
+            });
+          }
         }
       });
 

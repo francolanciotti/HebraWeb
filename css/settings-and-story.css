@@ -23,7 +23,7 @@
   --br-y3: 44%;
   --br-y4: 56%;
   border-radius: var(--br-x1) var(--br-x2) var(--br-x3) var(--br-x4) / var(--br-y1) var(--br-y2) var(--br-y3) var(--br-y4);
-  background: rgba(255, 255, 255, 0.65);
+  background: rgba(255, 255, 255, 1);
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1.5px solid rgba(255, 255, 255, 0.95);

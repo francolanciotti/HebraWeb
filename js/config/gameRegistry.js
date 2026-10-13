@@ -199,7 +199,7 @@ export const LOCATIONS_REGISTRY = [
     code: 'B',
     type: 'tree',
     name: 'Plaza San Martín',
-    companionTitle: 'de Plaza San Martín', // -> "Kencalo de Plaza San Martín"
+    companionTitle: 'Plaza San Martín',
     speciesId: 'burbuja', // Especie asignada a este árbol
     zone: 'Eje Monumental • Calle 7 y 50',
     address: 'Av. 7 e/ 50 y 54',
@@ -215,7 +215,7 @@ export const LOCATIONS_REGISTRY = [
     code: 'C',
     type: 'tree',
     name: 'Plaza Rocha',
-    companionTitle: 'de Plaza Rocha', // -> "Kencalo de Plaza Rocha"
+    companionTitle: 'Plaza Rocha', // -> "Kencalo de Plaza Rocha"
     speciesId: 'gatogota', // Especie asignada a este árbol
     zone: 'Diagonal 73 y Plaza Rocha',
     address: 'Av. 7 y 60',
