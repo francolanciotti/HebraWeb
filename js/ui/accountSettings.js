@@ -33,10 +33,18 @@ export class AccountSettingsUI {
 
     this.initEvents();
     this.stateManager.subscribe(state => this.render(state));
+
+    // Si el usuario aún no vinculó su cuenta (modo invitado), abrir modal directamente para incentivar la elección de un nombre
+    const initialState = this.stateManager.getState();
+    if (!initialState.isAccountLinked) {
+      this.open(false);
+    }
   }
 
-  open() {
-    soundManager.playOutfitNav();
+  open(playSound = true) {
+    if (playSound) {
+      soundManager.playOutfitNav();
+    }
     if (this.modal) {
       this.modal.classList.remove('hidden');
       this.modal.setAttribute('aria-hidden', 'false');
@@ -124,13 +132,9 @@ export class AccountSettingsUI {
   }
 
   render(state) {
-    // Actualizar visibilidad del cartel de recomendación en modo invitado
+    // El banner de recomendación ya no se muestra porque el modal se abre directamente
     if (this.recommendBanner) {
-      if (!state.isAccountLinked && !this.isBannerDismissed) {
-        this.recommendBanner.classList.remove('hidden');
-      } else {
-        this.recommendBanner.classList.add('hidden');
-      }
+      this.recommendBanner.classList.add('hidden');
     }
 
     if (!this.accountCard) return;
@@ -246,7 +250,6 @@ export class AccountSettingsUI {
       this.accountCard.innerHTML = `
         <div class="account-card-header">
           <span class="account-badge guest">MODO INVITADO</span>
-          <span class="account-tag-recommend">RECOMENDADO</span>
         </div>
         <p class="account-card-info">
           ${this.isRestoreMode ? 

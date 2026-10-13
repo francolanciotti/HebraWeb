@@ -30,7 +30,7 @@ export class SceneManager {
     // Renderer con soporte de alpha transparente, buffer preservado para capturas y DPR optimizado
     this.renderer = new THREE.WebGLRenderer({
       antialias: false,
-      alpha: false,
+      alpha: true,
       powerPreference: 'high-performance',
       preserveDrawingBuffer: true
     });
@@ -354,8 +354,27 @@ export class SceneManager {
 
   getSnapshotDataURL() {
     try {
+      // 1. Guardamos estado actual
+      const originalBackground = this.scene.background;
+      
+      // 2. Quitamos el fondo y forzamos el color base a transparente (Alpha 0)
+      this.scene.background = null;
+      const oldClearColor = new THREE.Color();
+      this.renderer.getClearColor(oldClearColor);
+      const oldClearAlpha = this.renderer.getClearAlpha();
+      
+      this.renderer.setClearColor(0x000000, 0); // Color negro, 0% de opacidad (transparente)
+      
+      // 3. Renderizamos y capturamos
       this.renderer.render(this.scene, this.camera);
-      return this.renderer.domElement.toDataURL('image/png');
+      const dataURL = this.renderer.domElement.toDataURL('image/png');
+      
+      // 4. Restauramos el entorno visual
+      this.scene.background = originalBackground;
+      this.renderer.setClearColor(oldClearColor, oldClearAlpha);
+      this.renderer.render(this.scene, this.camera);
+      
+      return dataURL;
     } catch (e) {
       console.warn('Error al obtener captura 3D:', e);
       return null;

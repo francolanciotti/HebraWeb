@@ -54,17 +54,10 @@
   width: 100%;
   display: flex;
   align-items: center;
-  padding: 4px;
-  --br-x1: 22%;
-  --br-x2: 28%;
-  --br-y1: 68%;
-  --br-y2: 62%;
-  border-radius: var(--br-x1) var(--br-x2) / var(--br-y1) var(--br-y2);
-  background: rgba(255, 255, 255, 0.45);
-  backdrop-filter: blur(12px);
-  -webkit-backdrop-filter: blur(12px);
-  border: 1.5px solid rgba(255, 255, 255, 0.85);
-  box-shadow: 0 4px 18px rgba(17, 33, 66, 0.08);
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   box-sizing: border-box;
   flex-shrink: 0;
 }
@@ -154,27 +147,12 @@
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 6px;
-  /* blob */
-  --br-x1: 62%;
-  --br-x2: 38%;
-  --br-x3: 58%;
-  --br-x4: 42%;
-  --br-y1: 38%;
-  --br-y2: 62%;
-  --br-y3: 44%;
-  --br-y4: 56%;
-  border-radius: var(--br-x1) var(--br-x2) var(--br-x3) var(--br-x4) / var(--br-y1) var(--br-y2) var(--br-y3) var(--br-y4);
-  background: rgba(217, 217, 217, 0.2);
-  backdrop-filter: blur(10px);
-  -webkit-backdrop-filter: blur(10px);
-  border: 1px solid rgba(255, 255, 255, 0.75);
-  box-shadow:
-    0 16px 40px -8px rgba(17, 33, 66, 0.12),
-    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85);
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
   box-sizing: border-box;
-  overflow: hidden;
-  transition: border-radius 0.25s ease;
+  overflow: visible;
 }
 
 .city-map-wrapper {
@@ -183,27 +161,16 @@
   height: 100%;
   max-width: 100%;
   max-height: 100%;
-  aspect-ratio: 553 / 607;
+  aspect-ratio: 356 / 478;
   display: flex;
   align-items: center;
   justify-content: center;
   margin: auto;
-  /* blob más suave para el interior */
-  --br-x1: 58%;
-  --br-x2: 42%;
-  --br-x3: 54%;
-  --br-x4: 46%;
-  --br-y1: 40%;
-  --br-y2: 60%;
-  --br-y3: 46%;
-  --br-y4: 54%;
-  border-radius: var(--br-x1) var(--br-x2) var(--br-x3) var(--br-x4) / var(--br-y1) var(--br-y2) var(--br-y3) var(--br-y4);
-  overflow: hidden;
-  background: rgba(255, 255, 255, 0.4);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1.5px solid rgba(255, 255, 255, 0.9);
-  box-shadow: inset 0 2px 14px rgba(17, 33, 66, 0.08);
+  overflow: visible;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+  filter: drop-shadow(0 12px 28px rgba(17, 33, 66, 0.14));
 }
 
 .map-viewport-wrapper {
@@ -388,12 +355,12 @@
 
 @keyframes radar-pulse {
   0% {
-    r: 14;
+    r: 10;
     opacity: 0.95;
   }
 
   100% {
-    r: 44;
+    r: 28;
     opacity: 0;
   }
 }

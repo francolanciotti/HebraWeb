@@ -59,7 +59,7 @@
   <div class="app-organic-bg">
     <img src="assets/bg.png" alt="" class="bg-png-full">
     <img src="assets/file.svg" alt="" class="bg-vector-full">
-    
+
   </div>
 
   <!-- VENTANA DE BIENVENIDA TRANSMEDIA (IN-PLACE FADE SYSTEM) -->
@@ -112,7 +112,6 @@
       <div class="recommend-banner-content">
         <div class="recommend-badge-row">
           <span class="recommend-badge-spark">✦</span>
-          <span class="recommend-badge-text">RECOMENDADO</span>
         </div>
         <p>Crea tu <strong>nombre de usuario</strong> para guardar tus Kencalos y no perder tu progreso.</p>
       </div>
@@ -182,8 +181,14 @@
       <section id="view-companion" class="view-section">
         <!-- Pantalla si Kencalo no fue capturado aún -->
         <div id="companion-unclaimed-hint" class="unclaimed-card glass-card">
-          <span class="unclaimed-icon">🔍</span>
-          <h2>Todavia no capturaste ningun Kencalo</h2>
+          <div class="unclaimed-icon-wrapper">
+            <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#112142" stroke-width="2.2"
+              stroke-linecap="round" stroke-linejoin="round">
+              <circle cx="11" cy="11" r="7" />
+              <line x1="21" y1="21" x2="16.65" y2="16.65" />
+            </svg>
+          </div>
+          <h2>Todavía no capturaste ningún Kencalo</h2>
           <p>Explora la ciudad para encontrar y capturar un Kencalo.</p>
           <button id="btn-go-ar" class="btn-dark-pill">Ir a Cámara</button>
         </div>
@@ -245,7 +250,7 @@
         <div class="transmedia-screen">
 
           <!-- Cabecera del Mapa: Acceso Principal al Traductor de Glifos -->
-          <div class="map-hud-header glass-card">
+          <div class="map-hud-header">
             <button id="btn-open-translator" class="btn-glyph-header-full" type="button"
               title="Abrir Traductor de Glifos">
               <h2 class="glyph-header-title">Traductor de Glifos</h2>
@@ -254,7 +259,7 @@
           </div>
 
           <!-- Escenario del Mapa Vectorial (Pantalla Completa) -->
-          <div class="map-stage glass-card">
+          <div class="map-stage">
             <div id="city-map-container" class="city-map-wrapper">
               <!-- SVG generado por CityMapUI -->
             </div>

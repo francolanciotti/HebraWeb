@@ -10,33 +10,43 @@
   height: 100%;
 }
 
-/* Unclaimed State Card (Figma Glass Effect) */
+/* Unclaimed State Card (Estética orgánica blob idéntica en lenguaje a ar-permission-card) */
 .unclaimed-card {
   position: absolute;
   top: 50%;
   left: 50%;
   transform: translate(-50%, -50%);
-  width: calc(100% - 40px);
-  max-width: 380px;
-  padding: 32px 24px;
-  border-radius: var(--radius-lg);
+  width: 90%;
+  max-width: 360px;
+  padding: 36px 26px;
   display: flex;
   flex-direction: column;
   align-items: center;
+  justify-content: center;
   text-align: center;
-  gap: 12px;
-  z-index: 20;
-  pointer-events: auto;
-  background: rgba(217, 217, 217, 0.2);
+  gap: 14px;
+  /* Blob orgánico asimétrico alternativo al de ar-permission-card */
+  --br-x1: 68%;
+  --br-x2: 42%;
+  --br-x3: 75%;
+  --br-x4: 52%;
+  --br-y1: 35%;
+  --br-y2: 78%;
+  --br-y3: 58%;
+  --br-y4: 85%;
+  border-radius: var(--br-x1) var(--br-x2) var(--br-x3) var(--br-x4) / var(--br-y1) var(--br-y2) var(--br-y3) var(--br-y4);
+  background: var(--primary-bg);
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.65);
-  border-top-color: rgba(255, 255, 255, 0.9);
-  border-left-color: rgba(255, 255, 255, 0.85);
+  border: 2px solid var(--navy-dark);
   box-shadow:
     0 16px 40px -8px rgba(17, 33, 66, 0.14),
     inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
     inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
+  z-index: 20;
+  pointer-events: auto;
+  will-change: transform;
+  transition: opacity 0.4s cubic-bezier(0.16, 1, 0.3, 1), transform 0.4s cubic-bezier(0.16, 1, 0.3, 1), visibility 0.4s ease;
 }
 
 .unclaimed-card.hidden,
@@ -44,8 +54,17 @@
   display: none !important;
 }
 
+.unclaimed-icon-wrapper,
 .unclaimed-icon {
-  font-size: 2.5rem;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: rgba(107, 201, 217, 0.2);
+  border: 1px solid rgba(107, 201, 217, 0.4);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 24px rgba(107, 201, 217, 0.25);
 }
 
 .unclaimed-card h2 {
@@ -53,11 +72,14 @@
   font-size: 1.4rem;
   font-weight: 400;
   color: var(--accent-2);
+  margin: 0;
 }
 
 .unclaimed-card p {
-  font-size: 0.88rem;
+  font-size: 0.9rem;
   color: var(--text-dark);
+  line-height: 1.45;
+  margin: 0;
 }
 
 .companion-hud {

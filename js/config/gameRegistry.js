@@ -188,7 +188,7 @@ export const LOCATIONS_REGISTRY = [
     zone: 'Paseo del Bosque • La Plata',
     address: 'Av. Iraola y 120',
     coords: "34°54'34\"S 57°56'02\"W",
-    mapCoords: { x: 435, y: 145 }, // Coordenadas en el mapa SVG 525x525
+    mapCoords: { x: 270, y: 185 }, // Coordenadas en el mapa SVG 356x478 (El Bosque)
     glyphSequence: [1, 2, 3, 4],
     glyphHint: 'Donde el verde se abre a los astros',
     description: '',
@@ -204,7 +204,7 @@ export const LOCATIONS_REGISTRY = [
     zone: 'Eje Monumental • Calle 7 y 50',
     address: 'Av. 7 e/ 50 y 54',
     coords: "34°54'57\"S 57°56'48\"W",
-    mapCoords: { x: 125, y: 230 }, // Coordenadas en el mapa SVG 525x525
+    mapCoords: { x: 89, y: 231 }, // Coordenadas en el mapa SVG 356x478 (Plaza San Martín)
     glyphSequence: [5, 6, 7, 8],
     glyphHint: 'Bajo las sombras del eje monumental',
     description: '',
@@ -220,7 +220,7 @@ export const LOCATIONS_REGISTRY = [
     zone: 'Diagonal 73 y Plaza Rocha',
     address: 'Av. 7 y 60',
     coords: "34°55'42\"S 57°56'30\"W",
-    mapCoords: { x: 262.5, y: 393.5 }, // Coordenadas en el mapa SVG 525x525
+    mapCoords: { x: 189, y: 338 }, // Coordenadas en el mapa SVG 356x478 (Plaza Rocha)
     glyphSequence: [9, 10, 11, 12],
     glyphHint: 'La diagonal que converge hacia el sur',
     description: '',
