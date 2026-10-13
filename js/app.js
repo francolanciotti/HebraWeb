@@ -14,6 +14,7 @@ import { AccountSettingsUI } from './ui/accountSettings.js';
 import { CaptureStoryUI } from './ui/captureModal.js';
 import { InkBleedCanvas } from './fx/inkBleed.js';
 import { soundManager } from './audio/audioManager.js';
+import { HebraNavUI } from './ui/hebraNav.js';
 import { getKencaloFullName, getSpeciesForTree, getLocationById } from './config/gameRegistry.js';
 
 // Configuración configurable de la Pantalla de Bienvenida (Splash Screen)
@@ -546,6 +547,16 @@ export class KencaloApp {
   }
 
   initNavigation() {
+    // Inicializar Navegación Gestual "Tirar de la Hebra" (MVP)
+    const navRoot = document.getElementById('hebra-nav-root');
+    this.hebraNav = new HebraNavUI({
+      container: navRoot,
+      currentView: this.currentView,
+      onSelectView: (targetView) => {
+        this.switchView(targetView);
+      }
+    });
+
     const navItems = document.querySelectorAll('.nav-item');
     navItems.forEach(item => {
       item.addEventListener('click', () => {
@@ -563,6 +574,11 @@ export class KencaloApp {
     const previousView = this.currentView;
     this.currentView = viewName;
 
+    // Sincronizar estado en la Hebra de Navegación lateral
+    if (this.hebraNav) {
+      this.hebraNav.setActiveView(viewName);
+    }
+
     // Si salimos de la vista AR sin haber capturado a Kencalo, desvincular del anclaje de cámara AR
     if (previousView === 'ar' && viewName !== 'ar') {
       const state = stateManager.getState();
@@ -576,7 +592,7 @@ export class KencaloApp {
       }
     }
 
-    // Actualizar items de la barra de navegación
+    // Actualizar items de la barra de navegación (legacy)
     document.querySelectorAll('.nav-item').forEach(item => {
       if (item.dataset.view === viewName) {
         item.classList.add('active');

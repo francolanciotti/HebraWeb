@@ -13,7 +13,7 @@
   --primary-purple: #E7E2F4;
   --secondary-cyan: #EAF9FC;
   --secondary-yellow: #F8F8E7;
-  
+
   --navy-dark: #112142;
   --purple-accent: #422E8F;
   --cyan-accent: #6BC9D9;
@@ -22,46 +22,146 @@
   --bg-light: #F5F6FA;
   --bg-card: rgba(245, 246, 250, 0.78);
   --bg-card-border: rgba(255, 255, 255, 0.85);
-  
+
   --text-dark: #112142;
   --text-purple: #422E8F;
   --text-muted: rgba(17, 33, 66, 0.75);
-  
+
   /* Specified Typography */
   --font-caoutchouc: 'Caoutchouc', sans-serif;
   --font-epilogue: 'Epilogue', sans-serif;
   --font-heading: 'Caoutchouc', sans-serif;
   --font-body: 'Epilogue', sans-serif;
-  
-  /* Layout Spacing */
-  --nav-height: 72px;
+
+  /* Layout Spacing (Hebra Lateral Nav MVP) */
+  --nav-height: 100px;
   --radius-xl: 32px;
   --radius-lg: 24px;
   --radius-md: 18px;
   --radius-sm: 12px;
   --radius-pill: 50px;
-  
+
   /* Safe Area for Mobile Notch */
   --sat: env(safe-area-inset-top, 0px);
   --sab: env(safe-area-inset-bottom, 0px);
 }
 
 /* Base Typography (Celular por defecto) */
-h1, .h1-title {
+h1,
+.h1-title {
   font-family: var(--font-caoutchouc);
   font-size: 64px;
   font-weight: 400;
   line-height: 1.05;
 }
 
-h2, .h2-title {
+h2,
+.h2-title {
   font-family: var(--font-caoutchouc);
   font-size: 24px;
   font-weight: 400;
   line-height: 1.2;
 }
 
-h3, .h3-title {
+/* --------------------------------------------------------------------------
+   BLOB EFFECTS - Border-radius con 8 valores (responsive)
+   Sintaxis: X1 X2 X3 X4 / Y1 Y2 Y3 Y4
+   -------------------------------------------------------------------------- */
+
+.blob {
+  --br-x1: 60%;
+  --br-x2: 40%;
+  --br-x3: 65%;
+  --br-x4: 35%;
+  --br-y1: 45%;
+  --br-y2: 55%;
+  --br-y3: 48%;
+  --br-y4: 52%;
+  border-radius: var(--br-x1) var(--br-x2) var(--br-x3) var(--br-x4) / var(--br-y1) var(--br-y2) var(--br-y3) var(--br-y4);
+  overflow: hidden; /* importante para blobs con contenido interno */
+  isolation: isolate; /* evita artefactos con blur */
+  will-change: border-radius;
+}
+
+.blob--settings {
+  --br-x1: 68%;
+  --br-x2: 32%;
+  --br-x3: 58%;
+  --br-x4: 42%;
+  --br-y1: 46%;
+  --br-y2: 54%;
+  --br-y3: 44%;
+  --br-y4: 56%;
+}
+
+.blob--wardrobe {
+  --br-x1: 70%;
+  --br-x2: 30%;
+  --br-x3: 62%;
+  --br-x4: 38%;
+  --br-y1: 48%;
+  --br-y2: 52%;
+  --br-y3: 40%;
+  --br-y4: 60%;
+}
+
+.blob--kencalo {
+  --br-x1: 66%;
+  --br-x2: 34%;
+  --br-x3: 60%;
+  --br-x4: 40%;
+  --br-y1: 42%;
+  --br-y2: 58%;
+  --br-y3: 50%;
+  --br-y4: 50%;
+}
+
+.blob--share {
+  --br-x1: 64%;
+  --br-x2: 36%;
+  --br-x3: 70%;
+  --br-x4: 30%;
+  --br-y1: 52%;
+  --br-y2: 48%;
+  --br-y3: 46%;
+  --br-y4: 54%;
+}
+
+.blob--glyph {
+  --br-x1: 58%;
+  --br-x2: 42%;
+  --br-x3: 66%;
+  --br-x4: 34%;
+  --br-y1: 40%;
+  --br-y2: 60%;
+  --br-y3: 38%;
+  --br-y4: 62%;
+}
+
+.blob--map {
+  --br-x1: 62%;
+  --br-x2: 38%;
+  --br-x3: 58%;
+  --br-x4: 42%;
+  --br-y1: 38%;
+  --br-y2: 62%;
+  --br-y3: 44%;
+  --br-y4: 56%;
+}
+
+/* Suaviza el blob en pantallas muy pequeñas */
+@media (max-width: 480px) {
+  .blob,
+  [class*="blob--"] {
+    border-radius: clamp(48%, 6vw + 40%, 65%) clamp(32%, 4vw + 30%, 52%)
+      clamp(46%, 6vw + 38%, 62%) clamp(34%, 4vw + 32%, 54%) /
+      clamp(38%, 5vw + 36%, 58%) clamp(42%, 5vw + 40%, 62%)
+      clamp(36%, 5vw + 34%, 56%) clamp(44%, 5vw + 42%, 60%);
+  }
+}
+
+h3,
+.h3-title {
   font-family: var(--font-epilogue);
   font-size: 15px;
   font-weight: 600;
@@ -69,14 +169,16 @@ h3, .h3-title {
   line-height: 1.3;
 }
 
-h4, .h4-title {
+h4,
+.h4-title {
   font-family: var(--font-epilogue);
   font-size: 16px;
   font-weight: 500;
   line-height: 1.3;
 }
 
-p, .p-body {
+p,
+.p-body {
   font-family: var(--font-epilogue);
   font-size: 10px;
   font-weight: 400;
@@ -85,29 +187,37 @@ p, .p-body {
 
 /* Adaptación de Tipografía para PC / Pantallas Mayores */
 @media (min-width: 769px) {
-  h1, .h1-title {
+
+  h1,
+  .h1-title {
     font-size: 110px;
   }
 
-  h2, .h2-title {
+  h2,
+  .h2-title {
     font-size: 42px;
   }
 
-  h3, .h3-title {
+  h3,
+  .h3-title {
     font-size: 22px;
   }
 
-  h4, .h4-title {
+  h4,
+  .h4-title {
     font-size: 26px;
   }
 
-  p, .p-body {
+  p,
+  .p-body {
     font-size: 15px;
   }
 }
 
 /* Reset & Box Sizing */
-*, *::before, *::after {
+*,
+*::before,
+*::after {
   box-sizing: border-box;
   margin: 0;
   padding: 0;
@@ -115,7 +225,8 @@ p, .p-body {
   user-select: none;
 }
 
-html, body {
+html,
+body {
   width: 100%;
   height: 100%;
   overflow: hidden;
@@ -180,7 +291,7 @@ html, body {
   border: 1px solid rgba(255, 255, 255, 0.65);
   border-top-color: rgba(255, 255, 255, 0.9);
   border-left-color: rgba(255, 255, 255, 0.85);
-  box-shadow: 
+  box-shadow:
     0 16px 40px -8px rgba(17, 33, 66, 0.14),
     inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
     inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
@@ -280,8 +391,9 @@ html, body {
   pointer-events: auto;
 }
 
-/* Bottom Navigation (Figma Style) */
+/* Bottom Navigation (Legacy - Oculto en favor de HebraNav lateral) */
 .bottom-nav {
+  display: none !important;
   position: absolute;
   bottom: max(16px, var(--sab));
   left: 14px;
@@ -327,7 +439,7 @@ html, body {
   border-top-color: rgba(255, 255, 255, 0.8);
   border-left-color: rgba(255, 255, 255, 0.7);
   border-radius: 18px;
-  box-shadow: 
+  box-shadow:
     0 8px 24px -4px rgba(0, 0, 0, 0.3),
     inset 1px 1px 2px 0 rgba(255, 255, 255, 0.8),
     inset -1px -1px 2px 0 rgba(0, 0, 0, 0.2);
@@ -409,8 +521,17 @@ button {
 }
 
 @keyframes glow-pulse-anim {
-  0%, 100% { box-shadow: 0 0 20px rgba(107, 201, 217, 0.4); transform: scale(1); }
-  50% { box-shadow: 0 0 35px rgba(66, 46, 143, 0.6); transform: scale(1.03); }
+
+  0%,
+  100% {
+    box-shadow: 0 0 20px rgba(107, 201, 217, 0.4);
+    transform: scale(1);
+  }
+
+  50% {
+    box-shadow: 0 0 35px rgba(66, 46, 143, 0.6);
+    transform: scale(1.03);
+  }
 }
 
 .btn-glow-pulse:active {
@@ -469,8 +590,15 @@ button {
 }
 
 @keyframes toast-in {
-  from { opacity: 0; transform: translateY(20px); }
-  to { opacity: 1; transform: translateY(0); }
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
 }
 
 /* Global Hidden Utility */

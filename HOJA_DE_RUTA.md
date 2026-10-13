@@ -111,4 +111,19 @@ Este documento establece la hoja de ruta oficial dividida en **6 Fases de Desarr
 - [ ] **Eventos Temporales en Vivo:** Marcadores AR especiales por tiempo limitado para desbloquear atuendos exclusivos.
 
 ---
+
+## 🟡 Fase 7: Navegación Gestual Orgánica — "Tirar de la Hebra" (MVP EN CURSO)
+> **Estado:** MVP Implementado y en fase de pruebas táctiles
+
+- [x] **Retiro de la Barra Convencional:** Ocultamiento de la navegación inferior fija tradicional (`.bottom-nav`) y liberación del 100% de la altura vertical de pantalla (`--nav-height: 0px`).
+- [x] **Arquitectura con Motor WebGL InkBleed (`hebraNav.js`, `hebra-strand.svg` y `hebra-nav.css`):**
+  - Geometría vectorial continua con masa biológica, cavidades y lagunas orgánicas (`assets/hebra-strand.svg`) idéntica a la anatomía de `file.svg` (color `#F5F6FA`, 100% visible en reposo).
+  - Eliminación total de resplandores neón, cápsulas de texto y círculos artificiales de selección.
+  - Conexión directa con el motor de sangrado de tinta `InkBleedCanvas`: el hilo sangra y reacciona con física fluida en WebGL bajo el contacto del usuario.
+- [x] **Mecánica Gestual Elástica Pura:**
+  - **Eje Y (Exploración de Nodos):** Navegación intuitiva por altura entre Cámara AR (arriba), Mi Kencalo (centro) y Hebra (abajo) sin interferir en el contenido.
+  - **Eje X (Confirmación por Tensión):** Tirar hacia el centro de la pantalla elonga físicamente el filamento; al superar el umbral y soltar, confirma el viaje con un impulso de tinta.
+  - **Cancelación y Rebote:** Retorno con física de muelle amortiguada al soltar sin tracción.
+
+---
 *Hoja de Ruta oficial para el desarrollo del proyecto WebHebra.*

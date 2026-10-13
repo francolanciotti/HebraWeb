@@ -41,7 +41,7 @@
   pointer-events: none;
 }
 
-.ar-overlay-ui > * {
+.ar-overlay-ui>* {
   pointer-events: auto;
 }
 
@@ -115,9 +115,19 @@
 }
 
 @keyframes scan-beam {
-  0% { top: 6%; opacity: 0.4; }
-  50% { opacity: 1; }
-  100% { top: 92%; opacity: 0.4; }
+  0% {
+    top: 6%;
+    opacity: 0.4;
+  }
+
+  50% {
+    opacity: 1;
+  }
+
+  100% {
+    top: 92%;
+    opacity: 0.4;
+  }
 }
 
 /* Indicación de Instrucción con Alto Contraste y Vidrio Glass */
@@ -216,7 +226,7 @@
   backdrop-filter: blur(8px);
   -webkit-backdrop-filter: blur(8px);
   border: 2px solid var(--navy-dark);
-  box-shadow: 
+  box-shadow:
     0 16px 40px -8px rgba(17, 33, 66, 0.14),
     inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
     inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);

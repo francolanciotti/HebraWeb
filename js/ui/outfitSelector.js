@@ -127,7 +127,7 @@ export class OutfitSelectorUI {
 
       const btn = document.createElement('button');
       btn.className = `outfit-icon-btn ${isActive ? 'active' : ''} ${!isUnlocked ? 'locked' : ''}`;
-      btn.title = isUnlocked ? outfit.name : `${outfit.name} (Bloqueado - Árbol B)`;
+      btn.title = isUnlocked ? outfit.name : `${outfit.name} (Bloqueado - Evento especial)`;
       btn.innerHTML = outfit.svg;
 
       if (isUnlocked) {
@@ -138,16 +138,8 @@ export class OutfitSelectorUI {
           this.kencaloModel.setOutfit(outfit.id);
           this.render();
         });
-      } else {
-        btn.addEventListener('click', (e) => {
-          e.stopPropagation();
-          soundManager.playOutfitNav();
-          this.stateManager.unlockSpecialEventOutfits();
-          this.stateManager.setOutfit(outfit.id, treeId);
-          this.kencaloModel.setOutfit(outfit.id);
-          this.render();
-        });
       }
+      // Locked outfits have no click handler - they remain non-interactive (cursor: not-allowed via CSS)
 
       this.gridEl.appendChild(btn);
     });

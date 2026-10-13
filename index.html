@@ -51,6 +51,7 @@
   <link rel="stylesheet" href="css/transmedia.css">
   <link rel="stylesheet" href="css/ink-bleed.css">
   <link rel="stylesheet" href="css/settings-and-story.css">
+  <link rel="stylesheet" href="css/hebra-nav.css">
 </head>
 
 <body>
@@ -140,7 +141,7 @@
               </svg>
             </div>
             <h3>Realidad Aumentada</h3>
-            <p>Activa tu cámara para escanear los árboles y descubrir a Hebra en tu entorno.</p>
+            <p>Activa tu cámara para escanear los fragmentos de Hebra en las ubicaciones indicadas en el mapa.</p>
             <button id="btn-request-camera" class="btn-dark-pill">
               Activar cámara
             </button>
@@ -264,7 +265,7 @@
 
           <!-- Pie Enigmático & Enlace Instagram -->
           <div class="map-hud-footer">
-            <span class="map-lore-quote">«Tres señales ocultas laten en la geometría urbana.»</span>
+            <span class="map-lore-quote">«Encontra los glifos en nuestro Instagram.»</span>
             <a href="https://www.instagram.com/hebra.tdm3" target="_blank" rel="noopener noreferrer"
               class="link-instagram-pill" title="Instagram @hebra.tdm3">
               <svg viewBox="0 0 24 24" width="13" height="13" fill="currentColor">
@@ -322,9 +323,10 @@
 
     </main>
 
+    <!-- NAVEGACIÓN LATERAL HEBRA (PULL THE THREAD MVP) -->
+    <div id="hebra-nav-root" class="hebra-nav-container"></div>
 
-
-    <!-- NAVEGACIÓN INFERIOR (FIGMA DESIGN) -->
+    <!-- NAVEGACIÓN INFERIOR (LEGACY / HIDDEN) -->
     <nav class="bottom-nav">
       <button class="nav-item active" data-view="ar">
         <svg class="nav-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="currentColor"

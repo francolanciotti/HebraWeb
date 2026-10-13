@@ -26,6 +26,8 @@ export class InkBleedCanvas {
     this.positionXDesktop = options.positionXDesktop;
     this.positionYDesktop = options.positionYDesktop;
     this.scaleMultiplier = options.scaleMultiplier !== undefined ? options.scaleMultiplier : 1.0;
+    this.fitMode = options.fitMode || null;
+    this.customDraw = options.customDraw || null;
     this.imgLoaded = false;
 
     // Parámetros de física y distorsión fluida
@@ -93,7 +95,8 @@ export class InkBleedCanvas {
     const rect = this.container.getBoundingClientRect();
     const dpr = Math.min(window.devicePixelRatio || 1, 1.25);
 
-    this.width = Math.max(Math.floor(rect.width), 320);
+    const minW = (this.fitMode === 'stretchHeight') ? 40 : 320;
+    this.width = Math.max(Math.floor(rect.width), minW);
     this.height = Math.max(Math.floor(rect.height), 120);
 
     this.canvas.width = Math.floor(this.width * dpr);
@@ -121,7 +124,11 @@ export class InkBleedCanvas {
     this.offCtx.imageSmoothingEnabled = true;
     this.offCtx.imageSmoothingQuality = 'high';
 
-    // 1. Renderizado de imagen/vector SVG con algoritmo idéntico a CSS background-position y background-size
+    // 0. Renderizado personalizado procedural (utilizado por HebraNav)
+    if (this.customDraw) {
+      this.customDraw(this.offCtx, w, h);
+      return;
+    }
     if (this.imageSrc && this.imgLoaded && this.img) {
       const isMobile = window.innerWidth <= 768;
       const imgW = this.img.naturalWidth || 723;
@@ -130,7 +137,19 @@ export class InkBleedCanvas {
       let drawW, drawH, drawX, drawY;
       let posX, posY;
 
-      if (isMobile) {
+      if (this.fitMode === 'stretchHeight') {
+        // Mantiene altura completa 100% y alinea hacia la derecha (ideal para barra lateral Hebra)
+        drawH = h;
+        drawW = (imgW / imgH) * h * this.scaleMultiplier;
+        drawX = (w - drawW) + (this.positionX !== undefined ? (w * (this.positionX - 0.5)) : 0);
+        drawY = 0;
+      } else if (this.fitMode === 'contain') {
+        const scale = Math.min(w / imgW, h / imgH) * this.scaleMultiplier;
+        drawW = imgW * scale;
+        drawH = imgH * scale;
+        drawX = (w - drawW) * 0.5;
+        drawY = (h - drawH) * 0.5;
+      } else if (isMobile) {
         // En celular: background-size: 180%, background-position: 45% 80%
         posX = this.positionXMobile !== undefined ? this.positionXMobile : (this.positionX !== undefined ? this.positionX : 0.45);
         posY = this.positionYMobile !== undefined ? this.positionYMobile : (this.positionY !== undefined ? this.positionY : 0.80);
@@ -458,6 +477,27 @@ export class InkBleedCanvas {
     gl.clear(gl.COLOR_BUFFER_BIT);
 
     gl.drawArrays(gl.TRIANGLES, 0, 6);
+  }
+
+  setInteractionState(isInteracting, volatility = null, mouseX = null, mouseY = null) {
+    this.isHovered = isInteracting;
+    if (volatility !== null) {
+      this.targetVolatility = volatility;
+      // Impulso inicial para que no tarde en verse el sangrado de tinta
+      if (isInteracting && this.volatility < 0.3) {
+        this.volatility = Math.max(this.volatility, volatility * 0.6);
+      }
+    } else if (!isInteracting) {
+      this.targetVolatility = this.baseVolatility;
+    }
+    if (mouseX !== null) {
+      this.targetMouse.x = mouseX;
+      this.mouse.x = mouseX;
+    }
+    if (mouseY !== null) {
+      this.targetMouse.y = mouseY;
+      this.mouse.y = mouseY;
+    }
   }
 
   setText(newText) {
