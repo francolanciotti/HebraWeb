@@ -96,7 +96,7 @@
   padding-left: 16px;
   padding-right: 16px;
   pointer-events: none;
-  z-index: 10;
+  z-index: 55; /* Prioridad superior a la hebra de navegación */
 }
 
 .view-section.active .companion-hud>* {

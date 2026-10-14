@@ -408,70 +408,7 @@ body {
   pointer-events: auto;
 }
 
-/* Bottom Navigation (Legacy - Oculto en favor de HebraNav lateral) */
-.bottom-nav {
-  display: none !important;
-  position: absolute;
-  bottom: max(16px, var(--sab));
-  left: 14px;
-  right: 14px;
-  height: var(--nav-height);
-  background: var(--navy-dark);
-  border-radius: 24px;
-  display: flex;
-  align-items: center;
-  justify-content: space-around;
-  padding: 6px 8px;
-  z-index: 50;
-  pointer-events: auto;
-  box-shadow: 0 12px 32px rgba(17, 33, 66, 0.3);
-}
 
-.nav-item {
-  background: none;
-  border: none;
-  outline: none;
-  display: flex;
-  flex-direction: column;
-  align-items: center;
-  justify-content: center;
-  gap: 4px;
-  color: rgba(245, 246, 250, 0.7);
-  cursor: pointer;
-  padding: 8px 12px;
-  border-radius: 18px;
-  transition: all 0.25s ease;
-  flex: 1;
-  height: 100%;
-  pointer-events: auto;
-}
-
-/* EFECTO GLASS EXACTO FIGMA EN EL BOTÓN SELECCIONADO (Light -45º 80%, Refract 21, Depth 73, Frost 8) */
-.nav-item.active {
-  color: #FFFFFF;
-  background: linear-gradient(135deg, rgba(255, 255, 255, 0.32) 0%, rgba(255, 255, 255, 0.1) 100%);
-  backdrop-filter: blur(8px);
-  -webkit-backdrop-filter: blur(8px);
-  border: 1px solid rgba(255, 255, 255, 0.55);
-  border-top-color: rgba(255, 255, 255, 0.8);
-  border-left-color: rgba(255, 255, 255, 0.7);
-  border-radius: 18px;
-  box-shadow:
-    0 8px 24px -4px rgba(0, 0, 0, 0.3),
-    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.8),
-    inset -1px -1px 2px 0 rgba(0, 0, 0, 0.2);
-}
-
-.nav-item.active .nav-svg {
-  stroke: #FFFFFF;
-  fill: none;
-}
-
-.nav-label {
-  font-size: 11px;
-  font-weight: 500;
-  font-family: var(--font-epilogue);
-}
 
 /* Buttons System (Dark Navy Pill - Figma) */
 button {

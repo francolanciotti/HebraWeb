@@ -515,6 +515,8 @@
    -------------------------------------------------------------------------- */
 
 .map-hud-footer {
+  position: relative;
+  z-index: 55; /* Prioridad de clics sobre la hebra inferior */
   display: flex;
   align-items: center;
   justify-content: space-between;

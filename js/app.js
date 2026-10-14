@@ -186,6 +186,13 @@ export class KencaloApp {
             this.inkCanvasVector.pause();
           }
           isTransitioning = false;
+
+          // Disparar la ondulación orgánica del hilo de navegación al entrar a la app
+          if (this.hebraNav && typeof this.hebraNav.triggerBreatheWave === 'function') {
+            setTimeout(() => {
+              this.hebraNav.triggerBreatheWave();
+            }, 350);
+          }
         }, 700);
       }, 800);
     };
@@ -546,7 +553,7 @@ export class KencaloApp {
   }
 
   initNavigation() {
-    // Inicializar Navegación Gestual "Tirar de la Hebra" (MVP)
+    // Inicializar Navegación Gestual Orgánica Hebra
     const navRoot = document.getElementById('hebra-nav-root');
     this.hebraNav = new HebraNavUI({
       container: navRoot,
@@ -554,14 +561,6 @@ export class KencaloApp {
       onSelectView: (targetView) => {
         this.switchView(targetView);
       }
-    });
-
-    const navItems = document.querySelectorAll('.nav-item');
-    navItems.forEach(item => {
-      item.addEventListener('click', () => {
-        const targetView = item.dataset.view;
-        this.switchView(targetView);
-      });
     });
   }
 
