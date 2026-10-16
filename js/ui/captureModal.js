@@ -134,7 +134,7 @@ export class CaptureStoryUI {
         ctx.shadowColor = 'rgba(0, 0, 0, 0.12)';
         ctx.shadowBlur = 24;
         ctx.shadowOffsetY = 8;
-        
+
         // Dibuja el SVG (ajusta las coordenadas y el tamaño si es necesario)
         ctx.drawImage(svgImg, 0, 0, size, size);
         ctx.restore();
@@ -145,12 +145,12 @@ export class CaptureStoryUI {
         resolve(); // Resolvemos igual para no bloquear la app
       };
       // REEMPLAZA ESTO CON LA RUTA REAL A TU ARCHIVO SVG
-      svgImg.src = 'assets/compartir_blob.svg'; 
+      svgImg.src = 'assets/compartir_blob.svg';
     });
 
     // 2. Textos (Arriba a la Izquierda)
     ctx.textAlign = 'left';
-    
+
     ctx.fillStyle = '#0f2446'; // Azul oscuro
     ctx.font = '700 42px "Epilogue", "Inter", sans-serif';
     ctx.fillText(companionDisplayName, 120, 170);
@@ -185,41 +185,20 @@ export class CaptureStoryUI {
       const img = new Image();
       img.onload = () => {
         // 1. Escalar más grande. 
-        const scale = Math.max(boxW / img.width, boxH / img.height) * 1.5; 
+        const scale = Math.max(boxW / img.width, boxH / img.height) * 1.5;
         const drawWidth = img.width * scale;
         const drawHeight = img.height * scale;
-        
+
         // 2. Centramos en X, y le restamos valor en Y para subirlo.
         const drawX = boxX + (boxW - drawWidth) / 2;
         const drawY = boxY + (boxH - drawHeight) / 2 - 60; // El -60 lo eleva
 
-        // 3. Sombra de contacto ambiental (Ground Ambient Shadow)
+        // Sombra proyectada natural sobre la silueta del Kencalo (Drop Shadow)
         ctx.save();
-        const footCenterX = drawX + drawWidth / 2;
-        const footCenterY = drawY + drawHeight * 0.88;
-        const shadowRadiusX = drawWidth * 0.28;
-        const shadowRadiusY = drawWidth * 0.08;
-
-        const contactGrad = ctx.createRadialGradient(
-          footCenterX, footCenterY, 4,
-          footCenterX, footCenterY, shadowRadiusX
-        );
-        contactGrad.addColorStop(0, 'rgba(15, 36, 70, 0.40)');
-        contactGrad.addColorStop(0.5, 'rgba(15, 36, 70, 0.16)');
-        contactGrad.addColorStop(1, 'rgba(15, 36, 70, 0)');
-
-        ctx.fillStyle = contactGrad;
-        ctx.beginPath();
-        ctx.ellipse(footCenterX, footCenterY, shadowRadiusX, shadowRadiusY, 0, 0, Math.PI * 2);
-        ctx.fill();
-        ctx.restore();
-
-        // 4. Sombra proyectada volumétrica sobre la silueta del Kencalo (Drop Shadow)
-        ctx.save();
-        ctx.shadowColor = 'rgba(15, 36, 70, 0.35)';
-        ctx.shadowBlur = 30;
+        ctx.shadowColor = 'rgba(15, 36, 70, 0.58)';
+        ctx.shadowBlur = 24;
         ctx.shadowOffsetX = 0;
-        ctx.shadowOffsetY = 16;
+        ctx.shadowOffsetY = 12;
 
         ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
         ctx.restore();
