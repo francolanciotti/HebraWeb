@@ -41,11 +41,18 @@ export class KencaloSwitcherUI {
   }
 
   switch(direction) {
+    if (this.isSwitching) return;
+
     const list = this.stateManager.getPossessedKencalos();
     if (list.length <= 1) return;
 
+    this.isSwitching = true;
+
     const nextKencalo = this.stateManager.switchKencalo(direction);
-    if (!nextKencalo) return;
+    if (!nextKencalo) {
+      this.isSwitching = false;
+      return;
+    }
 
     const outfit = this.stateManager.getOutfitForKencalo(nextKencalo.treeId);
 
@@ -55,22 +62,31 @@ export class KencaloSwitcherUI {
         this.kencaloModel.loadSpecies(nextKencalo.speciesId, nextKencalo.texture, () => {
           this.kencaloModel.setOutfit(outfit);
           this.kencaloModel.triggerTouchReaction();
+          this.isSwitching = false;
         });
       } else {
         this.kencaloModel.setTexture(nextKencalo.texture);
         this.kencaloModel.setOutfit(outfit);
         this.kencaloModel.triggerTouchReaction();
+        this.isSwitching = false;
       }
+    } else {
+      this.isSwitching = false;
     }
-    this.render();
+
+    // Actualizar datos de UI de la píldora inmediatamente
+    this.renderUIOnly();
+
+    // Desbloquear por seguridad si la carga toma más tiempo
+    setTimeout(() => {
+      this.isSwitching = false;
+    }, 450);
   }
 
-  render() {
+  renderUIOnly() {
     if (!this.capsuleEl) return;
 
     const list = this.stateManager.getPossessedKencalos();
-
-    // Si aún no capturó ningún Kencalo, ocultar la cápsula
     if (list.length === 0) {
       this.capsuleEl.classList.add('hidden');
       return;
@@ -82,7 +98,37 @@ export class KencaloSwitcherUI {
     let currentIndex = list.findIndex(k => k.treeId === current.treeId);
     if (currentIndex < 0) currentIndex = 0;
 
-    // Sincronizar especie, textura e indumento en el modelo 3D si difiere
+    if (this.nameEl) {
+      this.nameEl.textContent = current.fullName || `Kencalo ${current.companionTitle || current.name}`;
+    }
+
+    if (this.tagEl) {
+      this.tagEl.textContent = `Compañero • ${currentIndex + 1} de ${list.length}`;
+    }
+
+    const hasMultiple = list.length > 1;
+    if (this.btnPrev) {
+      this.btnPrev.disabled = !hasMultiple;
+      this.btnPrev.classList.toggle('disabled', !hasMultiple);
+    }
+    if (this.btnNext) {
+      this.btnNext.disabled = !hasMultiple;
+      this.btnNext.classList.toggle('disabled', !hasMultiple);
+    }
+  }
+
+  render() {
+    this.renderUIOnly();
+
+    // Si ya hay un cambio en proceso o el modelo está cargando, no disparar cargas redundantes
+    if (this.isSwitching || this.kencaloModel?.isLoadingSpecies) return;
+
+    const list = this.stateManager.getPossessedKencalos();
+    if (list.length === 0) return;
+
+    const current = this.stateManager.getCurrentKencalo() || list[0];
+
+    // Sincronizar especie, textura e indumento en el modelo 3D solo si difiere
     const outfit = this.stateManager.getOutfitForKencalo(current?.treeId);
     if (this.kencaloModel && current) {
       this.kencaloModel.currentOutfitId = outfit;
@@ -98,25 +144,6 @@ export class KencaloSwitcherUI {
           this.kencaloModel.setOutfit(outfit);
         }
       }
-    }
-
-    if (this.nameEl) {
-      this.nameEl.textContent = current.fullName || `Kencalo ${current.companionTitle || current.name}`;
-    }
-
-    if (this.tagEl) {
-      this.tagEl.textContent = `Compañero • ${currentIndex + 1} de ${list.length}`;
-    }
-
-    // Si tiene 1 solo Kencalo, deshabilitar flechas
-    const hasMultiple = list.length > 1;
-    if (this.btnPrev) {
-      this.btnPrev.disabled = !hasMultiple;
-      this.btnPrev.classList.toggle('disabled', !hasMultiple);
-    }
-    if (this.btnNext) {
-      this.btnNext.disabled = !hasMultiple;
-      this.btnNext.classList.toggle('disabled', !hasMultiple);
     }
   }
 }

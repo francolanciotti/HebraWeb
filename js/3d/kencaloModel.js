@@ -113,45 +113,65 @@ export class KencaloModel {
   loadSpecies(speciesId = 'libelula', textureKey = 'A', onLoadCallback = null) {
     if (!window.THREE || !window.THREE.GLTFLoader) return;
 
-    const speciesConfig = getSpeciesById(speciesId);
-    this.currentSpeciesId = speciesConfig.id;
-    this.currentTextureKey = textureKey || 'A';
+    const targetSpeciesConfig = getSpeciesById(speciesId);
+    const targetTextureKey = textureKey || 'A';
 
-    // 1. Limpiar estado de animación anterior para evitar bloqueos
-    this.cleanupReaction();
-    if (this.mixer) {
-      this.mixer.stopAllAction();
-    }
-    this.idleAction = null;
-    this.happyAction = null;
+    this.loadRequestId = (this.loadRequestId || 0) + 1;
+    const currentRequestId = this.loadRequestId;
+    this.isLoadingSpecies = true;
 
     const loader = new THREE.GLTFLoader();
     const loadPromise = (url) => new Promise((resolve, reject) => {
       loader.load(url, resolve, undefined, reject);
     });
 
-    // Cargar en paralelo la criatura base, animación Idle y animación Happy
+    const texturePath = targetSpeciesConfig.textures[targetTextureKey] || targetSpeciesConfig.textures['A'];
+    const cacheKey = `${targetSpeciesConfig.id}_${targetTextureKey}`;
+
+    const loadTexturePromise = () => new Promise((resolve) => {
+      if (this.loadedTextures[cacheKey]) {
+        resolve(this.loadedTextures[cacheKey]);
+        return;
+      }
+      this.textureLoader.load(texturePath, (tex) => {
+        tex.encoding = THREE.sRGBEncoding;
+        tex.flipY = false;
+        this.loadedTextures[cacheKey] = tex;
+        resolve(tex);
+      }, undefined, (err) => {
+        console.warn(`No se pudo cargar textura para ${targetSpeciesConfig.name}:`, err);
+        resolve(null);
+      });
+    });
+
+    // Cargar en paralelo la criatura base, animación Idle, animación Happy y su Textura
+    // Nota: El Kencalo saliente continúa reproduciendo su animación Idle con su textura original
     Promise.all([
-      loadPromise(speciesConfig.modelPath),
-      loadPromise(speciesConfig.animations.idle).catch(err => {
-        console.warn(`No se pudo cargar animación Idle para ${speciesConfig.name}:`, err);
+      loadPromise(targetSpeciesConfig.modelPath),
+      loadPromise(targetSpeciesConfig.animations.idle).catch(err => {
+        console.warn(`No se pudo cargar animación Idle para ${targetSpeciesConfig.name}:`, err);
         return null;
       }),
-      loadPromise(speciesConfig.animations.happy).catch(err => {
-        console.warn(`No se pudo cargar animación Happy para ${speciesConfig.name}:`, err);
+      loadPromise(targetSpeciesConfig.animations.happy).catch(err => {
+        console.warn(`No se pudo cargar animación Happy para ${targetSpeciesConfig.name}:`, err);
         return null;
-      })
-    ]).then(([gltfBase, gltfIdle, gltfHappy]) => {
-      if (!gltfBase) return;
+      }),
+      loadTexturePromise()
+    ]).then(([gltfBase, gltfIdle, gltfHappy, loadedTexture]) => {
+      // Si otra llamada más reciente a loadSpecies ya fue iniciada durante cambio rápido, descartar esta
+      if (currentRequestId !== this.loadRequestId || !gltfBase) {
+        return;
+      }
 
-      console.log(`1. Criatura base [${speciesConfig.name}] cargada con éxito`);
-      this.group.clear();
+      console.log(`1. Criatura base [${targetSpeciesConfig.name}] cargada con éxito`);
 
-      this.mesh = gltfBase.scene;
+      const newMesh = gltfBase.scene;
+      // Mantener oculta hasta que la textura esté completamente aplicada
+      newMesh.visible = false;
 
       // Bounding Box para calcular el centro real del cuerpo del Kencalo
       const bodyBox = new THREE.Box3();
-      this.mesh.traverse((node) => {
+      newMesh.traverse((node) => {
         if (node.isMesh) {
           node.geometry.computeBoundingBox();
           bodyBox.expandByObject(node);
@@ -162,39 +182,49 @@ export class KencaloModel {
       const size = bodyBox.getSize(new THREE.Vector3());
 
       // Centrar la geometría en su punto de pivote exacto
-      const pivot = speciesConfig.pivotOffset || KENCALO_CONFIG.pivotOffset || [0, 0, 0];
-      this.mesh.position.set(-center.x + pivot[0], -center.y + pivot[1], -center.z + pivot[2]);
-      this.mesh.rotation.set(0, 0, 0);
+      const pivot = targetSpeciesConfig.pivotOffset || KENCALO_CONFIG.pivotOffset || [0, 0, 0];
+      newMesh.position.set(-center.x + pivot[0], -center.y + pivot[1], -center.z + pivot[2]);
+      newMesh.rotation.set(0, 0, 0);
 
       const maxDim = Math.max(size.x, size.y, size.z);
       if (maxDim > 0) {
-        const baseScale = speciesConfig.baseScale || KENCALO_CONFIG.baseScale;
+        const baseScale = targetSpeciesConfig.baseScale || KENCALO_CONFIG.baseScale;
         const scaleFactor = baseScale / maxDim;
-        this.mesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
+        newMesh.scale.set(scaleFactor, scaleFactor, scaleFactor);
       }
 
-      this.mesh.traverse((node) => {
+      newMesh.traverse((node) => {
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
+
+          // Asignar inmediatamente la textura precargada para evitar ver el esqueleto sin textura
+          if (loadedTexture) {
+            if (Array.isArray(node.material)) {
+              node.material.forEach(mat => {
+                mat.map = loadedTexture;
+                mat.needsUpdate = true;
+              });
+            } else if (node.material) {
+              node.material.map = loadedTexture;
+              node.material.needsUpdate = true;
+            }
+          }
 
           // CONFIGURACIÓN DE MATERIALES PARA TRANSLUCIDEZ / HDRI
           if (node.material) {
             const materials = Array.isArray(node.material) ? node.material : [node.material];
 
             materials.forEach((mat) => {
-              // Asegura que la intensidad del entorno sea completa
               mat.envMapIntensity = 1.0;
 
-              // Si el material tiene transparencia o utiliza MeshPhysicalMaterial (efecto cristal/translucidez)
               if (mat.transparent || mat.isMeshPhysicalMaterial) {
-                mat.depthWrite = true; // Permite escribir en el z-buffer correctamente
+                mat.depthWrite = true;
                 
-                // Si es un material físico avanzado con transmisión
                 if (mat.isMeshPhysicalMaterial) {
-                  mat.transmission = mat.transmission || 0.85; // Grado de refracción
-                  mat.ior = 1.4;                               // Índice de refracción
-                  mat.thickness = 0.5;                         // Grosor del vidrio
+                  mat.transmission = mat.transmission || 0.85;
+                  mat.ior = 1.4;
+                  mat.thickness = 0.5;
                 }
               }
               mat.needsUpdate = true;
@@ -203,10 +233,23 @@ export class KencaloModel {
         }
       });
 
-      this.group.add(this.mesh);
-      this.isLoadedGLB = true;
+      // Detener animación previa de la criatura saliente justo antes de reemplazarla
+      this.cleanupReaction();
+      if (this.mixer) {
+        this.mixer.stopAllAction();
+      }
 
-      // Crear el nuevo mezclador de animaciones vinculado a la criatura base
+      // Reemplazo atómico: limpiar grupo y añadir nueva criatura lista
+      this.group.clear();
+      this.mesh = newMesh;
+      this.currentSpeciesId = targetSpeciesConfig.id;
+      this.currentTextureKey = targetTextureKey;
+      this.group.add(this.mesh);
+      this.mesh.visible = true;
+      this.isLoadedGLB = true;
+      this.isLoadingSpecies = false;
+
+      // Crear el nuevo mezclador de animaciones vinculado a la nueva criatura
       this.mixer = new THREE.AnimationMixer(this.mesh);
 
       // Vincular Idle
@@ -214,7 +257,7 @@ export class KencaloModel {
         const idleClip = gltfIdle.animations[0];
         this.idleAction = this.mixer.clipAction(idleClip);
         this.idleAction.play();
-        console.log(`2. Animación Idle de [${speciesConfig.name}] vinculada y reproduciéndose`);
+        console.log(`2. Animación Idle de [${targetSpeciesConfig.name}] vinculada y reproduciéndose`);
       }
 
       // Vincular Happy
@@ -223,18 +266,16 @@ export class KencaloModel {
         this.happyAction = this.mixer.clipAction(happyClip);
         this.happyAction.setLoop(THREE.LoopOnce, 1);
         this.happyAction.clampWhenFinished = true;
-        console.log(`3. Animación Happy de [${speciesConfig.name}] vinculada correctamente`);
+        console.log(`3. Animación Happy de [${targetSpeciesConfig.name}] vinculada correctamente`);
       }
-
-      // Aplicar textura
-      this.setTexture(this.currentTextureKey);
 
       // Cargar indumentos
       this.loadOutfitModels(loader);
 
       if (onLoadCallback) onLoadCallback();
     }).catch(err => {
-      console.warn(`Error al cargar especie ${speciesConfig.name}:`, err);
+      console.warn(`Error al cargar especie ${targetSpeciesConfig.name}:`, err);
+      this.isLoadingSpecies = false;
     });
   }
 

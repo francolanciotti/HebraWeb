@@ -391,6 +391,10 @@ export class HebraNavUI {
     const deltaY = this.dragStartY - clientY; // Tirando hacia arriba
     this.pullAmount = Math.max(0, Math.min(90, deltaY));
 
+    if (this.pullAmount > 8) {
+      this.hideTapArrowHint();
+    }
+
     const wasReady = this.isReadyToSnap;
     this.isReadyToSnap = this.pullAmount >= this.snapThreshold;
 
@@ -417,6 +421,7 @@ export class HebraNavUI {
     const deltaY = this.dragStartY - clientY;
 
     if (this.isReadyToSnap) {
+      this.hideTapArrowHint();
       // CONFIRMACIÓN: Superó el umbral de tensión
       const targetNode = this.nodes[this.hoveredIndex];
       if (targetNode) {
@@ -436,6 +441,8 @@ export class HebraNavUI {
       if (navigator.vibrate) navigator.vibrate(12);
       soundManager.playOutfitNav();
       this.animateTapChicleBounce(this.pullPos);
+      // Mostrar indicador de flecha hacia arriba sobre el nodo tocado
+      this.showTapArrowHint(this.hoveredIndex);
 
     } else {
       // CANCELACIÓN DE ARRASTRE: Rebote con física de muelle orgánico
@@ -614,13 +621,67 @@ export class HebraNavUI {
     }
   }
 
+  /**
+   * Muestra un pequeño indicador de flecha hacia arriba sobre el nodo tocado
+   */
+  showTapArrowHint(nodeIndex) {
+    if (!this.container) return;
+    const node = this.nodes[nodeIndex];
+    if (!node) return;
+
+    if (!this.arrowHintEl) {
+      this.arrowHintEl = document.createElement('div');
+      this.arrowHintEl.className = 'hebra-tap-arrow-hint';
+      this.arrowHintEl.innerHTML = `
+        <svg class="hebra-tap-chevron-svg" viewBox="0 0 24 24" width="22" height="22" fill="none" stroke="#FFFFFF" stroke-width="2.8" stroke-linecap="round" stroke-linejoin="round">
+          <path d="M18 10L12 4L6 10" />
+          <path d="M18 18L12 12L6 18" />
+        </svg>
+      `;
+      this.container.appendChild(this.arrowHintEl);
+    }
+
+    const xPercent = (node.xRatio * 100).toFixed(1);
+    this.arrowHintEl.style.left = `${xPercent}%`;
+    this.arrowHintEl.classList.remove('fade-out');
+    this.arrowHintEl.classList.add('visible');
+
+    // Auto-ocultar después de 3.5 segundos si el usuario no realiza la interacción
+    if (this.arrowHintTimer) {
+      clearTimeout(this.arrowHintTimer);
+    }
+    this.arrowHintTimer = setTimeout(() => {
+      this.hideTapArrowHint();
+    }, 3500);
+  }
+
+  /**
+   * Oculta suavemente el indicador de flecha hacia arriba
+   */
+  hideTapArrowHint() {
+    if (this.arrowHintTimer) {
+      clearTimeout(this.arrowHintTimer);
+      this.arrowHintTimer = null;
+    }
+    if (this.arrowHintEl) {
+      this.arrowHintEl.classList.add('fade-out');
+      setTimeout(() => {
+        if (this.arrowHintEl && this.arrowHintEl.classList.contains('fade-out')) {
+          this.arrowHintEl.classList.remove('visible', 'fade-out');
+        }
+      }, 300);
+    }
+  }
+
   setActiveView(viewId) {
+    this.hideTapArrowHint();
     this.currentView = viewId;
     this.hoveredIndex = this.getNodeIndex(viewId);
     this.renderStrandSVG();
   }
 
   destroy() {
+    this.hideTapArrowHint();
     if (this.springAnimId) {
       cancelAnimationFrame(this.springAnimId);
       this.springAnimId = null;

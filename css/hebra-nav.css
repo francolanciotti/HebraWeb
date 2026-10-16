@@ -56,3 +56,45 @@
   filter: drop-shadow(0 2px 6px rgba(17, 33, 66, 0.35));
   transition: transform 0.25s cubic-bezier(0.16, 1, 0.3, 1), opacity 0.2s ease;
 }
+
+/* Indicador de flecha hacia arriba al tocar un nodo (Guía gestual) */
+.hebra-tap-arrow-hint {
+  position: absolute;
+  top: 32px;
+  transform: translateX(-50%);
+  pointer-events: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  z-index: 65;
+  opacity: 0;
+  transition: opacity 0.25s ease, transform 0.25s cubic-bezier(0.16, 1, 0.3, 1);
+  will-change: transform, opacity;
+}
+
+.hebra-tap-arrow-hint.visible {
+  opacity: 1;
+  animation: hebraArrowFloat 1.2s ease-in-out infinite alternate;
+}
+
+.hebra-tap-arrow-hint.fade-out {
+  opacity: 0 !important;
+  transform: translateX(-50%) translateY(-10px) !important;
+}
+
+.hebra-tap-chevron-svg {
+  display: block;
+  width: 22px;
+  height: 22px;
+  filter: drop-shadow(0 2px 8px rgba(17, 33, 66, 0.65));
+}
+
+@keyframes hebraArrowFloat {
+  0% {
+    transform: translateX(-50%) translateY(0);
+  }
+  100% {
+    transform: translateX(-50%) translateY(-7px);
+  }
+}

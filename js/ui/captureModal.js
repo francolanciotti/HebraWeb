@@ -178,28 +178,52 @@ export class CaptureStoryUI {
     this.isGenerating = false;
   }
   /**
-   * Dibuja y recorta la instantánea 3D de Kencalo dentro de la ventana de la foto
+   * Dibuja y recorta la instantánea 3D de Kencalo dentro de la ventana de la foto con sombra ambiental
    */
   drawKencaloSnapshot(ctx, dataURL, boxX, boxY, boxW, boxH) {
     return new Promise((resolve) => {
       const img = new Image();
       img.onload = () => {
-        ctx.save();
-        
         // 1. Escalar más grande. 
-        // Como alejamos la cámara, multiplicamos fuerte (ej: 1.6 o 1.8) 
-        // Juega con este valor si lo quieres aún más gigante.
         const scale = Math.max(boxW / img.width, boxH / img.height) * 1.5; 
         const drawWidth = img.width * scale;
         const drawHeight = img.height * scale;
         
         // 2. Centramos en X, y le restamos valor en Y para subirlo.
         const drawX = boxX + (boxW - drawWidth) / 2;
-        const drawY = boxY + (boxH - drawHeight) / 2 - 60; // El -90 lo eleva. Ajusta si necesitas más.
+        const drawY = boxY + (boxH - drawHeight) / 2 - 60; // El -60 lo eleva
+
+        // 3. Sombra de contacto ambiental (Ground Ambient Shadow)
+        ctx.save();
+        const footCenterX = drawX + drawWidth / 2;
+        const footCenterY = drawY + drawHeight * 0.88;
+        const shadowRadiusX = drawWidth * 0.28;
+        const shadowRadiusY = drawWidth * 0.08;
+
+        const contactGrad = ctx.createRadialGradient(
+          footCenterX, footCenterY, 4,
+          footCenterX, footCenterY, shadowRadiusX
+        );
+        contactGrad.addColorStop(0, 'rgba(15, 36, 70, 0.40)');
+        contactGrad.addColorStop(0.5, 'rgba(15, 36, 70, 0.16)');
+        contactGrad.addColorStop(1, 'rgba(15, 36, 70, 0)');
+
+        ctx.fillStyle = contactGrad;
+        ctx.beginPath();
+        ctx.ellipse(footCenterX, footCenterY, shadowRadiusX, shadowRadiusY, 0, 0, Math.PI * 2);
+        ctx.fill();
+        ctx.restore();
+
+        // 4. Sombra proyectada volumétrica sobre la silueta del Kencalo (Drop Shadow)
+        ctx.save();
+        ctx.shadowColor = 'rgba(15, 36, 70, 0.35)';
+        ctx.shadowBlur = 30;
+        ctx.shadowOffsetX = 0;
+        ctx.shadowOffsetY = 16;
 
         ctx.drawImage(img, drawX, drawY, drawWidth, drawHeight);
-        
         ctx.restore();
+
         resolve();
       };
       img.onerror = () => {

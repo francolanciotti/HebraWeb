@@ -399,6 +399,7 @@ export class KencaloApp {
     const speciesId = this.currentEncounterSpecies || stateManager.getRandomUnusedSpecies();
     stateManager.captureKencaloFromTree(treeId, tex, speciesId);
 
+    this.triggerCaptureSparkles();
     soundManager.playKencaloInteract();
     this.isKencaloSpawnedInAR = false;
     this.currentEncounterTreeId = null;
@@ -422,13 +423,11 @@ export class KencaloApp {
     NotificationUI.showToast(`¡Has capturado al ${fullName}!`, '✨');
     if (this.kencaloModel) {
       if (this.kencaloModel.currentSpeciesId !== speciesId) {
-        this.kencaloModel.loadSpecies(speciesId, tex, () => {
-          this.kencaloModel.triggerTouchReaction();
-        });
+        this.kencaloModel.loadSpecies(speciesId, tex);
       } else {
         this.kencaloModel.setTexture(tex);
-        this.kencaloModel.triggerTouchReaction();
       }
+      // Se mantiene en Idle para no distorsionar la captura de la postal Polaroid
     }
 
     setTimeout(() => {
@@ -437,6 +436,48 @@ export class KencaloApp {
         this.captureStoryUI.openCapture(treeId);
       }
     }, 700);
+  }
+
+  /**
+   * Dispara una ráfaga de destello de pantalla y partículas místicas al capturar
+   */
+  triggerCaptureSparkles() {
+    // 1. Destello radial en pantalla completa
+    const flash = document.createElement('div');
+    flash.className = 'capture-flash-overlay';
+    document.body.appendChild(flash);
+    setTimeout(() => flash.remove(), 700);
+
+    // 2. Partículas místicas expansivas
+    const symbols = ['✦', '✧', '★', '•', '✸'];
+    const colors = ['#FFFFFF', '#FFE600', '#C4B5FD', '#67E8F9', '#F472B6'];
+    const centerX = window.innerWidth / 2;
+    const centerY = window.innerHeight * 0.65;
+
+    for (let i = 0; i < 28; i++) {
+      const p = document.createElement('div');
+      p.className = 'capture-sparkle-particle';
+      p.textContent = symbols[Math.floor(Math.random() * symbols.length)];
+
+      const angle = (Math.PI * 2 * i) / 28 + (Math.random() - 0.5) * 0.4;
+      const distance = 90 + Math.random() * 160;
+      const tx = Math.cos(angle) * distance;
+      const ty = Math.sin(angle) * distance;
+      const rot = (Math.random() - 0.5) * 360;
+      const size = 14 + Math.random() * 18;
+
+      p.style.left = `${centerX}px`;
+      p.style.top = `${centerY}px`;
+      p.style.color = colors[Math.floor(Math.random() * colors.length)];
+      p.style.fontSize = `${size}px`;
+      p.style.textShadow = `0 0 10px ${p.style.color}`;
+      p.style.setProperty('--tx', `${tx}px`);
+      p.style.setProperty('--ty', `${ty}px`);
+      p.style.setProperty('--rot', `${rot}deg`);
+
+      document.body.appendChild(p);
+      setTimeout(() => p.remove(), 900);
+    }
   }
 
   initAR() {
@@ -523,7 +564,7 @@ export class KencaloApp {
 
     if (btnCapture) {
       const span = btnCapture.querySelector('span') || btnCapture;
-      span.textContent = `¡CAPTURAR ${fullName.toUpperCase()}!`;
+      span.textContent = 'Capturar';
     }
 
     if (arActions) {
@@ -676,10 +717,15 @@ export class KencaloApp {
       }
     }
 
-    // Actualizar textura e indumentaria activa en el modelo 3D
-    if (this.kencaloModel) {
-      this.kencaloModel.setTexture(state.kencaloTexture || 'A');
-      this.kencaloModel.setOutfit(state.currentOutfit || 'default');
+    // Actualizar textura e indumentaria activa en el modelo 3D (únicamente si coincide con la especie activa y no está en transición)
+    if (this.kencaloModel && !this.kencaloModel.isLoadingSpecies) {
+      const current = stateManager.getCurrentKencalo();
+      if (current && current.speciesId === this.kencaloModel.currentSpeciesId) {
+        if (state.kencaloTexture && state.kencaloTexture !== this.kencaloModel.currentTextureKey) {
+          this.kencaloModel.setTexture(state.kencaloTexture);
+        }
+        this.kencaloModel.setOutfit(state.currentOutfit || 'default');
+      }
     }
 
     // Actualizar visibilidad del canvas 3D global

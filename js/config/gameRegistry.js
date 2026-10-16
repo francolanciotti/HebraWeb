@@ -35,7 +35,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, -0.02], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Espíritu grácil y etéreo de alas vibrantes que danza al compás del viento.'
+    description: 'Espíritu etéreo de alas vibrantes que danza al compás del viento.'
   },
 
   danzante: {
@@ -62,7 +62,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Espíritu rítmico y armónico cuyos movimientos acompasan las corrientes místicas.'
+    description: 'Espíritu rítmico cuyos movimientos acompasan las corrientes místicas.'
   },
 
   burbuja: {
@@ -89,7 +89,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Criatura flotante y serena con reflejos acuáticos que resuenan con la calma.'
+    description: 'Criatura flotante y serena.'
   },
 
   tapon: {
@@ -116,7 +116,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Guardián compacto y curioso que cuida los puntos de conexión telúrica.'
+    description: 'Guardián compacto y curioso.'
   },
 
   gatogota: {
@@ -143,7 +143,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Astuto y ágil con orejitas atentas; suele jugar entre los reflejos de lluvia.'
+    description: 'Astuto y ágil; suele jugar entre los reflejos de lluvia.'
   },
 
   manitas: {
@@ -160,7 +160,7 @@ export const SPECIES_REGISTRY = {
       idle: './assets/species/manitas/Kencalitas6_Idle.glb',
       happy: './assets/species/manitas/Kencalitas6_Happy.glb'
     },
-    baseScale: 2.2,
+    baseScale: 2,
     pivotOffset: [0, -0.3, -0],
     hatAnchor: {
       pos: [0, 0.28, 0.04],          // [X, Y, Z] Calibración de sombreros en Manitas
@@ -170,7 +170,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Espíritu acogedor que teje lazos místico-orgánicos entre las ramas centenarias.'
+    description: 'Espíritu acogedor.'
   },
 
   rino: {
@@ -197,7 +197,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Espíritu noble y firme que custodia las raíces ancestrales con serenidad.'
+    description: 'Espíritu noble y firme que custodia las raíces con serenidad.'
   },
 
   pajaro: {
@@ -224,7 +224,7 @@ export const SPECIES_REGISTRY = {
         'outfit_pet': { pos: [0.35, 0.05, 0], scale: [1.3, 1.3, 1.3], rot: [0, 0, 0] }
       }
     },
-    description: 'Espíritu veloz y curioso que surca las alturas conectando las copas de los árboles.'
+    description: 'Espíritu veloz y curioso.'
   }
 };
 
@@ -258,7 +258,7 @@ export const LOCATIONS_REGISTRY = [
     coords: "34°54'57\"S 57°56'48\"W",
     mapCoords: { x: 89, y: 231 }, // Coordenadas en el mapa SVG 356x478 (Plaza San Martín)
     glyphSequence: [5, 6, 7, 8],
-    glyphHint: 'Bajo las sombras del eje monumental',
+    glyphHint: 'Bajo las sombras del eje',
     description: '',
     targetIndex: 1
   },
@@ -273,7 +273,7 @@ export const LOCATIONS_REGISTRY = [
     coords: "34°55'42\"S 57°56'30\"W",
     mapCoords: { x: 189, y: 338 }, // Coordenadas en el mapa SVG 356x478 (Plaza Rocha)
     glyphSequence: [9, 10, 11, 12],
-    glyphHint: 'La diagonal que converge hacia el sur',
+    glyphHint: 'La diagonal que converge hacia la cueva',
     description: '',
     targetIndex: 2
   }

@@ -151,8 +151,85 @@
 
 /* AR Actions Bar */
 .ar-action-bar {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
   transition: opacity 0.3s ease, transform 0.3s ease;
+  z-index: 40;
+}
+
+#btn-capture-kencalo {
+  font-family: var(--font-epilogue);
+  font-size: 1.15rem;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  text-transform: uppercase;
+  padding: 15px 46px;
+  border-radius: var(--radius-pill);
+  background: linear-gradient(135deg, #182848 0%, #112142 100%);
+  color: #FFFFFF;
+  border: 1.5px solid rgba(255, 255, 255, 0.6);
+  box-shadow: 0 10px 32px rgba(17, 33, 66, 0.45), 0 0 24px rgba(138, 92, 246, 0.35);
+  cursor: pointer;
+  transform-origin: center;
+  transition: transform 0.2s cubic-bezier(0.16, 1, 0.3, 1), box-shadow 0.2s ease;
+  animation: captureBtnPulse 2.4s ease-in-out infinite alternate;
+}
+
+#btn-capture-kencalo:hover {
+  transform: scale(1.04);
+  box-shadow: 0 14px 38px rgba(17, 33, 66, 0.6), 0 0 32px rgba(138, 92, 246, 0.55);
+}
+
+#btn-capture-kencalo:active {
+  transform: scale(0.96);
+}
+
+@keyframes captureBtnPulse {
+  0% {
+    box-shadow: 0 8px 24px rgba(17, 33, 66, 0.4), 0 0 16px rgba(138, 92, 246, 0.25);
+  }
+  100% {
+    box-shadow: 0 14px 36px rgba(17, 33, 66, 0.6), 0 0 30px rgba(138, 92, 246, 0.55);
+  }
+}
+
+/* Efectos visuales de destello y partículas de captura */
+.capture-flash-overlay {
+  position: fixed;
+  inset: 0;
+  background: radial-gradient(circle at center, rgba(255, 255, 255, 0.9) 0%, rgba(220, 235, 255, 0.5) 50%, rgba(138, 92, 246, 0.2) 80%, transparent 100%);
+  pointer-events: none;
+  z-index: 9999;
+  animation: captureFlashAnim 0.65s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes captureFlashAnim {
+  0% { opacity: 0; transform: scale(0.92); }
+  25% { opacity: 1; transform: scale(1.02); }
+  100% { opacity: 0; transform: scale(1.08); }
+}
+
+.capture-sparkle-particle {
+  position: fixed;
+  pointer-events: none;
+  z-index: 10000;
+  user-select: none;
+  font-family: monospace;
+  line-height: 1;
+  animation: captureSparkleFly 0.85s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+@keyframes captureSparkleFly {
+  0% {
+    opacity: 1;
+    transform: translate(0, 0) scale(1) rotate(0deg);
+  }
+  100% {
+    opacity: 0;
+    transform: translate(var(--tx), var(--ty)) scale(0.1) rotate(var(--rot));
+  }
 }
 
 .ar-action-bar.hidden,
