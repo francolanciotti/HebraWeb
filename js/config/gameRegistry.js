@@ -242,7 +242,7 @@ export const LOCATIONS_REGISTRY = [
     address: 'Av. Iraola y 120',
     coords: "34°54'34\"S 57°56'02\"W",
     mapCoords: { x: 230, y: 145 }, // Coordenadas en el mapa SVG 356x478 (El Bosque)
-    glyphSequence: [1, 2, 3, 4],
+    glyphSequence: [1, 2, 4, 12],
     glyphHint: 'Donde el verde se abre a los astros',
     description: '',
     targetIndex: 0
@@ -257,7 +257,7 @@ export const LOCATIONS_REGISTRY = [
     address: 'Av. 7 e/ 50 y 54',
     coords: "34°54'57\"S 57°56'48\"W",
     mapCoords: { x: 89, y: 231 }, // Coordenadas en el mapa SVG 356x478 (Plaza San Martín)
-    glyphSequence: [5, 6, 7, 8],
+    glyphSequence: [6, 5, 3, 11],
     glyphHint: 'Bajo las sombras del eje',
     description: '',
     targetIndex: 1
@@ -272,7 +272,7 @@ export const LOCATIONS_REGISTRY = [
     address: 'Av. 7 y 60',
     coords: "34°55'42\"S 57°56'30\"W",
     mapCoords: { x: 189, y: 338 }, // Coordenadas en el mapa SVG 356x478 (Plaza Rocha)
-    glyphSequence: [9, 10, 11, 12],
+    glyphSequence: [8, 10, 9, 7],
     glyphHint: 'La diagonal que converge hacia la cueva',
     description: '',
     targetIndex: 2
