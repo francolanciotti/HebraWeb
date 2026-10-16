@@ -333,6 +333,13 @@
   filter: drop-shadow(0 3px 8px rgba(17, 33, 66, 0.35));
 }
 
+.marker-bubble-bg.event-beacon {
+  fill: rgba(28, 18, 68, 0.96);
+  stroke: #FFE600;
+  stroke-width: 1.8;
+  filter: drop-shadow(0 4px 14px rgba(255, 230, 0, 0.4));
+}
+
 .marker-bubble-text {
   font-family: var(--font-epilogue);
   font-size: 12.5px;
@@ -342,11 +349,37 @@
   letter-spacing: 0.3px;
 }
 
+.marker-bubble-text.event-beacon {
+  fill: #FFF8D6;
+  font-weight: 800;
+}
+
+.marker-core-event {
+  fill: #E5B824;
+  stroke: #FFFFFF;
+  stroke-width: 2.5;
+}
+
+.marker-code-event {
+  font-family: var(--font-epilogue);
+  font-size: 14px;
+  font-weight: 800;
+  fill: #FFFFFF;
+  text-anchor: middle;
+}
+
 .radar-ping-animation {
   fill: none;
   stroke: #6BC9D9;
   stroke-width: 2.2;
   animation: radar-pulse 2.2s infinite ease-out;
+}
+
+.event-radar-ping {
+  fill: none;
+  stroke: #FFE600;
+  stroke-width: 2.5;
+  animation: event-radar-pulse 2s infinite ease-out;
 }
 
 .marker-pulse-ring {
@@ -361,6 +394,18 @@
 
   100% {
     r: 28;
+    opacity: 0;
+  }
+}
+
+@keyframes event-radar-pulse {
+  0% {
+    r: 12;
+    opacity: 1;
+  }
+
+  100% {
+    r: 32;
     opacity: 0;
   }
 }

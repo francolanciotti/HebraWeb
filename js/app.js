@@ -15,7 +15,8 @@ import { CaptureStoryUI } from './ui/captureModal.js';
 import { InkBleedCanvas } from './fx/inkBleed.js';
 import { soundManager } from './audio/audioManager.js';
 import { HebraNavUI } from './ui/hebraNav.js';
-import { getKencaloFullName, getSpeciesForTree, getLocationById } from './config/gameRegistry.js';
+import { EventInvitationModalUI } from './ui/eventModal.js';
+import { getKencaloFullName, getSpeciesForTree, getLocationById, EVENT_INVITATION_CONFIG } from './config/gameRegistry.js';
 
 // Configuración configurable de la Pantalla de Bienvenida (Splash Screen)
 const SPLASH_CONFIG = {
@@ -37,6 +38,14 @@ export class KencaloApp {
 
     // Suscribirse a cambios de estado
     stateManager.subscribe(state => this.onStateChange(state));
+
+    // Si la pantalla de bienvenida no existe o ya está oculta y tiene los 3 Kencalos
+    const splash = document.getElementById('welcome-splash-modal');
+    if ((!splash || splash.style.display === 'none') && stateManager.getPossessedKencalos().length === 3) {
+      setTimeout(() => {
+        if (this.eventModalUI) this.eventModalUI.open();
+      }, 500);
+    }
   }
 
   /**
@@ -193,6 +202,13 @@ export class KencaloApp {
               this.hebraNav.triggerBreatheWave();
             }, 350);
           }
+
+          // Si el usuario ya posee los 3 Kencalos capturados al iniciar o recargar, desplegar invitación al evento
+          if (stateManager.getPossessedKencalos().length === 3 && this.eventModalUI) {
+            setTimeout(() => {
+              this.eventModalUI.open();
+            }, 600);
+          }
         }, 700);
       }, 800);
     };
@@ -268,18 +284,40 @@ export class KencaloApp {
   initUI() {
     this.outfitUI = new OutfitSelectorUI(stateManager, this.kencaloModel);
     this.kencaloSwitcherUI = new KencaloSwitcherUI(stateManager, this.kencaloModel);
-    this.transmediaUI = new TransmediaUI(stateManager);
+
+    // Inicializar modal de invitación a evento exclusivo (3 Kencalos capturados)
+    this.eventModalUI = new EventInvitationModalUI();
+
+    // Inicializar pestaña transmedia con callback para abrir el evento desde el marcador del mapa
+    this.transmediaUI = new TransmediaUI(stateManager, () => {
+      if (this.eventModalUI) this.eventModalUI.open();
+    });
 
     // Inicializar generador de captura para Instagram (Historia 9:16)
     this.captureStoryUI = new CaptureStoryUI(
       stateManager,
       this.sceneManager,
-      () => { this.switchView('companion'); },
-      () => { if (this.accountSettingsUI) this.accountSettingsUI.open(); }
+      () => {
+        this.switchView('companion');
+        // Si el usuario acaba de completar la captura de los 3 Kencalos:
+        // Se le da un tiempo para apreciar su nuevo Kencalo (configurable, 10s por defecto) antes de mostrar la invitación
+        if (stateManager.getPossessedKencalos().length === 3) {
+          const delay = EVENT_INVITATION_CONFIG?.postCaptureDelayMs ?? 10000;
+          setTimeout(() => {
+            if (stateManager.getPossessedKencalos().length === 3 && this.eventModalUI) {
+              this.eventModalUI.open();
+            }
+          }, delay);
+        }
+      }
     );
 
     // Inicializar modal y botón flotante de Ajustes de Cuenta
-    this.accountSettingsUI = new AccountSettingsUI(stateManager);
+    this.accountSettingsUI = new AccountSettingsUI(stateManager, () => {
+      if (stateManager.getPossessedKencalos().length === 3 && this.eventModalUI) {
+        this.eventModalUI.open();
+      }
+    });
 
     // Botón en el HUD de Companion para compartir la historia 9:16 de forma directa (sin ventana redundante)
     const btnCompanionShare = document.getElementById('btn-companion-share-story');

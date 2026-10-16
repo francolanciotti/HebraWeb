@@ -7,8 +7,9 @@ import { NotificationUI } from './notificationUI.js';
 import { soundManager } from '../audio/audioManager.js';
 
 export class AccountSettingsUI {
-  constructor(stateManager) {
+  constructor(stateManager, onAccountLoadedCallback = null) {
     this.stateManager = stateManager;
+    this.onAccountLoadedCallback = onAccountLoadedCallback;
 
     // Elementos del Modal
     this.modal = document.getElementById('account-settings-modal');
@@ -221,6 +222,10 @@ export class AccountSettingsUI {
             NotificationUI.showToast(result.message, result.success ? '✨' : '⚠️');
             if (result.success) {
               this.isRestoreMode = false;
+              this.close();
+              if (typeof this.onAccountLoadedCallback === 'function') {
+                this.onAccountLoadedCallback();
+              }
             } else if (errorMsgEl) {
               errorMsgEl.textContent = `⚠️ ${result.message}`;
               errorMsgEl.classList.add('visible');
@@ -313,7 +318,12 @@ export class AccountSettingsUI {
             if (this.isRestoreMode) {
               const res = await this.stateManager.restoreAccount(val);
               NotificationUI.showToast(res.message, res.success ? '🎉' : '⚠️');
-              if (!res.success && errorMsgEl) {
+              if (res.success) {
+                this.close();
+                if (typeof this.onAccountLoadedCallback === 'function') {
+                  this.onAccountLoadedCallback();
+                }
+              } else if (errorMsgEl) {
                 errorMsgEl.textContent = `⚠️ ${res.message}`;
                 errorMsgEl.classList.add('visible');
                 inputId.classList.add('input-has-error');

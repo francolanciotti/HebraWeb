@@ -241,7 +241,7 @@ export const LOCATIONS_REGISTRY = [
     zone: 'Paseo del Bosque • La Plata',
     address: 'Av. Iraola y 120',
     coords: "34°54'34\"S 57°56'02\"W",
-    mapCoords: { x: 270, y: 185 }, // Coordenadas en el mapa SVG 356x478 (El Bosque)
+    mapCoords: { x: 230, y: 145 }, // Coordenadas en el mapa SVG 356x478 (El Bosque)
     glyphSequence: [1, 2, 3, 4],
     glyphHint: 'Donde el verde se abre a los astros',
     description: '',
@@ -350,3 +350,31 @@ export function getPolaroidTreeData() {
   });
   return map;
 }
+
+// ============================================================================
+// 4. CONFIGURACIÓN DEL EVENTO EXCLUSIVO (PERSONALIZABLE)
+// ============================================================================
+export const EVENT_INVITATION_CONFIG = {
+  // Tiempo de espera para apreciar al Kencalo tras cerrar la Polaroid antes de que salte el cartel (en ms)
+  postCaptureDelayMs: 7000, // 10 segundos (10000 ms)
+
+  // Textos y Encabezado de la Ventana
+  badgeText: '✦ TRILOGÍA COMPLETADA',
+  title: '¡Felicitaciones!',
+  subtitle: 'Has capturado a tus 3 Kencalos',
+
+  // Datos del Evento Personalizado
+  eventName: 'Encuentro Transmedia Hebra',
+  eventDescription: 'Capturaste tus tres espíritus desifrando los glifos y sintonizado con cada Kencalo. Ellos te guiaron a una nueva experiencia exclusiva.',
+  eventDate: 'Sábado 21 de Noviembre • 18:00 hs',
+  eventLocation: 'Gruta del Bosque.',
+  eventAccessNote: 'Presenta esta aplicación con los 3 Kencalos en el acceso.',
+
+  // Marcador en el Mapa SVG de La Plata (CityMapUI)
+  mapPin: {
+    x: 290,
+    y: 150, // Coordenadas en el mapa SVG (356x478)
+    label: '✦ Evento ✦',
+    badgeText: 'Acceso Exclusivo'
+  }
+};

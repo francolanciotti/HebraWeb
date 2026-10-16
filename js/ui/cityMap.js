@@ -9,13 +9,14 @@
 import { soundManager } from '../audio/audioManager.js';
 import { NotificationUI } from './notificationUI.js';
 
-import { getMapTreesData } from '../config/gameRegistry.js';
+import { getMapTreesData, EVENT_INVITATION_CONFIG } from '../config/gameRegistry.js';
 
 export const TREES_MAP_DATA = getMapTreesData();
 
 export class CityMapUI {
-  constructor(stateManager) {
+  constructor(stateManager, onOpenEventCallback = null) {
     this.stateManager = stateManager;
+    this.onOpenEventCallback = onOpenEventCallback;
 
     this.container = document.getElementById('city-map-container');
     this.popupContainer = document.getElementById('map-tree-details-popup');
@@ -27,6 +28,10 @@ export class CityMapUI {
     this.stateManager.subscribe(() => {
       this.update();
     });
+  }
+
+  setOnOpenEventCallback(callback) {
+    this.onOpenEventCallback = callback;
   }
 
   renderMap() {
@@ -47,6 +52,12 @@ export class CityMapUI {
               <stop offset="0%" stop-color="#55E6A5" stop-opacity="0.9" />
               <stop offset="50%" stop-color="#422E8F" stop-opacity="0.4" />
               <stop offset="100%" stop-color="#112142" stop-opacity="0" />
+            </radialGradient>
+            <!-- Gradiente para el marcador del Evento Exclusivo -->
+            <radialGradient id="grad-event-pulse" cx="50%" cy="50%" r="50%">
+              <stop offset="0%" stop-color="#FFE600" stop-opacity="0.95" />
+              <stop offset="50%" stop-color="#D4AF37" stop-opacity="0.45" />
+              <stop offset="100%" stop-color="#422E8F" stop-opacity="0" />
             </radialGradient>
             <!-- Filtro de resplandor Glass -->
             <filter id="glow-filter" x="-30%" y="-30%" width="160%" height="160%">
@@ -132,9 +143,52 @@ export class CityMapUI {
       }
     });
 
+    // Si el usuario capturó los 3 Kencalos, se desbloquea el marcador del evento exclusivo en el mapa
+    const possessed = this.stateManager.getPossessedKencalos();
+    if (possessed.length === 3 && EVENT_INVITATION_CONFIG?.mapPin) {
+      const pin = EVENT_INVITATION_CONFIG.mapPin;
+      const gEvent = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+      gEvent.setAttribute('class', 'tree-marker-interactive event-beacon-marker');
+      gEvent.setAttribute('data-event-id', 'hebra-event');
+      gEvent.style.cursor = 'pointer';
+
+      const labelText = pin.label || '✦ Evento Hebra';
+      const badgeWidth = Math.max(110, labelText.length * 8 + 18);
+      const badgeX = pin.x - badgeWidth / 2;
+      const badgeY = pin.y - 38;
+
+      gEvent.innerHTML = `
+        <!-- Onda de radar mística dorada -->
+        <circle cx="${pin.x}" cy="${pin.y}" r="26" class="event-radar-ping" />
+        <circle cx="${pin.x}" cy="${pin.y}" r="16" fill="url(#grad-event-pulse)" />
+        <!-- Pin central dorado con filtro de resplandor -->
+        <circle cx="${pin.x}" cy="${pin.y}" r="12" class="marker-core-event" filter="url(#glow-filter)" />
+        <text x="${pin.x}" y="${pin.y + 4.5}" class="marker-code-event">★</text>
+        <!-- Badge flotante del Evento -->
+        <g class="marker-tag-group">
+          <rect x="${badgeX}" y="${badgeY}" width="${badgeWidth}" height="22" rx="11" class="marker-bubble-bg event-beacon" />
+          <text x="${pin.x}" y="${badgeY + 14.5}" class="marker-bubble-text event-beacon">${labelText}</text>
+        </g>
+      `;
+
+      gEvent.addEventListener('click', (e) => {
+        e.stopPropagation();
+        soundManager.playGlyphTap(3);
+        if (typeof this.onOpenEventCallback === 'function') {
+          this.onOpenEventCallback();
+        }
+      });
+
+      markersLayer.appendChild(gEvent);
+    }
+
     const subtitle = document.getElementById('map-trees-subtitle');
     if (subtitle) {
-      subtitle.textContent = `${visibleCount} de ${totalTrees} Árboles Descubiertos`;
+      if (possessed.length === 3) {
+        subtitle.textContent = `${visibleCount} de ${totalTrees} Árboles • ✦ Evento Desbloqueado`;
+      } else {
+        subtitle.textContent = `${visibleCount} de ${totalTrees} Árboles Descubiertos`;
+      }
     }
 
   }

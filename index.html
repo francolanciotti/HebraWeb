@@ -355,6 +355,50 @@
       </div>
     </div>
 
+    <!-- MODAL DE INVITACIÓN AL EVENTO EXCLUSIVO (GLASSMORPHISM FIGMA) -->
+    <div id="event-invitation-modal" class="settings-modal-overlay hidden" aria-hidden="true">
+      <div class="settings-modal-backdrop" id="event-modal-backdrop"></div>
+      <div class="settings-modal-dialog event-modal-dialog glass-card pop-in">
+        <div class="settings-modal-header">
+          <div class="settings-title-group">
+            <h3 class="settings-modal-title" id="event-modal-title">¡Felicitaciones!</h3>
+            <span class="event-modal-subtitle" id="event-modal-subtitle">Has capturado a los 3 Kencalos</span>
+          </div>
+          <button id="btn-close-event-modal" class="btn-close-settings-modal" type="button" title="Cerrar">✕</button>
+        </div>
+
+        <div class="settings-modal-body event-modal-body">
+          <div class="event-details-card">
+            <h4 class="event-name" id="event-modal-name">Encuentro Transmedia Hebra</h4>
+            <p class="event-description" id="event-modal-desc"></p>
+            <div class="event-meta-grid">
+              <div class="event-meta-item">
+                <span class="event-meta-icon">📅</span>
+                <div class="event-meta-content">
+                  <span class="event-meta-label">Fecha y Hora</span>
+                  <span class="event-meta-val" id="event-modal-date"></span>
+                </div>
+              </div>
+              <div class="event-meta-item">
+                <span class="event-meta-icon">📍</span>
+                <div class="event-meta-content">
+                  <span class="event-meta-label">Lugar</span>
+                  <span class="event-meta-val" id="event-modal-location"></span>
+                </div>
+              </div>
+              <div class="event-meta-item">
+                <span class="event-meta-icon">🎟️</span>
+                <div class="event-meta-content">
+                  <span class="event-meta-label">Acceso</span>
+                  <span class="event-meta-val" id="event-modal-note"></span>
+                </div>
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
     <!-- MODAL DE COMPARTIR POLAROID / POSTAL DE HEBRA -->
     <div id="polaroid-share-modal" class="polaroid-modal-overlay hidden" aria-hidden="true">
       <div class="polaroid-modal-backdrop" id="polaroid-modal-backdrop"></div>

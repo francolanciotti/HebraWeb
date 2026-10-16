@@ -459,6 +459,104 @@
   opacity: 0.85;
 }
 
+/* --------------------------------------------------------------------------
+   2.1. MODAL DE INVITACIÓN AL EVENTO EXCLUSIVO (FIGMA GLASSMORPHISM)
+   -------------------------------------------------------------------------- */
+
+.event-modal-dialog {
+  max-width: 440px;
+  gap: 16px;
+}
+
+.event-modal-subtitle {
+  font-family: var(--font-epilogue);
+  font-size: 0.88rem;
+  font-weight: 600;
+  color: var(--purple-accent);
+  margin-top: 2px;
+}
+
+.event-modal-body {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+}
+
+.event-details-card {
+  display: flex;
+  flex-direction: column;
+  gap: 14px;
+  padding: 0;
+  background: transparent;
+  border: none;
+  box-shadow: none;
+}
+
+.event-name {
+  font-family: var(--font-heading);
+  font-size: 1.18rem;
+  font-weight: 700;
+  color: var(--navy-dark);
+  margin: 0;
+  line-height: 1.25;
+}
+
+.event-description {
+  font-family: var(--font-epilogue);
+  font-size: 0.84rem;
+  color: var(--text-dark);
+  line-height: 1.48;
+  margin: 0;
+}
+
+.event-meta-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 4px;
+}
+
+.event-meta-item {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 8px 0;
+  background: transparent;
+  border: none;
+  border-bottom: 1px solid rgba(17, 33, 66, 0.08);
+  border-radius: 0;
+}
+
+.event-meta-item:last-child {
+  border-bottom: none;
+}
+
+.event-meta-icon {
+  font-size: 1.2rem;
+  flex-shrink: 0;
+}
+
+.event-meta-content {
+  display: flex;
+  flex-direction: column;
+  gap: 1px;
+}
+
+.event-meta-label {
+  font-size: 0.65rem;
+  font-weight: 700;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  color: var(--text-muted);
+}
+
+.event-meta-val {
+  font-family: var(--font-epilogue);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--navy-dark);
+}
+
 
 /* --------------------------------------------------------------------------
    3. OVERLAY Y MODAL: POSTAL POLAROID DE HEBRA (GRANDE, LEGIBLE Y ELEGANTE)

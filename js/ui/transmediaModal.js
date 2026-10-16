@@ -8,8 +8,9 @@ import { GlyphTranslatorUI } from './glyphTranslator.js';
 import { CityMapUI } from './cityMap.js';
 
 export class TransmediaUI {
-  constructor(stateManager) {
+  constructor(stateManager, onOpenEventCallback = null) {
     this.stateManager = stateManager;
+    this.onOpenEventCallback = onOpenEventCallback;
 
     this.overlayTranslator = document.getElementById('glyph-translator-overlay');
     this.btnOpenTranslator = document.getElementById('btn-open-translator');
@@ -17,7 +18,7 @@ export class TransmediaUI {
     this.backdropTranslator = document.getElementById('glyph-modal-backdrop');
 
     // Inicializar Traductor de Glifos y Mapa de La Plata
-    this.cityMapUI = new CityMapUI(this.stateManager);
+    this.cityMapUI = new CityMapUI(this.stateManager, this.onOpenEventCallback);
     this.glyphTranslatorUI = new GlyphTranslatorUI(this.stateManager, (unlockedTreeId) => {
       // Al descifrar una coordenada mediante glifos:
       // Esperar brevemente para mostrar la señal de éxito, cerrar el modal y enfocar el árbol en el mapa
