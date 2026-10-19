@@ -48,19 +48,7 @@ export const OUTFIT_GLB_MAP = {
     rot: [0, 0, 0]
   }
 };
-
-const TEXTURES_MAP = {
-  'A': './assets/textures/KencalitaTextura1A.png',
-  'B': './assets/textures/KencalitaTextura1B.png',
-  'C': './assets/textures/KencalitaTextura1C.png',
-  'D': './assets/textures/KencalitaTextura1D.png'
-};
-
-const ANIMATIONS_MAP = {
-  idle: './assets/animations/Kencalitas1_Idle.glb',
-  happy: './assets/animations/Kencalitas1_Happy.glb'
-};
-
+// ============================================================================
 // ============================================================================
 
 import { SPECIES_REGISTRY, getSpeciesById } from '../config/gameRegistry.js';
@@ -133,7 +121,8 @@ export class KencaloModel {
         resolve(this.loadedTextures[cacheKey]);
         return;
       }
-      this.textureLoader.load(texturePath, (tex) => {
+      const textureUrl = `${texturePath}?v=${Date.now()}`;
+      this.textureLoader.load(textureUrl, (tex) => {
         tex.encoding = THREE.sRGBEncoding;
         tex.flipY = false;
         this.loadedTextures[cacheKey] = tex;
@@ -197,39 +186,7 @@ export class KencaloModel {
         if (node.isMesh) {
           node.castShadow = true;
           node.receiveShadow = true;
-
-          // Asignar inmediatamente la textura precargada para evitar ver el esqueleto sin textura
-          if (loadedTexture) {
-            if (Array.isArray(node.material)) {
-              node.material.forEach(mat => {
-                mat.map = loadedTexture;
-                mat.needsUpdate = true;
-              });
-            } else if (node.material) {
-              node.material.map = loadedTexture;
-              node.material.needsUpdate = true;
-            }
-          }
-
-          // CONFIGURACIÓN DE MATERIALES PARA TRANSLUCIDEZ / HDRI
-          if (node.material) {
-            const materials = Array.isArray(node.material) ? node.material : [node.material];
-
-            materials.forEach((mat) => {
-              mat.envMapIntensity = 1.0;
-
-              if (mat.transparent || mat.isMeshPhysicalMaterial) {
-                mat.depthWrite = true;
-                
-                if (mat.isMeshPhysicalMaterial) {
-                  mat.transmission = mat.transmission || 0.85;
-                  mat.ior = 1.4;
-                  mat.thickness = 0.5;
-                }
-              }
-              mat.needsUpdate = true;
-            });
-          }
+          this.configureNodeMaterial(node, loadedTexture);
         }
       });
 
@@ -346,7 +303,8 @@ export class KencaloModel {
     if (this.loadedTextures[cacheKey]) {
       this.applyTextureToMesh(this.loadedTextures[cacheKey]);
     } else {
-      this.textureLoader.load(path, (texture) => {
+      const textureUrl = `${path}?v=${Date.now()}`;
+      this.textureLoader.load(textureUrl, (texture) => {
         texture.encoding = THREE.sRGBEncoding;
         texture.flipY = false;
         this.loadedTextures[cacheKey] = texture;
@@ -355,21 +313,53 @@ export class KencaloModel {
     }
   }
 
+  configureNodeMaterial(node, texture) {
+    if (!node.isMesh || !node.material || node.userData.isOutfit) return;
+
+    const materials = Array.isArray(node.material) ? node.material : [node.material];
+
+    materials.forEach((mat) => {
+      const isEye = Boolean(mat.name && mat.name.toLowerCase().includes('ojo'));
+
+      if (isEye) {
+        // Los ojos vienen de Blender con color base negro (0x000000).
+        // Para que se vean los detalles de la textura (el reflejo blanco y el haz de color),
+        // su color base debe ser blanco puro (0xffffff) para no multiplicar la textura por 0.
+        mat.color.setHex(0xffffff);
+        if (texture) {
+          mat.map = texture;
+        }
+        mat.transparent = false;
+        mat.depthWrite = true;
+        mat.roughness = 0.2;
+        mat.metalness = 0.0;
+        mat.needsUpdate = true;
+      } else {
+        // Material del cuerpo
+        if (texture) {
+          mat.map = texture;
+        }
+        mat.envMapIntensity = 1.0;
+
+        if (mat.transparent || mat.isMeshPhysicalMaterial) {
+          mat.depthWrite = true;
+
+          if (mat.isMeshPhysicalMaterial) {
+            mat.transmission = mat.transmission || 0.85;
+            mat.ior = 1.4;
+            mat.thickness = 0.5;
+          }
+        }
+        mat.needsUpdate = true;
+      }
+    });
+  }
+
   applyTextureToMesh(texture) {
     if (!this.mesh) return;
 
     this.mesh.traverse((node) => {
-      if (node.isMesh && node.material && !node.userData.isOutfit) {
-        if (Array.isArray(node.material)) {
-          node.material.forEach(mat => {
-            mat.map = texture;
-            mat.needsUpdate = true;
-          });
-        } else {
-          node.material.map = texture;
-          node.material.needsUpdate = true;
-        }
-      }
+      this.configureNodeMaterial(node, texture);
     });
   }
 
