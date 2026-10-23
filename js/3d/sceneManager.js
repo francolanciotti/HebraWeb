@@ -157,7 +157,7 @@ export class SceneManager {
 
       if (intersects.length > 0 && this.onTapCallback) {
         const point = intersects[0].point;
-        this.onTapCallback(intersects[0], point);
+        this.onTapCallback(intersects[0], point, { clientX, clientY });
       }
     };
 

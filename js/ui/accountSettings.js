@@ -331,7 +331,12 @@ export class AccountSettingsUI {
             } else {
               const res = await this.stateManager.createAccount(val);
               NotificationUI.showToast(res.message, res.success ? '✨' : '⚠️');
-              if (!res.success && errorMsgEl) {
+              if (res.success) {
+                this.close();
+                if (typeof this.onAccountLoadedCallback === 'function') {
+                  this.onAccountLoadedCallback();
+                }
+              } else if (errorMsgEl) {
                 errorMsgEl.textContent = `⚠️ ${res.message}`;
                 errorMsgEl.classList.add('visible');
                 inputId.classList.add('input-has-error');

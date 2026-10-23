@@ -135,7 +135,7 @@
   will-change: transform;
   transform: translateZ(0);
   transition: transform 0.2s ease, background-color 0.2s ease, border-radius 0.25s ease;
-  overflow: hidden;
+  overflow: visible;
 }
 
 .btn-glass-circle svg {
@@ -159,19 +159,32 @@
 
 .badge-count {
   position: absolute;
-  top: -2px;
-  right: -2px;
-  width: 20px;
-  height: 20px;
+  top: -6px;
+  right: -6px;
+  width: 22px;
+  height: 22px;
   border-radius: 50%;
   background: var(--purple-accent);
-  color: var(--text-light);
-  font-size: 0.65rem;
+  color: #FFFFFF;
+  font-size: 0.72rem;
   font-weight: 800;
   display: flex;
   align-items: center;
   justify-content: center;
-  box-shadow: 0 0 10px rgba(66, 46, 143, 0.5);
+  border: 2px solid #FFFFFF;
+  box-shadow: 0 3px 10px rgba(17, 33, 66, 0.4), 0 0 12px rgba(66, 46, 143, 0.6);
+  z-index: 25;
+  pointer-events: none;
+  animation: badgeCountPulse 2.2s ease-in-out infinite;
+}
+
+@keyframes badgeCountPulse {
+  0%, 100% {
+    transform: scale(1);
+  }
+  50% {
+    transform: scale(1.12);
+  }
 }
 
 .badge-count.hidden {
@@ -362,4 +375,44 @@
   font-weight: 600;
   color: var(--purple-accent);
   letter-spacing: 0.4px;
+}
+
+/* Pequeño halo súper translúcido sobre el Kénkalo (desaparece al interactuar) */
+.kencalo-touch-halo {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 220px;
+  height: 220px;
+  margin-top: 15px;
+  transform: translate(-50%, -50%);
+  border-radius: 50%;
+  background: radial-gradient(circle, rgba(165, 243, 252, 0.22) 0%, rgba(192, 132, 252, 0.16) 45%, rgba(99, 102, 241, 0.05) 65%, transparent 75%);
+  border: 1.5px solid rgba(165, 243, 252, 0.45);
+  box-shadow: 0 0 35px rgba(165, 243, 252, 0.3), inset 0 0 25px rgba(192, 132, 252, 0.2);
+  pointer-events: none !important;
+  z-index: 20;
+  opacity: 0.92;
+  transition: opacity 0.7s cubic-bezier(0.4, 0, 0.2, 1), transform 0.7s cubic-bezier(0.4, 0, 0.2, 1);
+  animation: subtleHaloPulse 3s ease-in-out infinite;
+}
+
+.kencalo-touch-halo.halo-dismissed,
+.kencalo-touch-halo.hidden {
+  opacity: 0 !important;
+  transform: translate(-50%, -50%) scale(0.8) !important;
+  pointer-events: none !important;
+}
+
+@keyframes subtleHaloPulse {
+  0%, 100% {
+    transform: translate(-50%, -50%) scale(0.92);
+    box-shadow: 0 0 25px rgba(165, 243, 252, 0.25), inset 0 0 20px rgba(192, 132, 252, 0.15);
+    border-color: rgba(165, 243, 252, 0.35);
+  }
+  50% {
+    transform: translate(-50%, -50%) scale(1.08);
+    box-shadow: 0 0 45px rgba(165, 243, 252, 0.45), inset 0 0 35px rgba(192, 132, 252, 0.3);
+    border-color: rgba(165, 243, 252, 0.65);
+  }
 }

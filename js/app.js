@@ -36,6 +36,7 @@ export class KencaloApp {
   constructor() {
     this.currentView = 'ar'; // 'ar' | 'companion' | 'transmedia'
     this.isKencaloSpawnedInAR = false;
+    this.hasInteractedWithKencalo = false;
 
     this.initWelcomeModal();
     this.init3DScene();
@@ -279,6 +280,7 @@ export class KencaloApp {
       if (this.currentView === 'companion' && state.kencaloCaptured) {
         soundManager.playKencaloInteract();
         this.kencaloModel.triggerTouchReaction();
+        this.dismissKencaloHalo(true);
       }
     });
 
@@ -737,8 +739,12 @@ export class KencaloApp {
         this.kencaloModel.applyCompanionTransform();
         this.sceneManager.setInteractiveRotationEnabled(true);
         this.sceneManager.setInitialRotation(this.kencaloModel.group.rotation.y, this.kencaloModel.group.rotation.x);
-      } else if (viewName === 'ar') {
-        this.sceneManager.setInteractiveRotationEnabled(false);
+        this.showKencaloHalo();
+      } else {
+        this.dismissKencaloHalo(false);
+        if (viewName === 'ar') {
+          this.sceneManager.setInteractiveRotationEnabled(false);
+        }
       }
     }
 
@@ -803,6 +809,31 @@ export class KencaloApp {
     }
     if (this.sceneManager) {
       this.sceneManager.setVisible(shouldShow3D);
+    }
+
+    if (shouldShow3D) {
+      this.showKencaloHalo();
+    } else {
+      this.dismissKencaloHalo(false);
+    }
+  }
+
+  showKencaloHalo() {
+    if (this.hasInteractedWithKencalo) return;
+    const halo = document.getElementById('kencalo-touch-halo');
+    if (halo) {
+      halo.classList.remove('halo-dismissed');
+      halo.classList.remove('hidden');
+    }
+  }
+
+  dismissKencaloHalo(isUserInteraction = false) {
+    if (isUserInteraction) {
+      this.hasInteractedWithKencalo = true;
+    }
+    const halo = document.getElementById('kencalo-touch-halo');
+    if (halo) {
+      halo.classList.add('halo-dismissed');
     }
   }
 }
