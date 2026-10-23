@@ -4,15 +4,19 @@
 
 import { NotificationUI } from '../ui/notificationUI.js';
 import { MindARThree } from '../lib/mindar-image-three.prod.js';
+import { getTodayArgentinaDate } from '../config/gameRegistry.js';
 
 export class ARController {
   constructor(options = {}) {
+    this.onTargetDetected = options.onTargetDetected || null;
     this.onTargetFoundA = options.onTargetFoundA || (() => {});
     this.onTargetFoundB = options.onTargetFoundB || (() => {});
     this.onTargetFoundC = options.onTargetFoundC || (() => {});
     this.onTargetLost = options.onTargetLost || (() => {});
 
     this.mindThree = null;
+    this.anchors = [];
+    this.activeAnchorGroup = null;
     this.isARActive = false;
     this.isStartingAR = false;
     this.hasPermission = false;
@@ -47,10 +51,13 @@ export class ARController {
           const leftoverElements = containerElement.querySelectorAll('canvas, video');
           leftoverElements.forEach(el => el.remove());
 
+          // Cache-buster basado en la fecha de Argentina para descargar siempre el .mind del día
+          const todayDate = getTodayArgentinaDate();
+
           this.mindThree = new MindARThree({
             container: containerElement,
-            imageTargetSrc: './assets/targets/targets.mind',
-            maxTrack: 2,
+            imageTargetSrc: `./assets/targets/targets.mind?d=${todayDate}`,
+            maxTrack: 1,
             uiLoading: 'no',
             uiScanning: 'no'
           });
@@ -65,35 +72,38 @@ export class ARController {
           dirLight.position.set(1, 2, 3);
           scene.add(dirLight);
 
-          this.anchorA = this.mindThree.addAnchor(0);
+          // Soporte para hasta 10 fotos en targets.mind para el árbol del día
+          const MAX_TARGETS = 10;
+          this.anchors = [];
 
-          this.anchorA.onTargetFound = () => {
-            console.log('Target 0 (Árbol A) detectado por MindAR');
-            const arInstruction = document.getElementById('ar-instruction');
-            if (arInstruction) {
-              arInstruction.textContent = '¡ÁRBOL A DETECTADO! Tócalo para capturar';
-            }
-            this.onTargetFoundA();
-          };
-          this.anchorA.onTargetLost = () => {
-            console.log('Target 0 perdido');
-            this.onTargetLost();
-          };
+          for (let i = 0; i < MAX_TARGETS; i++) {
+            const anchor = this.mindThree.addAnchor(i);
 
-          this.anchorB = this.mindThree.addAnchor(1);
+            anchor.onTargetFound = () => {
+              console.log(`Foto/Target #${i} detectado por MindAR`);
+              this.activeAnchorGroup = anchor.group;
 
-          this.anchorB.onTargetFound = () => {
-            console.log('Target 1 (Árbol B) detectado por MindAR');
-            const arInstruction = document.getElementById('ar-instruction');
-            if (arInstruction) {
-              arInstruction.textContent = '¡ÁRBOL B DETECTADO!';
-            }
-            this.onTargetFoundB();
-          };
-          this.anchorB.onTargetLost = () => {
-            console.log('Target 1 perdido');
-            this.onTargetLost();
-          };
+              if (this.onTargetDetected) {
+                this.onTargetDetected(anchor.group, i);
+              } else {
+                if (i === 0) this.onTargetFoundA(anchor.group);
+                else if (i === 1) this.onTargetFoundB(anchor.group);
+                else if (i === 2) this.onTargetFoundC(anchor.group);
+              }
+            };
+
+            anchor.onTargetLost = () => {
+              if (this.activeAnchorGroup === anchor.group) {
+                this.activeAnchorGroup = null;
+              }
+              this.onTargetLost();
+            };
+
+            this.anchors.push(anchor);
+          }
+
+          this.anchorA = this.anchors[0];
+          this.anchorB = this.anchors[1];
 
           await this.mindThree.start();
 
@@ -236,6 +246,8 @@ export class ARController {
   }
 
   getAnchorGroup(index = 0) {
+    if (this.activeAnchorGroup) return this.activeAnchorGroup;
+    if (this.anchors && this.anchors[index]) return this.anchors[index].group;
     if (index === 0 && this.anchorA) return this.anchorA.group;
     if (index === 1 && this.anchorB) return this.anchorB.group;
     return null;

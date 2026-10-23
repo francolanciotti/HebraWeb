@@ -16,7 +16,14 @@ import { InkBleedCanvas } from './fx/inkBleed.js';
 import { soundManager } from './audio/audioManager.js';
 import { HebraNavUI } from './ui/hebraNav.js';
 import { EventInvitationModalUI } from './ui/eventModal.js';
-import { getKencaloFullName, getSpeciesForTree, getLocationById, EVENT_INVITATION_CONFIG } from './config/gameRegistry.js';
+import { 
+  getKencaloFullName, 
+  getSpeciesForTree, 
+  getLocationById, 
+  getActiveTreeForToday,
+  getTodayArgentinaDate,
+  EVENT_INVITATION_CONFIG 
+} from './config/gameRegistry.js';
 
 // Configuración configurable de la Pantalla de Bienvenida (Splash Screen)
 const SPLASH_CONFIG = {
@@ -520,9 +527,12 @@ export class KencaloApp {
 
   initAR() {
     this.arController = new ARController({
-      onTargetFoundA: () => this.handleTargetFoundA(),
-      onTargetFoundB: () => this.handleTargetFoundB(),
-      onTargetFoundC: () => this.handleTargetFoundC(),
+      onTargetDetected: (anchorGroup, targetIndex) => {
+        this.handleDailyTargetDetected(anchorGroup, targetIndex);
+      },
+      onTargetFoundA: (anchorGroup) => this.handleTargetFoundA(anchorGroup),
+      onTargetFoundB: (anchorGroup) => this.handleTargetFoundB(anchorGroup),
+      onTargetFoundC: (anchorGroup) => this.handleTargetFoundC(anchorGroup),
       onTargetLost: () => this.handleTargetLost()
     });
     this.arController.onRenderCallback = (time) => {
@@ -532,7 +542,16 @@ export class KencaloApp {
     };
   }
 
-  handleTreeEncounter(treeId, treeName, anchorIndex = 0) {
+  handleDailyTargetDetected(anchorGroup, targetIndex) {
+    const activeTree = getActiveTreeForToday();
+    const arInstruction = document.getElementById('ar-instruction');
+    if (arInstruction) {
+      arInstruction.textContent = `¡${activeTree.name.toUpperCase()} DETECTADO! Tócalo para capturar`;
+    }
+    this.handleTreeEncounter(activeTree.id, activeTree.name, anchorGroup);
+  }
+
+  handleTreeEncounter(treeId, treeName, anchorRef = 0) {
     const fullName = getKencaloFullName(treeId);
 
     // Si este árbol YA fue capturado, no permitir volver a capturarlo
@@ -568,8 +587,17 @@ export class KencaloApp {
       }
     }
 
+    // Resolver el anclaje físico detectado (objeto THREE.Group o índice numérico)
+    let anchorGroup = null;
+    if (anchorRef && (anchorRef.isGroup || typeof anchorRef.add === 'function')) {
+      anchorGroup = anchorRef;
+    } else if (typeof anchorRef === 'number') {
+      anchorGroup = this.arController.getAnchorGroup(anchorRef);
+    } else if (this.arController && this.arController.activeAnchorGroup) {
+      anchorGroup = this.arController.activeAnchorGroup;
+    }
+
     // Vincular Kencalo al anclaje AR de MindAR si la cámara real está activa
-    const anchorGroup = this.arController.getAnchorGroup(anchorIndex);
     if (anchorGroup && this.kencaloModel && this.kencaloModel.group) {
       anchorGroup.add(this.kencaloModel.group);
       this.kencaloModel.applyARTransform();
@@ -612,16 +640,16 @@ export class KencaloApp {
     NotificationUI.showToast(`¡${fullName} descubierto!`, '✨');
   }
 
-  handleTargetFoundA() {
-    this.handleTreeEncounter('tree_a', 'El Bosque', 0);
+  handleTargetFoundA(anchorGroup = null) {
+    this.handleTreeEncounter('tree_a', 'El Bosque', anchorGroup !== null ? anchorGroup : 0);
   }
 
-  handleTargetFoundB() {
-    this.handleTreeEncounter('tree_b', 'Plaza San Martín', 1);
+  handleTargetFoundB(anchorGroup = null) {
+    this.handleTreeEncounter('tree_b', 'Plaza San Martín', anchorGroup !== null ? anchorGroup : 1);
   }
 
-  handleTargetFoundC() {
-    this.handleTreeEncounter('tree_c', 'Plaza Rocha', 0);
+  handleTargetFoundC(anchorGroup = null) {
+    this.handleTreeEncounter('tree_c', 'Plaza Rocha', anchorGroup !== null ? anchorGroup : 2);
   }
 
   handleTargetLost() {

@@ -378,3 +378,51 @@ export const EVENT_INVITATION_CONFIG = {
     badgeText: 'Acceso Exclusivo'
   }
 };
+
+// ============================================================================
+// 5. CRONOGRAMA DIARIO DE ÁRBOLES (ZONA HORARIA ARGENTINA ART / UTC-3)
+// ============================================================================
+
+/**
+ * Calendario de activación de árboles por fecha (Horario oficial de Argentina ART / UTC-3).
+ * Formato: 'AAAA-MM-DD'
+ * Edita estas fechas según los días en que actives cada árbol.
+ */
+export const TREE_DAILY_SCHEDULE = {
+  '2026-10-29': 'tree_a', // El Bosque
+  '2026-10-30': 'tree_b', // Plaza San Martín
+  '2026-10-31': 'tree_c', // Plaza Rocha
+};
+
+/**
+ * Obtiene la fecha actual en formato 'AAAA-MM-DD' bajo la zona horaria oficial de Argentina,
+ * garantizando que funcione idéntico sin importar la zona horaria configurada en el teléfono del usuario.
+ */
+export function getTodayArgentinaDate() {
+  try {
+    return new Intl.DateTimeFormat('en-CA', {
+      timeZone: 'America/Argentina/Buenos_Aires',
+      year: 'numeric',
+      month: '2-digit',
+      day: '2-digit'
+    }).format(new Date());
+  } catch (e) {
+    // Fallback estándar si el navegador no soporta IANA timezones
+    const now = new Date();
+    const utcTime = now.getTime() + (now.getTimezoneOffset() * 60000);
+    const artDate = new Date(utcTime - (3 * 3600000));
+    const year = artDate.getFullYear();
+    const month = String(artDate.getMonth() + 1).padStart(2, '0');
+    const day = String(artDate.getDate()).padStart(2, '0');
+    return `${year}-${month}-${day}`;
+  }
+}
+
+/**
+ * Determina cuál es el árbol activo correspondiente a la fecha actual de Argentina.
+ */
+export function getActiveTreeForToday() {
+  const todayStr = getTodayArgentinaDate();
+  const treeId = TREE_DAILY_SCHEDULE[todayStr] || 'tree_a';
+  return getLocationById(treeId);
+}
