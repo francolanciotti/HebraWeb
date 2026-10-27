@@ -427,6 +427,25 @@ export class KencaloApp {
         }
       });
     }
+
+    // Elementos de prueba / debug (ocultos por defecto)
+    const urlParams = new URLSearchParams(window.location.search);
+    const devSimBar = document.querySelector('.dev-sim-bar');
+    if (devSimBar) {
+      if (urlParams.get('debug') === 'true' || urlParams.get('dev') === 'true') {
+        devSimBar.classList.remove('hidden');
+        devSimBar.classList.add('dev-active');
+      }
+      window.__toggleDebugTools = () => {
+        const isHidden = devSimBar.classList.toggle('hidden');
+        if (!isHidden) {
+          devSimBar.classList.add('dev-active');
+        } else {
+          devSimBar.classList.remove('dev-active');
+        }
+        return !isHidden;
+      };
+    }
   }
 
   /**

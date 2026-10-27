@@ -238,10 +238,10 @@ export const LOCATIONS_REGISTRY = [
     type: 'tree',
     name: 'El Bosque',
     companionTitle: 'del Bosque', // -> "Kencalo del Bosque"
-    zone: 'Paseo del Bosque • La Plata',
-    address: 'Av. Iraola y 120',
+    zone: '',
+    address: 'Av. 1 y Av. 53',
     coords: "34°54'34\"S 57°56'02\"W",
-    mapCoords: { x: 230, y: 145 }, // Coordenadas en el mapa SVG 356x478 (El Bosque)
+    mapCoords: { x: 200, y: 118 }, // Coordenadas en el mapa SVG 356x478 (El Bosque)
     glyphSequence: [1, 2, 4, 12],
     glyphHint: 'Donde el verde se abre a los astros',
     description: '',
@@ -252,11 +252,11 @@ export const LOCATIONS_REGISTRY = [
     code: 'B',
     type: 'tree',
     name: 'Plaza San Martín',
-    companionTitle: 'Plaza San Martín',
-    zone: 'Eje Monumental • Calle 7 y 50',
-    address: 'Av. 7 e/ 50 y 54',
+    companionTitle: 'de Plaza San Martín',
+    zone: '',
+    address: 'Av. 51 y Calle 4',
     coords: "34°54'57\"S 57°56'48\"W",
-    mapCoords: { x: 89, y: 231 }, // Coordenadas en el mapa SVG 356x478 (Plaza San Martín)
+    mapCoords: { x: 113, y: 180 }, // Coordenadas en el mapa SVG 356x478 (Plaza San Martín)
     glyphSequence: [6, 5, 3, 11],
     glyphHint: 'Bajo las sombras del eje',
     description: '',
@@ -266,12 +266,12 @@ export const LOCATIONS_REGISTRY = [
     id: 'tree_c',
     code: 'C',
     type: 'tree',
-    name: 'Plaza Rocha',
-    companionTitle: 'Plaza Rocha', // -> "Kencalo de Plaza Rocha"
-    zone: 'Diagonal 73 y Plaza Rocha',
-    address: 'Av. 7 y 60',
+    name: 'Sede Fonseca',
+    companionTitle: 'de Sede Fonseca', // -> "Kencalo de Plaza Rocha"
+    zone: '',
+    address: 'Diag. 78 y Calle 62',
     coords: "34°55'42\"S 57°56'30\"W",
-    mapCoords: { x: 189, y: 338 }, // Coordenadas en el mapa SVG 356x478 (Plaza Rocha)
+    mapCoords: { x: 189, y: 408 }, // Coordenadas en el mapa SVG 356x478 (Plaza Rocha)
     glyphSequence: [8, 10, 9, 7],
     glyphHint: 'La diagonal que converge hacia la cueva',
     description: '',

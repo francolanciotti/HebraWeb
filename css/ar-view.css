@@ -239,9 +239,9 @@
   pointer-events: none !important;
 }
 
-/* Dev Simulation Bar */
+/* Dev Simulation Bar (Oculto para usuarios finales) */
 .dev-sim-bar {
-  display: flex;
+  display: none !important;
   align-items: center;
   gap: 8px;
   padding: 8px 16px;
@@ -251,6 +251,10 @@
   backdrop-filter: blur(12px);
   -webkit-backdrop-filter: blur(12px);
   border: 1px solid var(--bg-card-border);
+}
+
+.dev-sim-bar.dev-active {
+  display: flex !important;
 }
 
 .dev-label {
