@@ -49,6 +49,7 @@ class FirebaseService {
   sanitizeState(state) {
     if (!state || typeof state !== 'object') return {};
     return {
+      version: Number(state.version) || 2,
       kencaloCaptured: Boolean(state.kencaloCaptured),
       activeKencaloTreeId: state.activeKencaloTreeId || 'tree_a',
       kencaloTexture: state.kencaloTexture || 'A',

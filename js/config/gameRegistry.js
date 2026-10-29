@@ -361,11 +361,11 @@ export const EVENT_INVITATION_CONFIG = {
   // Textos y Encabezado de la Ventana
   badgeText: '✦ TRILOGÍA COMPLETADA',
   title: '¡Felicitaciones!',
-  subtitle: 'Has capturado a tus 3 Kencalos',
+  subtitle: 'Haz capturado a tus 3 Kencalos',
 
   // Datos del Evento Personalizado
   eventName: 'Encuentro Transmedia Hebra',
-  eventDescription: 'Capturaste tus tres espíritus desifrando los glifos y sintonizado con cada Kencalo. Ellos te guiaron a una nueva experiencia exclusiva.',
+  eventDescription: 'Capturaste tus tres espíritus decifrando los glifos y sintonizado con cada Kencalo. Ellos te guiaron a una nueva experiencia exclusiva.',
   eventDate: 'Sábado 21 de Noviembre • 18:00 hs',
   eventLocation: 'Gruta del Bosque.',
   eventAccessNote: 'Presenta esta aplicación con los 3 Kencalos en el acceso.',

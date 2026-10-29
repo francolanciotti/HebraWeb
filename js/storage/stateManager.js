@@ -5,12 +5,14 @@
 import { firebaseService } from './firebaseService.js';
 import { getLocationById, getSpeciesForTree, getKencaloFullName, SPECIES_REGISTRY } from '../config/gameRegistry.js';
 
-const STORAGE_KEY = 'kencalo_game_state_v1';
+const STORAGE_KEY = 'kencalo_game_state_v2';
+const RESET_FLAG_KEY = 'kencalo_reset_wipe_v2';
 
 const TEXTURES = ['A', 'B', 'C', 'D'];
 const getRandomTexture = () => TEXTURES[Math.floor(Math.random() * TEXTURES.length)];
 
 const defaultState = {
+  version: 2,
   kencaloCaptured: false,
   activeKencaloTreeId: 'tree_a', // 'tree_a' | 'tree_b' | 'tree_c'
   kencaloTexture: getRandomTexture(), // 'A' | 'B' | 'C' | 'D'
@@ -29,7 +31,32 @@ const defaultState = {
 class StateManager {
   constructor() {
     this.listeners = [];
+    this.performOneTimeReset();
     this.state = this.loadState();
+  }
+
+  /**
+   * Reinicio general por única vez para todos los usuarios.
+   * Si el navegador no tiene registrada la bandera de reseteo v2,
+   * elimina el progreso anterior y las cuentas locales viejas.
+   */
+  performOneTimeReset() {
+    try {
+      if (!localStorage.getItem(RESET_FLAG_KEY)) {
+        console.log('[StateManager] Aplicando reinicio general único de progreso a 0...');
+        const keysToRemove = [];
+        for (let i = 0; i < localStorage.length; i++) {
+          const key = localStorage.key(i);
+          if (key && (key.startsWith('kencalo_') || key === 'kencalo_game_state_v1')) {
+            keysToRemove.push(key);
+          }
+        }
+        keysToRemove.forEach(k => localStorage.removeItem(k));
+        localStorage.setItem(RESET_FLAG_KEY, 'true');
+      }
+    } catch (e) {
+      console.warn('[StateManager] Error al ejecutar reinicio de progreso:', e);
+    }
   }
 
   loadState() {
@@ -424,16 +451,26 @@ class StateManager {
       if (firebaseService.isAvailable()) {
         const cloudResult = await firebaseService.loadAccountFromCloud(cleanId);
         if (cloudResult.success && cloudResult.state) {
-          // REEMPLAZO LIMPIO DIRECTO: CERO MERGE
+          // Si la cuenta en la nube es previa al reseteo general (version < 2), reiniciar su progreso a 0
+          const isLegacy = !cloudResult.state.version || cloudResult.state.version < 2;
+          const restoredProgress = isLegacy ? {} : cloudResult.state;
+
           this.state = {
             ...defaultState,
-            ...cloudResult.state,
+            ...restoredProgress,
+            version: 2,
             userIdentifier: cleanId,
             isAccountLinked: true
           };
 
           this.saveState();
-          return { success: true, isNew: false, message: `Bienvenido de vuelta, ${cleanId} (Sincronizado desde la nube)` };
+          return { 
+            success: true, 
+            isNew: false, 
+            message: isLegacy 
+              ? `Bienvenido, ${cleanId}. Tu progreso anterior fue reiniciado a 0.` 
+              : `Bienvenido de vuelta, ${cleanId} (Sincronizado desde la nube)` 
+          };
         }
       }
 
