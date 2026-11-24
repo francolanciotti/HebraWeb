@@ -131,8 +131,28 @@
         </div>
 
         <div class="ar-overlay-ui">
-          <!-- Tarjeta de Solicitud de Permiso de Cámara (Figma Style) -->
-          <div id="ar-permission-card" class="ar-permission-card glass-card">
+          <!-- Cartel Superpuesto de Fin de Evento (Activo cuando EVENT_ENDED_MODE = true) -->
+          <div id="event-ended-card" class="event-ended-card glass-card">
+            <span class="event-ended-badge" id="event-ended-badge">✦ EVENTO FINALIZADO</span>
+            <div class="event-ended-icon-wrapper" aria-hidden="true">
+              <svg viewBox="0 0 24 24" width="32" height="32" fill="none" stroke="#112142" stroke-width="2"
+                stroke-linecap="round" stroke-linejoin="round">
+                <path d="M12 3l2.4 5.2L20 9l-4 4 1 5.6L12 16l-5 2.6 1-5.6-4-4 5.6-.8L12 3z" />
+              </svg>
+            </div>
+            <h3 id="event-ended-title">El evento ha terminado</h3>
+            <p id="event-ended-desc">
+              Gracias por ser parte de Hebra y Kenosis. La captura AR en la ciudad ya concluyó, pero podés reclamar a
+              los 3 Kencalos juntos para explorarlos en 3D.
+            </p>
+            <button id="btn-claim-all-kencalos" class="btn-dark-pill btn-claim-all" type="button">
+              Conseguir los 3 Kencalos a la vez
+            </button>
+            <a href="../" class="event-ended-back-link">← Volver a la bitácora</a>
+          </div>
+
+          <!-- Tarjeta de Solicitud de Permiso de Cámara (Oculta por defecto tras fin del evento) -->
+          <div id="ar-permission-card" class="ar-permission-card glass-card hidden">
             <div class="camera-icon-wrapper">
               <svg viewBox="0 0 24 24" width="34" height="34" fill="#112142">
                 <path d="M12 15a3 3 0 100-6 3 3 0 000 6z" />

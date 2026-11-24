@@ -4,7 +4,7 @@
 
 import { NotificationUI } from '../ui/notificationUI.js';
 import { MindARThree } from '../lib/mindar-image-three.prod.js';
-import { getTodayArgentinaDate } from '../config/gameRegistry.js';
+import { getTodayArgentinaDate, EVENT_ENDED_MODE } from '../config/gameRegistry.js';
 
 export class ARController {
   constructor(options = {}) {
@@ -30,6 +30,11 @@ export class ARController {
    * Inicializa la cámara AR y el tracking de marcadores
    */
   async startAR(containerElement) {
+    if (EVENT_ENDED_MODE) {
+      this.stopAR();
+      return;
+    }
+
     if (!containerElement) return;
 
     if (this.isARActive || this.isStartingAR) {
@@ -137,6 +142,11 @@ export class ARController {
   }
 
   async startLiveCamera(containerElement) {
+    if (EVENT_ENDED_MODE) {
+      this.stopAR();
+      return;
+    }
+
     if (this.cameraStream && this.videoElement) {
       return;
     }

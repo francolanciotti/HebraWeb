@@ -15,11 +15,14 @@ export class AudioManager {
       outfitNav: new Audio('./assets/audio/4.mp3')
     };
 
-    // Precargar audios para baja latencia
+    // Precargar audios para baja latencia y garantizar que ninguno quede en bucle
     Object.values(this.sounds).forEach(audio => {
       audio.preload = 'auto';
+      audio.loop = false;
     });
 
+    this.individualCaptureMuted = false;
+    this._lastBatchSoundAt = 0;
     this.isUnlocked = false;
     this.audioCtx = null;
     this.initAudioUnlock();
@@ -67,6 +70,28 @@ export class AudioManager {
   }
 
   /**
+   * Activa o desactiva los sonidos automáticos de captura/escaneo individual
+   * (usado en Modo Fin de Evento para evitar múltiples disparos superpuestos).
+   */
+  setIndividualCaptureMuted(muted) {
+    this.individualCaptureMuted = Boolean(muted);
+  }
+
+  /**
+   * Detiene y reinicia cualquier audio en curso para evitar solapamientos o bucles.
+   */
+  stopAllSounds() {
+    Object.values(this.sounds).forEach(audio => {
+      if (!audio) return;
+      try {
+        audio.pause();
+        audio.currentTime = 0;
+        audio.loop = false;
+      } catch (e) {}
+    });
+  }
+
+  /**
    * Reproduce 1.mp3 - Al capturar a Kencalo o interactuar/tocar la criatura 3D
    */
   playKencaloInteract() {
@@ -77,6 +102,20 @@ export class AudioManager {
    * Reproduce 3.mp3 - Al detectar/escanear correctamente un marcador de árbol
    */
   playScanSuccess() {
+    if (this.individualCaptureMuted) return;
+    this.playSound(this.sounds.scanSuccess);
+  }
+
+  /**
+   * Reproduce un único sonido de éxito al reclamar los 3 Kencalos a la vez.
+   * Garantiza cero superposición y protección anti-rebote.
+   */
+  playBatchCaptureSuccess() {
+    const now = Date.now();
+    if (now - this._lastBatchSoundAt < 1200) return;
+    this._lastBatchSoundAt = now;
+
+    this.stopAllSounds();
     this.playSound(this.sounds.scanSuccess);
   }
 

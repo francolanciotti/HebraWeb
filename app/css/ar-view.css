@@ -370,3 +370,109 @@
 .scanner-frame.hidden {
   display: none !important;
 }
+
+/* ==========================================================================
+   CARTEL SUPERPUESTO DE FIN DE EVENTO
+   ========================================================================== */
+.event-ended-card {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  text-align: center;
+  padding: 32px 24px;
+  max-width: 380px;
+  width: 92%;
+  margin: auto;
+  gap: 14px;
+  --br-x1: 50%;
+  --br-x2: 37%;
+  --br-x3: 85%;
+  --br-x4: 65%;
+  --br-y1: 25%;
+  --br-y2: 65%;
+  --br-y3: 68%;
+  --br-y4: 82%;
+  border-radius: var(--br-x1) var(--br-x2) var(--br-x3) var(--br-x4) / var(--br-y1) var(--br-y2) var(--br-y3);
+  background: var(--primary-bg);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  border: 2px solid var(--navy-dark);
+  box-shadow:
+    0 18px 44px -8px rgba(17, 33, 66, 0.2),
+    inset 1px 1px 2px 0 rgba(255, 255, 255, 0.85),
+    inset -1px -1px 3px 0 rgba(17, 33, 66, 0.1);
+  z-index: 25;
+}
+
+.event-ended-card.hidden {
+  display: none !important;
+}
+
+.event-ended-badge {
+  font-family: var(--font-epilogue);
+  font-size: 0.7rem;
+  font-weight: 800;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  padding: 5px 12px;
+  border-radius: var(--radius-pill);
+  background: var(--primary-purple);
+  color: var(--purple-accent);
+}
+
+.event-ended-icon-wrapper {
+  width: 64px;
+  height: 64px;
+  border-radius: 50%;
+  background: rgba(107, 201, 217, 0.22);
+  border: 1px solid rgba(107, 201, 217, 0.45);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  box-shadow: 0 0 22px rgba(107, 201, 217, 0.24);
+}
+
+.event-ended-card h3 {
+  font-family: var(--font-heading);
+  font-size: 1.55rem;
+  font-style: normal;
+  font-weight: 400;
+  color: var(--navy-dark);
+  margin: 0;
+}
+
+.event-ended-card p {
+  font-size: 0.92rem;
+  color: var(--text-dark);
+  line-height: 1.48;
+  margin: 0;
+}
+
+.btn-claim-all {
+  width: 100%;
+  padding: 14px 22px;
+  font-size: 0.95rem;
+  font-weight: 600;
+  white-space: normal;
+  line-height: 1.25;
+  box-shadow: 0 10px 24px rgba(17, 33, 66, 0.25);
+}
+
+.btn-claim-all:disabled {
+  opacity: 0.65;
+  cursor: wait;
+}
+
+.event-ended-back-link {
+  font-family: var(--font-epilogue);
+  font-size: 0.84rem;
+  font-weight: 600;
+  color: var(--purple-accent);
+  text-decoration: none;
+  padding: 4px 8px;
+}
+
+.event-ended-back-link:hover {
+  text-decoration: underline;
+}

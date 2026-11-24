@@ -225,6 +225,64 @@ class StateManager {
     return isNew;
   }
 
+  /**
+   * Modo Fin de Evento: entrega los 3 Kencalos (tree_a, tree_b, tree_c) simultáneamente
+   * con 3 especies distintas (sin repetir) y un único saveState().
+   */
+  captureAllThreeKencalos() {
+    const treeIds = ['tree_a', 'tree_b', 'tree_c'];
+    const allSpecies = Object.keys(SPECIES_REGISTRY);
+    const discovered = new Set(this.state.discoveredTrees || []);
+    const coords = new Set(this.state.discoveredCoordinates || []);
+    const capturedMap = { ...(this.state.capturedKencalos || {}) };
+    const capturedSpeciesMap = { ...(this.state.capturedSpecies || {}) };
+
+    let newlyCapturedCount = 0;
+
+    treeIds.forEach((treeId) => {
+      if (!discovered.has(treeId)) {
+        newlyCapturedCount++;
+      }
+      discovered.add(treeId);
+      coords.add(treeId);
+
+      if (!capturedMap[treeId] || !TEXTURES.includes(capturedMap[treeId])) {
+        capturedMap[treeId] = this.getRandomTexture();
+      }
+
+      if (!capturedSpeciesMap[treeId] || !SPECIES_REGISTRY[capturedSpeciesMap[treeId]]) {
+        const usedSpecies = Object.values(capturedSpeciesMap);
+        const available = allSpecies.filter((s) => !usedSpecies.includes(s));
+        const pool = available.length > 0 ? available : allSpecies;
+        capturedSpeciesMap[treeId] = pool[Math.floor(Math.random() * pool.length)];
+      }
+    });
+
+    const activeTreeId = treeIds.includes(this.state.activeKencaloTreeId)
+      ? this.state.activeKencaloTreeId
+      : 'tree_a';
+
+    this.state.kencaloCaptured = true;
+    this.state.activeKencaloTreeId = activeTreeId;
+    this.state.kencaloTexture = capturedMap[activeTreeId];
+    this.state.discoveredTrees = Array.from(discovered);
+    this.state.discoveredCoordinates = Array.from(coords);
+    this.state.capturedKencalos = capturedMap;
+    this.state.capturedSpecies = capturedSpeciesMap;
+
+    if (!this.state.unlockedOutfits || this.state.unlockedOutfits.length === 0) {
+      this.state.unlockedOutfits = ['default'];
+    }
+
+    this.saveState();
+
+    return {
+      newlyCapturedCount,
+      totalPossessed: this.getPossessedKencalos().length,
+      activeKencalo: this.getCurrentKencalo()
+    };
+  }
+
   // Compatibilidad con la vista AR original (Árbol A)
   captureKencalo(textureKey) {
     return this.captureKencaloFromTree('tree_a', textureKey);

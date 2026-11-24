@@ -22,7 +22,9 @@ import {
   getLocationById, 
   getActiveTreeForToday,
   getTodayArgentinaDate,
-  EVENT_INVITATION_CONFIG 
+  EVENT_INVITATION_CONFIG,
+  EVENT_ENDED_MODE,
+  EVENT_ENDED_CONFIG
 } from './config/gameRegistry.js';
 
 // Configuración configurable de la Pantalla de Bienvenida (Splash Screen)
@@ -37,6 +39,11 @@ export class KencaloApp {
     this.currentView = 'ar'; // 'ar' | 'companion' | 'transmedia'
     this.isKencaloSpawnedInAR = false;
     this.hasInteractedWithKencalo = false;
+    this.isClaimingBatch = false;
+
+    if (EVENT_ENDED_MODE) {
+      soundManager.setIndividualCaptureMuted(true);
+    }
 
     this.initWelcomeModal();
     this.init3DScene();
@@ -49,7 +56,7 @@ export class KencaloApp {
 
     // Si la pantalla de bienvenida no existe o ya está oculta y tiene los 3 Kencalos
     const splash = document.getElementById('welcome-splash-modal');
-    if ((!splash || splash.style.display === 'none') && stateManager.getPossessedKencalos().length === 3) {
+    if (!EVENT_ENDED_MODE && (!splash || splash.style.display === 'none') && stateManager.getPossessedKencalos().length === 3) {
       setTimeout(() => {
         if (this.eventModalUI) this.eventModalUI.open();
       }, 500);
@@ -212,7 +219,7 @@ export class KencaloApp {
           }
 
           // Si el usuario ya posee los 3 Kencalos capturados al iniciar o recargar, desplegar invitación al evento
-          if (stateManager.getPossessedKencalos().length === 3 && this.eventModalUI) {
+          if (!EVENT_ENDED_MODE && stateManager.getPossessedKencalos().length === 3 && this.eventModalUI) {
             setTimeout(() => {
               this.eventModalUI.open();
             }, 600);
@@ -310,7 +317,7 @@ export class KencaloApp {
         this.switchView('companion');
         // Si el usuario acaba de completar la captura de los 3 Kencalos:
         // Se le da un tiempo para apreciar su nuevo Kencalo (configurable, 10s por defecto) antes de mostrar la invitación
-        if (stateManager.getPossessedKencalos().length === 3) {
+        if (!EVENT_ENDED_MODE && stateManager.getPossessedKencalos().length === 3) {
           const delay = EVENT_INVITATION_CONFIG?.postCaptureDelayMs ?? 10000;
           setTimeout(() => {
             if (stateManager.getPossessedKencalos().length === 3 && this.eventModalUI) {
@@ -381,13 +388,27 @@ export class KencaloApp {
       });
     }
 
-    // Botón ir a AR desde la pantalla de no capturado
+    // Botón de reclamo simultáneo (Modo Fin de Evento)
+    const btnClaimAll = document.getElementById('btn-claim-all-kencalos');
+    if (btnClaimAll) {
+      btnClaimAll.addEventListener('click', (e) => {
+        e.stopPropagation();
+        this.claimAllKencalosAtOnce();
+      });
+    }
+
+    // Botón ir a AR / reclamo desde la pantalla de no capturado
     const btnGoAr = document.getElementById('btn-go-ar');
     if (btnGoAr) {
+      if (EVENT_ENDED_MODE) {
+        btnGoAr.textContent = 'Conseguir los 3 Kencalos';
+      }
       btnGoAr.addEventListener('click', () => {
         this.switchView('ar');
       });
     }
+
+    this.syncEventEndedUI();
 
     // Botón de debug para reiniciar el progreso (Modo Prueba)
     const btnSimReset = document.getElementById('btn-sim-reset');
@@ -449,6 +470,95 @@ export class KencaloApp {
   }
 
   /**
+   * Sincroniza la tarjeta superpuesta de Fin de Evento y oculta la UI de cámara AR cuando corresponde.
+   */
+  syncEventEndedUI() {
+    const endedCard = document.getElementById('event-ended-card');
+    const permissionCard = document.getElementById('ar-permission-card');
+    const scannerFrame = document.getElementById('ar-target-scanner');
+    const arActions = document.getElementById('ar-actions');
+
+    if (!EVENT_ENDED_MODE) {
+      if (endedCard) endedCard.classList.add('hidden');
+      return;
+    }
+
+    if (permissionCard) permissionCard.classList.add('hidden');
+    if (scannerFrame) scannerFrame.classList.add('hidden');
+    if (arActions) arActions.classList.add('hidden');
+    if (!endedCard) return;
+
+    endedCard.classList.remove('hidden');
+
+    const possessedCount = stateManager.getPossessedKencalos().length;
+    const badgeEl = document.getElementById('event-ended-badge');
+    const titleEl = document.getElementById('event-ended-title');
+    const descEl = document.getElementById('event-ended-desc');
+    const btnClaimAll = document.getElementById('btn-claim-all-kencalos');
+    const backLink = endedCard.querySelector('.event-ended-back-link');
+
+    if (badgeEl) badgeEl.textContent = EVENT_ENDED_CONFIG.badge;
+    if (backLink) backLink.textContent = EVENT_ENDED_CONFIG.backToBlogText;
+
+    if (possessedCount >= 3) {
+      if (titleEl) titleEl.textContent = EVENT_ENDED_CONFIG.alreadyClaimedTitle;
+      if (descEl) descEl.textContent = EVENT_ENDED_CONFIG.alreadyClaimedDescription;
+      if (btnClaimAll) btnClaimAll.textContent = EVENT_ENDED_CONFIG.goToCompanionText;
+    } else {
+      if (titleEl) titleEl.textContent = EVENT_ENDED_CONFIG.title;
+      if (descEl) descEl.textContent = EVENT_ENDED_CONFIG.description;
+      if (btnClaimAll) btnClaimAll.textContent = EVENT_ENDED_CONFIG.claimButtonText;
+    }
+  }
+
+  /**
+   * Modo Fin de Evento: entrega los 3 Kencalos simultáneamente sin captura AR,
+   * reproduciendo un único sonido de éxito (sin bucles ni superposición).
+   */
+  claimAllKencalosAtOnce() {
+    if (this.isClaimingBatch) return;
+
+    if (stateManager.getPossessedKencalos().length >= 3) {
+      this.switchView('companion');
+      return;
+    }
+
+    this.isClaimingBatch = true;
+    const btnClaimAll = document.getElementById('btn-claim-all-kencalos');
+    if (btnClaimAll) btnClaimAll.disabled = true;
+
+    const { activeKencalo } = stateManager.captureAllThreeKencalos();
+
+    this.triggerCaptureSparkles();
+    soundManager.playBatchCaptureSuccess();
+
+    if (this.sceneManager && this.kencaloModel && this.kencaloModel.group) {
+      this.sceneManager.scene.add(this.kencaloModel.group);
+      this.kencaloModel.applyCompanionTransform();
+      this.sceneManager.setInteractiveRotationEnabled(true);
+      this.sceneManager.setInitialRotation(this.kencaloModel.group.rotation.y, this.kencaloModel.group.rotation.x);
+      this.kencaloModel.group.visible = true;
+    }
+
+    if (this.kencaloModel && activeKencalo) {
+      if (this.kencaloModel.currentSpeciesId !== activeKencalo.speciesId) {
+        this.kencaloModel.loadSpecies(activeKencalo.speciesId, activeKencalo.texture);
+      } else {
+        this.kencaloModel.setTexture(activeKencalo.texture);
+      }
+    }
+
+    NotificationUI.showToast('¡Has conseguido los 3 Kencalos!', '✨');
+    this.syncEventEndedUI();
+
+    setTimeout(() => {
+      this.switchView('companion', { silent: true });
+      if (btnClaimAll) btnClaimAll.disabled = false;
+      this.isClaimingBatch = false;
+    }, 650);
+  }
+
+  /**
    * Captura a Kencalo, dispara su animación alegre y pasa a la vista Companion
    */
   captureCurrentKencalo() {
@@ -466,7 +576,9 @@ export class KencaloApp {
     stateManager.captureKencaloFromTree(treeId, tex, speciesId);
 
     this.triggerCaptureSparkles();
-    soundManager.playKencaloInteract();
+    if (!EVENT_ENDED_MODE) {
+      soundManager.playKencaloInteract();
+    }
     this.isKencaloSpawnedInAR = false;
     this.currentEncounterTreeId = null;
     this.currentEncounterTexture = null;
@@ -692,8 +804,8 @@ export class KencaloApp {
     });
   }
 
-  switchView(viewName) {
-    if (this.currentView !== viewName) {
+  switchView(viewName, options = {}) {
+    if (this.currentView !== viewName && !options.silent) {
       soundManager.playOutfitNav();
     }
 
@@ -769,17 +881,22 @@ export class KencaloApp {
 
     // Gestiones específicas de cámara AR
     if (viewName === 'ar') {
-      const permissionCard = document.getElementById('ar-permission-card');
-      const scannerFrame = document.getElementById('ar-target-scanner');
-
-      if (this.arController.hasPermission) {
-        if (permissionCard) permissionCard.classList.add('hidden');
-        if (scannerFrame) scannerFrame.classList.remove('hidden');
-        const arViewport = document.getElementById('ar-viewport');
-        if (arViewport) this.arController.startAR(arViewport);
+      if (EVENT_ENDED_MODE) {
+        this.arController.stopAR();
+        this.syncEventEndedUI();
       } else {
-        if (permissionCard) permissionCard.classList.remove('hidden');
-        if (scannerFrame) scannerFrame.classList.add('hidden');
+        const permissionCard = document.getElementById('ar-permission-card');
+        const scannerFrame = document.getElementById('ar-target-scanner');
+
+        if (this.arController.hasPermission) {
+          if (permissionCard) permissionCard.classList.add('hidden');
+          if (scannerFrame) scannerFrame.classList.remove('hidden');
+          const arViewport = document.getElementById('ar-viewport');
+          if (arViewport) this.arController.startAR(arViewport);
+        } else {
+          if (permissionCard) permissionCard.classList.remove('hidden');
+          if (scannerFrame) scannerFrame.classList.add('hidden');
+        }
       }
     } else {
       this.arController.stopAR();
@@ -787,6 +904,7 @@ export class KencaloApp {
   }
 
   onStateChange(state) {
+    this.syncEventEndedUI();
     const isCaptured = !!state.kencaloCaptured;
 
     // Control de visibilidad del modelo 3D de Kencalo

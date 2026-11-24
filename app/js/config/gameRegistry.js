@@ -352,8 +352,21 @@ export function getPolaroidTreeData() {
 }
 
 // ============================================================================
-// 4. CONFIGURACIÓN DEL EVENTO EXCLUSIVO (PERSONALIZABLE)
+// 4. CONFIGURACIÓN DEL EVENTO EXCLUSIVO Y MODO FIN DE EVENTO (PERSONALIZABLE)
 // ============================================================================
+export const EVENT_ENDED_MODE = true;
+
+export const EVENT_ENDED_CONFIG = {
+  badge: '✦ EVENTO FINALIZADO',
+  title: 'El evento ha terminado',
+  description: 'Gracias por ser parte de Hebra y Kenosis. La captura AR en la ciudad ya concluyó, pero podés reclamar a los 3 Kencalos juntos para explorarlos en 3D.',
+  claimButtonText: 'Conseguir los 3 Kencalos a la vez',
+  alreadyClaimedTitle: '¡Ya tenés tus 3 Kencalos!',
+  alreadyClaimedDescription: 'El evento presencial concluyó, pero tus 3 Kencalos siguen disponibles para interactuar en 3D y crear postales.',
+  goToCompanionText: 'Ver mis 3 Kencalos',
+  backToBlogText: '← Volver a la bitácora'
+};
+
 export const EVENT_INVITATION_CONFIG = {
   // Tiempo de espera para apreciar al Kencalo tras cerrar la Polaroid antes de que salte el cartel (en ms)
   postCaptureDelayMs: 7000, // 10 segundos (10000 ms)
