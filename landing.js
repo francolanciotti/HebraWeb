@@ -211,6 +211,20 @@ function initScrollReveal() {
   elements.forEach((el) => revealObserver.observe(el));
 }
 
+const AUDIO_MUTED_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><line x1="23" y1="9" x2="17" y2="15"></line><line x1="17" y1="9" x2="23" y2="15"></line></svg>';
+const AUDIO_UNMUTED_ICON =
+  '<svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2" stroke-linecap="round" stroke-linejoin="round" aria-hidden="true"><polygon points="11 5 6 9 2 9 2 15 6 15 11 19 11 5"></polygon><path d="M15.54 8.46a5 5 0 0 1 0 7.07"></path><path d="M19.07 4.93a10 10 0 0 1 0 14.14"></path></svg>';
+
+function syncAudioToggleButton(btn, video) {
+  if (!btn || !video) return;
+  const isUnmuted = !video.muted;
+  btn.classList.toggle('is-unmuted', isUnmuted);
+  btn.setAttribute('aria-pressed', String(isUnmuted));
+  btn.setAttribute('aria-label', isUnmuted ? 'Desactivar audio' : 'Activar audio');
+  btn.innerHTML = `${isUnmuted ? AUDIO_UNMUTED_ICON : AUDIO_MUTED_ICON}<span>${isUnmuted ? 'Con audio' : 'Sin audio'}</span>`;
+}
+
 function initLightbox() {
   const modal = document.getElementById('landing-lightbox');
   const backdrop = document.getElementById('lightbox-backdrop');
@@ -218,28 +232,80 @@ function initLightbox() {
   const prevBtn = document.getElementById('lightbox-prev');
   const nextBtn = document.getElementById('lightbox-next');
   const imgEl = document.getElementById('lightbox-img');
-  const captionEl = document.getElementById('lightbox-caption');
+  const videoWrap = document.getElementById('lightbox-video-wrap');
+  const videoEl = document.getElementById('lightbox-video');
+  const videoAudioBtn = document.getElementById('lightbox-audio-toggle');
   const counterEl = document.getElementById('lightbox-counter');
   if (!modal || !imgEl) return;
 
   let galleryItems = [];
   let currentIndex = 0;
 
-  const collectGalleryImages = () =>
-    Array.from(document.querySelectorAll('.media-slot img, [data-lightbox]')).filter(
-      (img) => Boolean(img.getAttribute('src'))
+  const getMediaSrc = (el) => {
+    if (!el) return '';
+    if (el.tagName === 'VIDEO') {
+      return el.currentSrc || el.getAttribute('src') || el.querySelector('source')?.getAttribute('src') || '';
+    }
+    return el.getAttribute('src') || '';
+  };
+
+  const collectGalleryMedia = () =>
+    Array.from(document.querySelectorAll('.media-slot--filled img, .media-slot--filled video.loop-content-video')).filter(
+      (el) => !el.closest('.glyphs-showcase-plate, .media-slot--app-cover') && Boolean(getMediaSrc(el))
     );
+
+  const resetLightboxVideo = () => {
+    if (!videoEl) return;
+    videoEl.pause();
+    videoEl.muted = true;
+    videoEl.removeAttribute('src');
+    videoEl.load();
+    syncAudioToggleButton(videoAudioBtn, videoEl);
+  };
 
   const showAt = (index) => {
     if (!galleryItems.length) return;
     currentIndex = (index + galleryItems.length) % galleryItems.length;
-    const targetImg = galleryItems[currentIndex];
-    const figure = targetImg.closest('figure, article');
-    const caption = figure?.querySelector('figcaption')?.textContent?.trim() || targetImg.alt || '';
+    const targetEl = galleryItems[currentIndex];
 
-    imgEl.src = targetImg.src;
-    imgEl.alt = targetImg.alt || 'Registro Hebra';
-    if (captionEl) captionEl.textContent = caption;
+    if (targetEl.tagName === 'VIDEO' && videoEl && videoWrap) {
+      const wasMuted = targetEl.muted;
+      const resumeTime = targetEl.currentTime || 0;
+      document.querySelectorAll('video.loop-content-video').forEach((v) => {
+        v.muted = true;
+      });
+
+      imgEl.classList.add('hidden');
+      imgEl.src = '';
+      videoWrap.classList.remove('hidden');
+
+      videoEl.src = targetEl.currentSrc || targetEl.querySelector('source')?.src || getMediaSrc(targetEl);
+      videoEl.loop = true;
+      videoEl.muted = wasMuted;
+      videoEl.playsInline = true;
+
+      if (resumeTime > 0) {
+        videoEl.addEventListener(
+          'loadedmetadata',
+          () => {
+            try {
+              videoEl.currentTime = resumeTime;
+            } catch (_) {}
+          },
+          { once: true }
+        );
+      }
+
+      syncAudioToggleButton(videoAudioBtn, videoEl);
+      videoEl.play().catch(() => {});
+    } else {
+      resetLightboxVideo();
+      if (videoWrap) videoWrap.classList.add('hidden');
+      imgEl.classList.remove('hidden');
+      imgEl.src = targetEl.src;
+      imgEl.alt = targetEl.alt || 'Registro Hebra';
+    }
+
     if (counterEl) counterEl.textContent = `${currentIndex + 1} / ${galleryItems.length}`;
     const hasMultiple = galleryItems.length > 1;
     if (prevBtn) prevBtn.style.display = hasMultiple ? '' : 'none';
@@ -248,15 +314,33 @@ function initLightbox() {
 
   const close = () => {
     modal.classList.add('hidden');
+    resetLightboxVideo();
+    if (videoWrap) videoWrap.classList.add('hidden');
+    imgEl.classList.remove('hidden');
     imgEl.src = '';
   };
 
-  document.addEventListener('click', (e) => {
-    const targetImg = e.target.closest('.media-slot img, [data-lightbox]');
-    if (!targetImg || !targetImg.getAttribute('src')) return;
+  videoAudioBtn?.addEventListener('click', (e) => {
+    e.preventDefault();
+    e.stopPropagation();
+    if (!videoEl) return;
+    videoEl.muted = !videoEl.muted;
+    if (!videoEl.muted && videoEl.paused) {
+      videoEl.play().catch(() => {});
+    }
+    syncAudioToggleButton(videoAudioBtn, videoEl);
+  });
 
-    galleryItems = collectGalleryImages();
-    const idx = galleryItems.indexOf(targetImg);
+  videoEl?.addEventListener('volumechange', () => syncAudioToggleButton(videoAudioBtn, videoEl));
+
+  document.addEventListener('click', (e) => {
+    if (e.target.closest('.video-audio-toggle, button, a')) return;
+    const targetEl = e.target.closest('.media-slot--filled img, .media-slot--filled video.loop-content-video');
+    if (!targetEl || targetEl.closest('.glyphs-showcase-plate, .media-slot--app-cover')) return;
+    if (!getMediaSrc(targetEl)) return;
+
+    galleryItems = collectGalleryMedia();
+    const idx = galleryItems.indexOf(targetEl);
     showAt(idx >= 0 ? idx : 0);
     modal.classList.remove('hidden');
   });
@@ -272,6 +356,132 @@ function initLightbox() {
     if (e.key === 'ArrowLeft') showAt(currentIndex - 1);
     if (e.key === 'ArrowRight') showAt(currentIndex + 1);
   });
+}
+
+function initMediaSwitchers() {
+  const galleries = Array.from(document.querySelectorAll('[data-media-gallery]'));
+  if (!galleries.length) return;
+
+  galleries.forEach((gallery) => {
+    const slides = Array.from(gallery.querySelectorAll('.card-media-slide'));
+    if (!slides.length) return;
+
+    const prevBtn = gallery.querySelector('[data-media-prev]');
+    const nextBtn = gallery.querySelector('[data-media-next]');
+    const counterEl = gallery.querySelector('[data-media-counter]');
+    const labelEl = gallery.querySelector('[data-media-label]');
+    const tabs = Array.from(gallery.querySelectorAll('[data-media-tab]'));
+
+    let activeIndex = Math.max(
+      0,
+      slides.findIndex((slide) => slide.classList.contains('is-active'))
+    );
+
+    const showSlide = (idx) => {
+      const nextIdx = ((idx % slides.length) + slides.length) % slides.length;
+      const reducedMotion = prefersReducedMotion();
+      slides.forEach((slide, slideIdx) => {
+        const isCurrent = slideIdx === nextIdx;
+        slide.classList.toggle('is-active', isCurrent);
+        if (!isCurrent) {
+          slide.querySelectorAll('video').forEach((video) => {
+            video.pause();
+            video.muted = true;
+          });
+        } else if (!reducedMotion) {
+          slide.querySelectorAll('video.loop-content-video').forEach((video) => {
+            video.play().catch(() => {});
+          });
+        }
+      });
+
+      tabs.forEach((tab) => {
+        const tabIdx = parseInt(tab.getAttribute('data-media-tab') || '-1', 10);
+        const isCurrent = tabIdx === nextIdx;
+        tab.classList.toggle('is-active', isCurrent);
+        tab.setAttribute('aria-pressed', String(isCurrent));
+      });
+
+      activeIndex = nextIdx;
+      if (counterEl) counterEl.textContent = `${activeIndex + 1} / ${slides.length}`;
+      if (labelEl) labelEl.textContent = slides[activeIndex].dataset.label || '';
+    };
+
+    prevBtn?.addEventListener('click', () => showSlide(activeIndex - 1));
+    nextBtn?.addEventListener('click', () => showSlide(activeIndex + 1));
+    tabs.forEach((tab) => {
+      tab.addEventListener('click', () => {
+        const tabIdx = parseInt(tab.getAttribute('data-media-tab') || '0', 10);
+        if (!Number.isNaN(tabIdx)) showSlide(tabIdx);
+      });
+    });
+
+    showSlide(activeIndex);
+  });
+}
+
+function initLoopContentVideos() {
+  const videos = Array.from(document.querySelectorAll('video.loop-content-video'));
+  if (!videos.length) return;
+
+  const reducedMotion = prefersReducedMotion();
+
+  videos.forEach((video) => {
+    video.loop = true;
+    video.muted = true;
+    video.playsInline = true;
+
+    const host = video.closest('.card-media-slide') || video.parentElement;
+    if (!host) return;
+
+    const btn = document.createElement('button');
+    btn.type = 'button';
+    btn.className = 'video-audio-toggle';
+
+    const sync = () => syncAudioToggleButton(btn, video);
+
+    btn.addEventListener('click', (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const willUnmute = video.muted;
+      if (willUnmute) {
+        videos.forEach((other) => {
+          if (other !== video) other.muted = true;
+        });
+        video.muted = false;
+        video.play().catch(() => {});
+      } else {
+        video.muted = true;
+      }
+      sync();
+    });
+
+    video.addEventListener('volumechange', sync);
+    sync();
+    host.appendChild(btn);
+  });
+
+  if ('IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          const video = entry.target;
+          const slide = video.closest('.card-media-slide');
+          const slideActive = !slide || slide.classList.contains('is-active');
+
+          if (entry.isIntersecting && slideActive) {
+            if (!reducedMotion) video.play().catch(() => {});
+          } else {
+            video.pause();
+            video.muted = true;
+          }
+        });
+      },
+      { threshold: 0.15 }
+    );
+
+    videos.forEach((video) => observer.observe(video));
+  }
 }
 
 function initBackToTop() {
@@ -346,6 +556,8 @@ document.addEventListener('DOMContentLoaded', () => {
   initActiveNavHighlight();
   initSubtleParallax();
   initTransmediaTimeline();
+  initMediaSwitchers();
+  initLoopContentVideos();
   initLightbox();
   try {
     initBackgroundVideos();

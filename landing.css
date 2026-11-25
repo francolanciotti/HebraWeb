@@ -596,10 +596,26 @@ code {
   border-color: rgba(216, 206, 245, 0.32);
 }
 
-.media-slot--landscape { aspect-ratio: 16 / 9; }
-.media-slot--portrait  { aspect-ratio: 4 / 5; }
-.media-slot--insta     { aspect-ratio: 4 / 5; }
-.media-slot--square    { aspect-ratio: 1 / 1; }
+.media-slot--filled {
+  border-style: solid;
+  border-color: var(--border-light);
+  background: #0d1526;
+}
+
+.media-slot--dark.media-slot--filled {
+  border-color: var(--border-dark);
+  background: #040810;
+}
+
+.media-slot--landscape   { aspect-ratio: 16 / 9; }
+.media-slot--landscape-43 { aspect-ratio: 4 / 3; }
+.media-slot--transmedia  { aspect-ratio: 4 / 3; }
+.media-slot--portrait    { aspect-ratio: 4 / 5; }
+.media-slot--portrait-34 { aspect-ratio: 3 / 4; }
+.media-slot--portrait-23 { aspect-ratio: 2 / 3; }
+.media-slot--reel        { aspect-ratio: 9 / 16; }
+.media-slot--insta       { aspect-ratio: 4 / 5; }
+.media-slot--square      { aspect-ratio: 1 / 1; }
 
 .media-slot img {
   width: 100%;
@@ -609,8 +625,52 @@ code {
   transition: transform 0.45s var(--ease-out-expo);
 }
 
+.media-slot video {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+  display: block;
+  background: #040810;
+  cursor: zoom-in;
+}
+
 .media-slot:hover img {
   transform: scale(1.03);
+}
+
+.media-slot--app-cover {
+  border-style: solid;
+  border-color: var(--border-light);
+  background: linear-gradient(145deg, #112142 0%, #241d57 58%, #182a50 100%);
+  flex-direction: column;
+  gap: 12px;
+  padding: 20px;
+  color: var(--text-light);
+  text-decoration: none;
+  cursor: pointer;
+}
+
+.media-slot--app-cover:hover {
+  border-color: var(--accent-purple);
+}
+
+.media-slot--app-cover .app-cover-emblem {
+  width: 92px;
+  height: auto;
+  object-fit: contain;
+  cursor: pointer;
+}
+
+.media-slot--app-cover:hover img {
+  transform: scale(1.04);
+}
+
+.media-slot--app-cover span {
+  font-size: 0.78rem;
+  font-weight: 700;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: var(--accent-cyan);
 }
 
 .placeholder-inner {
@@ -733,15 +793,15 @@ code {
    ========================================================================== */
 .illustrations-layout {
   display: grid;
-  grid-template-columns: 0.9fr 1.1fr;
+  grid-template-columns: 0.8fr 1.2fr;
   gap: 24px;
   align-items: start;
 }
 
 .illustrations-subgrid {
   display: grid;
-  grid-template-columns: repeat(2, minmax(0, 1fr));
-  gap: 18px;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 16px;
 }
 
 /* ==========================================================================
@@ -749,7 +809,7 @@ code {
    ========================================================================== */
 .fragmentos-sticky-layout {
   display: grid;
-  grid-template-columns: 0.85fr 1.15fr;
+  grid-template-columns: 0.72fr 1.28fr;
   gap: 36px;
   align-items: start;
 }
@@ -779,6 +839,18 @@ code {
 .fragmentos-photos-col {
   display: grid;
   gap: 22px;
+}
+
+.fragmentos-row-top {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 18px;
+}
+
+.fragmentos-row-bottom {
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  gap: 18px;
 }
 
 /* ==========================================================================
@@ -836,6 +908,7 @@ code {
 
 .transmedia-track {
   display: flex;
+  align-items: stretch;
   gap: 20px;
   overflow-x: auto;
   scroll-snap-type: x mandatory;
@@ -850,8 +923,13 @@ code {
 }
 
 .transmedia-track .transmedia-card {
-  flex: 0 0 clamp(300px, 46%, 500px);
+  flex: 0 0 clamp(290px, 31%, 350px);
   scroll-snap-align: start;
+}
+
+.transmedia-card .media-slot--transmedia {
+  aspect-ratio: 4 / 5;
+  height: auto;
 }
 
 .timeline-progress {
@@ -972,6 +1050,169 @@ code {
   color: var(--text-light);
 }
 
+.card-media-slide {
+  position: relative;
+  display: none;
+  width: 100%;
+  height: 100%;
+}
+
+.video-audio-toggle {
+  position: absolute;
+  right: 12px;
+  bottom: 12px;
+  z-index: 4;
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 7px 12px;
+  border-radius: var(--blob-pill-a);
+  border: 1px solid rgba(250, 249, 247, 0.32);
+  background: rgba(17, 33, 66, 0.78);
+  backdrop-filter: blur(8px);
+  -webkit-backdrop-filter: blur(8px);
+  color: var(--text-light);
+  font-family: var(--font-body);
+  font-size: 0.74rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  box-shadow: 0 6px 18px rgba(4, 8, 16, 0.35);
+  transition:
+    background-color 0.2s ease,
+    color 0.2s ease,
+    border-color 0.2s ease,
+    transform 0.2s var(--ease-out-expo),
+    border-radius 0.35s var(--ease-out-expo);
+}
+
+.video-audio-toggle:hover {
+  background: rgba(17, 33, 66, 0.94);
+  border-color: var(--text-light);
+  border-radius: var(--blob-pill-b);
+  transform: translateY(-1px);
+}
+
+.video-audio-toggle.is-unmuted {
+  background: var(--surface-paper);
+  color: var(--ink-navy);
+  border-color: var(--surface-paper);
+}
+
+.video-audio-toggle svg {
+  width: 15px;
+  height: 15px;
+  flex-shrink: 0;
+  display: block;
+}
+
+.card-media-slide.is-active {
+  display: block;
+}
+
+.glyphs-showcase-plate {
+  width: 100%;
+  height: 100%;
+  padding: 18px 22px;
+  background: linear-gradient(155deg, var(--surface-paper) 0%, var(--surface-lavender) 100%);
+  display: grid;
+  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-rows: repeat(4, minmax(0, 1fr));
+  gap: 10px 14px;
+  place-items: center;
+}
+
+.media-slot .glyphs-showcase-plate img {
+  width: 100%;
+  height: 100%;
+  max-height: 62px;
+  object-fit: contain;
+  cursor: default;
+  transition: transform 0.25s var(--ease-out-expo);
+}
+
+.media-slot:hover .glyphs-showcase-plate img {
+  transform: none;
+}
+
+.media-slot .glyphs-showcase-plate img:hover {
+  transform: scale(1.08);
+}
+
+.card-media-controls {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 8px;
+  padding: 0 2px;
+}
+
+.card-media-btn {
+  width: 32px;
+  height: 32px;
+  flex-shrink: 0;
+  border-radius: var(--blob-circle-a);
+  border: 1px solid var(--border-light);
+  background: var(--surface-paper);
+  color: var(--ink-navy);
+  font-size: 1.05rem;
+  font-weight: 700;
+  line-height: 1;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, transform 0.18s ease, border-radius 0.35s var(--ease-out-expo);
+}
+
+.card-media-btn:hover {
+  background: var(--ink-navy);
+  color: var(--text-light);
+  border-radius: var(--blob-circle-c);
+}
+
+.card-media-status {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  font-size: 0.78rem;
+  font-weight: 700;
+  color: var(--accent-purple);
+}
+
+.card-media-label {
+  font-weight: 600;
+  color: var(--text-dark-muted);
+}
+
+.video-switcher-tabs {
+  display: inline-flex;
+  align-items: center;
+  gap: 8px;
+  flex-wrap: wrap;
+}
+
+.video-tab-btn {
+  border-radius: var(--blob-pill-a);
+  padding: 7px 15px;
+  border: 1px solid rgba(250, 249, 247, 0.3);
+  background: rgba(255, 255, 255, 0.08);
+  color: var(--text-light);
+  font-family: inherit;
+  font-size: 0.8rem;
+  font-weight: 700;
+  cursor: pointer;
+  transition: background-color 0.2s ease, color 0.2s ease, border-color 0.2s ease, border-radius 0.35s var(--ease-out-expo);
+}
+
+.video-tab-btn:hover {
+  background: rgba(255, 255, 255, 0.16);
+  border-color: var(--text-light);
+}
+
+.video-tab-btn.is-active {
+  background: var(--surface-paper);
+  color: var(--ink-navy);
+  border-color: var(--surface-paper);
+}
+
 /* ==========================================================================
    05 · INSTALACIÓN FINAL — KENOSIS (CLÍMAX EN BANDA OSCURA)
    ========================================================================== */
@@ -1019,12 +1260,19 @@ code {
   justify-content: center;
 }
 
+.video-frame-wrapper--filled {
+  border-style: solid;
+  border-color: var(--border-dark);
+  background: #040810;
+}
+
 .video-frame-wrapper video,
 .video-frame-wrapper iframe {
   width: 100%;
   height: 100%;
   border: 0;
   object-fit: cover;
+  background: #040810;
   display: block;
 }
 
@@ -1062,12 +1310,20 @@ code {
 
 .instalacion-gallery {
   display: grid;
-  grid-template-columns: repeat(3, minmax(0, 1fr));
+  grid-template-columns: repeat(4, minmax(0, 1fr));
   gap: 20px;
 }
 
+.kenosis-videos-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 380px));
+  justify-content: center;
+  gap: 24px;
+  margin-bottom: 28px;
+}
+
 .gallery-item--wide {
-  grid-column: span 2;
+  grid-column: 1 / -1;
 }
 
 /* ==========================================================================
@@ -1302,10 +1558,38 @@ code {
 }
 
 .lightbox-stage img {
-  max-height: 72vh;
+  max-height: 78vh;
+  max-width: min(100%, calc(94vw - 140px));
   width: auto;
+  height: auto;
   margin-inline: auto;
-  border-radius: var(--radius-sm);
+  border-radius: var(--blob-media);
+  display: block;
+}
+
+.lightbox-stage img.hidden,
+.lightbox-video-wrap.hidden {
+  display: none;
+}
+
+.lightbox-video-wrap {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  margin-inline: auto;
+  border-radius: var(--blob-media);
+  overflow: hidden;
+  background: #040810;
+}
+
+.lightbox-video {
+  max-height: 78vh;
+  max-width: min(100%, calc(94vw - 140px));
+  width: auto;
+  height: auto;
+  display: block;
+  background: #040810;
 }
 
 .lightbox-nav-btn {
@@ -1496,6 +1780,9 @@ code {
   .btn-light-pill,
   .btn-outline-light,
   .card-inline-link,
+  .video-tab-btn,
+  .card-media-btn,
+  .video-audio-toggle,
   .team-avatar,
   .timeline-arrow-btn,
   .nav-toggle,
@@ -1509,6 +1796,9 @@ code {
    RESPONSIVE
    ========================================================================== */
 @media (max-width: 1040px) {
+  .illustrations-subgrid {
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+  }
   .team-grid {
     grid-template-columns: repeat(3, minmax(0, 1fr));
   }
@@ -1571,6 +1861,12 @@ code {
   }
 }
 
+@media (max-width: 640px) {
+  .kenosis-videos-grid {
+    grid-template-columns: minmax(0, 360px);
+  }
+}
+
 @media (max-width: 560px) {
   .section-block {
     padding: 64px 0;
@@ -1582,12 +1878,14 @@ code {
   }
 
   .instalacion-gallery,
-  .illustrations-subgrid {
+  .illustrations-subgrid,
+  .fragmentos-row-top,
+  .fragmentos-row-bottom {
     grid-template-columns: 1fr;
   }
 
   .transmedia-track .transmedia-card {
-    flex: 0 0 88%;
+    flex: 0 0 86%;
   }
 
   .team-grid {

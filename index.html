@@ -79,8 +79,6 @@
       <!-- Animación de fondo en loop para la banda oscura de Hebra -->
       <div class="band-bg-media" aria-hidden="true">
         <video id="hebra-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
-          <!-- TODO: Coloca tu video en ./media/bg-animacion.webm y/o ./media/bg-animacion.mp4 -->
-          <source src="./media/bg-animacion.webm" type="video/webm">
           <source src="./media/bg-animacion.mp4" type="video/mp4">
         </video>
         <div class="band-bg-scrim"></div>
@@ -108,7 +106,8 @@
 
       <div class="blob-mask blob-mask--bottom blob-mask--paper" aria-hidden="true">
         <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
-          <path d="M0,90 L1440,90 L1440,34 C1310,82 1175,14 1020,56 C865,86 720,16 555,54 C400,84 250,18 115,58 C52,76 20,56 0,40 Z" />
+          <path
+            d="M0,90 L1440,90 L1440,34 C1310,82 1175,14 1020,56 C865,86 720,16 555,54 C400,84 250,18 115,58 C52,76 20,56 0,40 Z" />
         </svg>
       </div>
     </section>
@@ -170,70 +169,52 @@
           <h2 class="section-title">Ilustraciones del Universo</h2>
           <!-- TODO: Describir brevemente el método de ilustración elegido -->
           <p class="section-lead">
-            [Placeholder — Método de ilustración elegido] Serie visual desarrollada con el estilo ilustrativo propio
-            del universo.
+            Serie visual con el estilo propio del universo.
           </p>
         </header>
 
         <div class="illustrations-layout">
           <figure class="media-card media-card--light reveal-on-scroll">
-            <div class="media-slot media-slot--insta">
-              <!-- TODO: <img src="./media/ilustracion-01.jpg" alt="Ilustración principal del universo Hebra" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">ILUSTRACIÓN DESTACADA • 4:5</span>
-                <strong>Pieza ilustrada principal</strong>
-                <p>Insertar imagen con el método de ilustración elegido (formato IG).</p>
-              </div>
+            <div class="media-slot media-slot--insta media-slot--filled">
+              <img src="./media/Ilustraciones/1.jpg" loading="lazy">
             </div>
-            <figcaption class="media-caption">
-              <!-- TODO: Epígrafe + técnica -->
-              Lámina I — Técnica y lenguaje visual de nuestras publicaciones.
-            </figcaption>
           </figure>
 
           <div class="illustrations-subgrid">
             <figure class="media-card media-card--light reveal-on-scroll">
-              <div class="media-slot media-slot--insta">
-                <!-- TODO: <img src="./media/ilustracion-02.jpg" alt="Ilustración de publicación Instagram 2" data-lightbox> -->
-                <div class="placeholder-inner">
-                  <span class="placeholder-badge">ILUSTRACIÓN 02 • 4:5</span>
-                  <strong>Publicación / Lámina II</strong>
-                </div>
+              <div class="media-slot media-slot--insta media-slot--filled">
+                <img src="./media/Ilustraciones/2.jpg" loading="lazy">
               </div>
-              <figcaption class="media-caption">Lámina II — Publicación del universo.</figcaption>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
-              <div class="media-slot media-slot--insta">
-                <!-- TODO: <img src="./media/ilustracion-03.jpg" alt="Ilustración de publicación Instagram 3" data-lightbox> -->
-                <div class="placeholder-inner">
-                  <span class="placeholder-badge">ILUSTRACIÓN 03 • 4:5</span>
-                  <strong>Publicación / Lámina III</strong>
-                </div>
+              <div class="media-slot media-slot--insta media-slot--filled">
+                <img src="./media/Ilustraciones/3.jpg" loading="lazy">
               </div>
-              <figcaption class="media-caption">Lámina III — Publicación del universo.</figcaption>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
-              <div class="media-slot media-slot--insta">
-                <!-- TODO: <img src="./media/ilustracion-04.jpg" alt="Ilustración de publicación Instagram 4" data-lightbox> -->
-                <div class="placeholder-inner">
-                  <span class="placeholder-badge">ILUSTRACIÓN 04 • 4:5</span>
-                  <strong>Publicación / Lámina IV</strong>
-                </div>
+              <div class="media-slot media-slot--insta media-slot--filled">
+                <img src="./media/Ilustraciones/4.jpg" loading="lazy">
               </div>
-              <figcaption class="media-caption">Lámina IV — Publicación del universo.</figcaption>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
-              <div class="media-slot media-slot--insta">
-                <!-- TODO: <img src="./media/ilustracion-05.jpg" alt="Ilustración de publicación Instagram 5" data-lightbox> -->
-                <div class="placeholder-inner">
-                  <span class="placeholder-badge">ILUSTRACIÓN 05 • 4:5</span>
-                  <strong>Publicación / Lámina V</strong>
-                </div>
+              <div class="media-slot media-slot--insta media-slot--filled">
+                <img src="./media/Ilustraciones/Rectangle%2075.png" loading="lazy">
               </div>
-              <figcaption class="media-caption">Lámina V — Publicación del universo.</figcaption>
+            </figure>
+
+            <figure class="media-card media-card--light reveal-on-scroll">
+              <div class="media-slot media-slot--insta media-slot--filled">
+                <img src="./media/Ilustraciones/Rectangle%2076.png" loading="lazy">
+              </div>
+            </figure>
+
+            <figure class="media-card media-card--light reveal-on-scroll">
+              <div class="media-slot media-slot--insta media-slot--filled">
+                <img src="./media/Ilustraciones/Rectangle%2077.png" loading="lazy">
+              </div>
             </figure>
           </div>
         </div>
@@ -258,40 +239,51 @@
           </div>
 
           <div class="fragmentos-photos-col">
-            <figure class="media-card media-card--light reveal-on-scroll">
-              <div class="media-slot media-slot--landscape">
-                <!-- TODO: <img src="./media/fragmentos-01.jpg" alt="Dispositivo completo en la muestra Fragmentos" data-lightbox> -->
-                <div class="placeholder-inner">
-                  <span class="placeholder-badge">FRAGMENTOS · FOTO PRINCIPAL (16:9)</span>
-                  <strong>Dispositivo en la muestra Fragmentos</strong>
-                  <p>Vista general del dispositivo del cuatrimestre pasado.</p>
+            <div class="fragmentos-row-top">
+              <figure class="media-card media-card--light reveal-on-scroll">
+                <div class="media-slot media-slot--reel media-slot--filled">
+                  <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                    <source src="./media/Fragmento/video_dispositivo.mp4" type="video/mp4">
+                  </video>
                 </div>
-              </div>
-              <figcaption class="media-caption">Dispositivo expuesto en la muestra Fragmentos (Cuatrimestre I).
-              </figcaption>
-            </figure>
+                <figcaption class="media-caption">Registro en video del dispositivo en la muestra Fragmentos.
+                </figcaption>
+              </figure>
 
-            <figure class="media-card media-card--light reveal-on-scroll">
-              <div class="media-slot media-slot--landscape">
-                <!-- TODO: <img src="./media/fragmentos-02.jpg" alt="Detalle del dispositivo Fragmentos" data-lightbox> -->
-                <div class="placeholder-inner">
-                  <span class="placeholder-badge">FRAGMENTOS · 02 (16:9)</span>
-                  <strong>Detalle constructivo y materialidad</strong>
+              <figure class="media-card media-card--light reveal-on-scroll">
+                <div class="media-slot media-slot--reel media-slot--filled">
+                  <img src="./media/Fragmento/IMG_20260706_155355_1.jpg"
+                    alt="Dispositivo completo en la muestra Fragmentos" loading="lazy">
                 </div>
-              </div>
-              <figcaption class="media-caption">Detalle material del dispositivo.</figcaption>
-            </figure>
+                <figcaption class="media-caption">Vista del dispositivo en Fragmentos.</figcaption>
+              </figure>
+            </div>
 
-            <figure class="media-card media-card--light reveal-on-scroll">
-              <div class="media-slot media-slot--landscape">
-                <!-- TODO: <img src="./media/fragmentos-03.jpg" alt="Interacción del público en Fragmentos" data-lightbox> -->
-                <div class="placeholder-inner">
-                  <span class="placeholder-badge">FRAGMENTOS · 03 (16:9)</span>
-                  <strong>Interacción del público en la muestra</strong>
+            <div class="fragmentos-row-bottom">
+              <figure class="media-card media-card--light reveal-on-scroll">
+                <div class="media-slot media-slot--reel media-slot--filled">
+                  <img src="./media/Fragmento/IMG_20260706_155408.jpg" alt="Detalle material del dispositivo Fragmentos"
+                    loading="lazy">
                 </div>
-              </div>
-              <figcaption class="media-caption">Registro de prueba con visitantes.</figcaption>
-            </figure>
+                <figcaption class="media-caption">Detalle y materialidad.</figcaption>
+              </figure>
+
+              <figure class="media-card media-card--light reveal-on-scroll">
+                <div class="media-slot media-slot--reel media-slot--filled">
+                  <img src="./media/Fragmento/IMG_20260706_155439.jpg"
+                    alt="Registro del dispositivo en la muestra Fragmentos" loading="lazy">
+                </div>
+                <figcaption class="media-caption">Registro espacial.</figcaption>
+              </figure>
+
+              <figure class="media-card media-card--light reveal-on-scroll">
+                <div class="media-slot media-slot--reel media-slot--filled">
+                  <img src="./media/Fragmento/IMG_20260706_155508.jpg" alt="Interacción y detalles en Fragmentos"
+                    loading="lazy">
+                </div>
+                <figcaption class="media-caption">Interacción y detalles en muestra.</figcaption>
+              </figure>
+            </div>
           </div>
         </div>
       </div>
@@ -321,170 +313,284 @@
         </div>
 
         <div class="transmedia-track" id="transmedia-track">
-          <!-- Transmedia 01 -->
-          <article class="transmedia-card" data-step-index="0">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-01.jpg" alt="Registro activación transmedia 1" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 01</span>
-                <strong>Foto de la activación 01</strong>
+          <!-- Transmedia 01: Dato Digital (Glifos) (lámina de 12 glifos + 3 videos) -->
+          <article class="transmedia-card" data-step-index="0" data-media-gallery>
+            <div class="media-slot media-slot--transmedia media-slot--filled">
+              <div class="card-media-slide is-active" data-label="Glifos">
+                <div class="glyphs-showcase-plate" role="img" aria-label="Sistema de 12 glifos de Hebra">
+                  <img src="./app/assets/glifos/image%20(45)%202.svg" alt="Glifo 1" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%203.svg" alt="Glifo 2" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%204.svg" alt="Glifo 3" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%205.svg" alt="Glifo 4" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%206.svg" alt="Glifo 5" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%207.svg" alt="Glifo 6" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%208.svg" alt="Glifo 7" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%209.svg" alt="Glifo 8" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%2010.svg" alt="Glifo 9" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%2011.svg" alt="Glifo 10" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%2012.svg" alt="Glifo 11" loading="lazy">
+                  <img src="./app/assets/glifos/image%20(45)%2013.svg" alt="Glifo 12" loading="lazy">
+                </div>
               </div>
+              <div class="card-media-slide" data-label="Gato Gota">
+                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                  <source src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20gatogota_codigo.mp4"
+                    type="video/mp4">
+                </video>
+              </div>
+              <div class="card-media-slide" data-label="Pulpito">
+                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                  <source src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20pulpito_codigo.mp4"
+                    type="video/mp4">
+                </video>
+              </div>
+              <div class="card-media-slide" data-label="Rino">
+                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                  <source src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20rino_codigo.mp4"
+                    type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <div class="card-media-controls">
+              <button type="button" class="card-media-btn" data-media-prev aria-label="Archivo anterior">‹</button>
+              <span class="card-media-status">
+                <span data-media-counter>1 / 4</span>
+                <span class="card-media-label" data-media-label>Glifos</span>
+              </span>
+              <button type="button" class="card-media-btn" data-media-next aria-label="Siguiente archivo">›</button>
             </div>
             <div class="transmedia-body">
               <div class="transmedia-meta">
                 <span class="transmedia-num">01 / 08</span>
-                <span class="transmedia-pill">Territorio / Gráfica</span>
+                <span class="transmedia-pill">Dato Digital</span>
               </div>
-              <!-- TODO: Completar título y descripción real -->
-              <h3>[Placeholder — Transmedia 01]</h3>
-              <p>Descripción breve de la primera activación transmedia, su soporte, lugar y vínculo con el relato.</p>
+              <h3>Dato Digital</h3>
+              <p>
+                Sistema de glifos cifrados y códigos digitales para decodificar pistas y coordenadas dentro de
+                la app.
+              </p>
             </div>
           </article>
 
-          <!-- Transmedia 02: Incluye el sistema de Glifos como parte de esta transmedia -->
+          <!-- Transmedia 02: Soporte Digital (Web) (/app) -->
           <article class="transmedia-card" data-step-index="1">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-02.jpg" alt="Registro activación transmedia 2 — Glifos" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 02</span>
-                <strong>Foto de la activación de Glifos</strong>
-              </div>
-            </div>
+            <a href="./app/" class="media-slot media-slot--transmedia media-slot--app-cover"
+              aria-label="Abrir MiniJuego en /app">
+              <img src="./media/faviconK.png" alt="Ícono Kencalo — Soporte Digital Web" class="app-cover-emblem"
+                loading="lazy">
+              <span>MiniJuego</span>
+            </a>
             <div class="transmedia-body">
               <div class="transmedia-meta">
                 <span class="transmedia-num">02 / 08</span>
-                <span class="transmedia-pill">Glifos &amp; Pistas</span>
+                <span class="transmedia-pill">Soporte Digital</span>
               </div>
-              <h3>[Placeholder — Sistema de Glifos / Redes]</h3>
+              <h3>Soporte Digital</h3>
               <p>
-                Descripción breve de la activación con glifos ocultos en redes y pistas para decodificar coordenadas
-                del recorrido.
-              </p>
-              <div class="transmedia-glyphs-row" aria-label="Muestra de glifos utilizados en la transmedia">
-                <img src="./app/assets/glifos/image (45) 2.svg" alt="Glifo I">
-                <img src="./app/assets/glifos/image (45) 3.svg" alt="Glifo II">
-                <img src="./app/assets/glifos/image (45) 4.svg" alt="Glifo III">
-                <img src="./app/assets/glifos/image (45) 5.svg" alt="Glifo IV">
-                <span>12 glifos del sistema</span>
-              </div>
-            </div>
-          </article>
-
-          <!-- Transmedia 03 -->
-          <article class="transmedia-card" data-step-index="2">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-03.jpg" alt="Registro activación transmedia 3" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 03</span>
-                <strong>Foto de la activación 03</strong>
-              </div>
-            </div>
-            <div class="transmedia-body">
-              <div class="transmedia-meta">
-                <span class="transmedia-num">03 / 08</span>
-                <span class="transmedia-pill">Intervención</span>
-              </div>
-              <h3>[Placeholder — Transmedia 03]</h3>
-              <p>Descripción breve de la tercera activación, materialidad utilizada y respuesta del público.</p>
-            </div>
-          </article>
-
-          <!-- Transmedia 04: App WebAR (mismo peso visual que las otras 7, con acceso claro a ./app/) -->
-          <article class="transmedia-card" data-step-index="3">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-04-app.jpg" alt="Registro App WebAR Hebra y Kencalos 3D" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 04 • WEB AR</span>
-                <strong>App WebAR — Kencalos &amp; Mapa</strong>
-              </div>
-            </div>
-            <div class="transmedia-body">
-              <div class="transmedia-meta">
-                <span class="transmedia-num">04 / 08</span>
-                <span class="transmedia-pill">WebAR / 3D</span>
-              </div>
-              <h3>Aplicación WebAR &amp; Kencalos</h3>
-              <p>
-                Dispositivo web con traductor de glifos, mapa de La Plata y captura AR de los 3 Kencalos en El Bosque,
-                Plaza San Martín y Sede Fonseca.
+                Aplicación web con traductor de glifos, mapa de La Plata y captura AR de los 3 Kencalos.
               </p>
               <a href="./app/" class="card-inline-link">Abrir experiencia en /app ↗</a>
             </div>
           </article>
 
-          <!-- Transmedia 05 -->
-          <article class="transmedia-card" data-step-index="4">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-05.jpg" alt="Registro activación transmedia 5" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 05</span>
-                <strong>Foto de la activación 05</strong>
+          <!-- Transmedia 03: Lúdico (1 video + 1 foto) -->
+          <article class="transmedia-card" data-step-index="2" data-media-gallery>
+            <div class="media-slot media-slot--transmedia media-slot--filled">
+              <div class="card-media-slide is-active" data-label="Video">
+                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                  <source src="./media/Transmedia/3-%20Ludico/1.mp4" type="video/mp4">
+                </video>
               </div>
+              <div class="card-media-slide" data-label="Foto">
+                <img src="./media/Transmedia/3-%20Ludico/2.jpg" alt="Activación Lúdico — Registro fotográfico"
+                  loading="lazy">
+              </div>
+            </div>
+            <div class="card-media-controls">
+              <button type="button" class="card-media-btn" data-media-prev aria-label="Archivo anterior">‹</button>
+              <span class="card-media-status">
+                <span data-media-counter>1 / 2</span>
+                <span class="card-media-label" data-media-label>Video</span>
+              </span>
+              <button type="button" class="card-media-btn" data-media-next aria-label="Siguiente archivo">›</button>
+            </div>
+            <div class="transmedia-body">
+              <div class="transmedia-meta">
+                <span class="transmedia-num">03 / 08</span>
+                <span class="transmedia-pill">Lúdico</span>
+              </div>
+              <h3>Lúdico</h3>
+              <p>Instancia lúdica e interactiva donde el usuario captura los Kencalitos.</p>
+            </div>
+          </article>
+
+          <!-- Transmedia 04: Objeto (1 video + 3 fotos) -->
+          <article class="transmedia-card" data-step-index="3" data-media-gallery>
+            <div class="media-slot media-slot--transmedia media-slot--filled">
+              <div class="card-media-slide is-active" data-label="Video">
+                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                  <source src="./media/Transmedia/4-%20Objeto/1.mp4" type="video/mp4">
+                </video>
+              </div>
+              <div class="card-media-slide" data-label="Foto 1">
+                <img src="./media/Transmedia/4-%20Objeto/2.png" alt="Activación Objeto — Foto 1" loading="lazy">
+              </div>
+              <div class="card-media-slide" data-label="Foto 2">
+                <img src="./media/Transmedia/4-%20Objeto/3.png" alt="Activación Objeto — Foto 2" loading="lazy">
+              </div>
+              <div class="card-media-slide" data-label="Foto 3">
+                <img src="./media/Transmedia/4-%20Objeto/4.png" alt="Activación Objeto — Foto 3" loading="lazy">
+              </div>
+            </div>
+            <div class="card-media-controls">
+              <button type="button" class="card-media-btn" data-media-prev aria-label="Archivo anterior">‹</button>
+              <span class="card-media-status">
+                <span data-media-counter>1 / 4</span>
+                <span class="card-media-label" data-media-label>Video</span>
+              </span>
+              <button type="button" class="card-media-btn" data-media-next aria-label="Siguiente archivo">›</button>
+            </div>
+            <div class="transmedia-body">
+              <div class="transmedia-meta">
+                <span class="transmedia-num">04 / 08</span>
+                <span class="transmedia-pill">Objeto</span>
+              </div>
+              <h3>Objeto</h3>
+              <p>Sustancia tridimensional incoorporada a los arboles.</p>
+            </div>
+          </article>
+
+          <!-- Transmedia 05: Gráfica (3 fotos) -->
+          <article class="transmedia-card" data-step-index="4" data-media-gallery>
+            <div class="media-slot media-slot--transmedia media-slot--filled">
+              <div class="card-media-slide is-active" data-label="Foto 1">
+                <img src="./media/Transmedia/5-%20Grafica/WhatsApp%20Image%202026-10-29%20at%2010.31.34%20PM.jpeg"
+                  alt="Activación Gráfica — Registro 1" loading="lazy">
+              </div>
+              <div class="card-media-slide" data-label="Foto 2">
+                <img src="./media/Transmedia/5-%20Grafica/WhatsApp%20Image%202026-10-29%20at%2010.31.34%20PM%20(1).jpeg"
+                  alt="Activación Gráfica — Registro 2" loading="lazy">
+              </div>
+              <div class="card-media-slide" data-label="Foto 3">
+                <img src="./media/Transmedia/5-%20Grafica/WhatsApp%20Image%202026-10-29%20at%2010.31.38%20PM.jpeg"
+                  alt="Activación Gráfica — Registro 3" loading="lazy">
+              </div>
+            </div>
+            <div class="card-media-controls">
+              <button type="button" class="card-media-btn" data-media-prev aria-label="Archivo anterior">‹</button>
+              <span class="card-media-status">
+                <span data-media-counter>1 / 3</span>
+                <span class="card-media-label" data-media-label>Foto 1</span>
+              </span>
+              <button type="button" class="card-media-btn" data-media-next aria-label="Siguiente archivo">›</button>
             </div>
             <div class="transmedia-body">
               <div class="transmedia-meta">
                 <span class="transmedia-num">05 / 08</span>
-                <span class="transmedia-pill">Editorial / Sonoro</span>
+                <span class="transmedia-pill">Gráfica</span>
               </div>
-              <h3>[Placeholder — Transmedia 05]</h3>
-              <p>Descripción breve de la quinta activación transmedia dentro del ecosistema anual.</p>
+              <h3>Gráfica</h3>
+              <p>Piezas gráficas desplegadas como invitación a la performance.</p>
             </div>
           </article>
 
-          <!-- Transmedia 06 -->
-          <article class="transmedia-card" data-step-index="5">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-06.jpg" alt="Registro activación transmedia 6" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 06</span>
-                <strong>Foto de la activación 06</strong>
+          <!-- Transmedia 06: Indumentaria (4 fotos) -->
+          <article class="transmedia-card" data-step-index="5" data-media-gallery>
+            <div class="media-slot media-slot--transmedia media-slot--filled">
+              <div class="card-media-slide is-active" data-label="Foto 1">
+                <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%201794506584009.jpg"
+                  alt="Activación Indumentaria — Foto 1" loading="lazy">
               </div>
+              <div class="card-media-slide" data-label="Foto 2">
+                <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%20IMG_20261112_150556.jpg"
+                  alt="Activación Indumentaria — Foto 2" loading="lazy">
+              </div>
+              <div class="card-media-slide" data-label="Foto 3">
+                <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%20IMG_20261112_150619.jpg"
+                  alt="Activación Indumentaria — Foto 3" loading="lazy">
+              </div>
+              <div class="card-media-slide" data-label="Foto 4">
+                <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%20IMG_20261112_151011.jpg"
+                  alt="Activación Indumentaria — Foto 4" loading="lazy">
+              </div>
+            </div>
+            <div class="card-media-controls">
+              <button type="button" class="card-media-btn" data-media-prev aria-label="Archivo anterior">‹</button>
+              <span class="card-media-status">
+                <span data-media-counter>1 / 4</span>
+                <span class="card-media-label" data-media-label>Foto 1</span>
+              </span>
+              <button type="button" class="card-media-btn" data-media-next aria-label="Siguiente archivo">›</button>
             </div>
             <div class="transmedia-body">
               <div class="transmedia-meta">
                 <span class="transmedia-num">06 / 08</span>
-                <span class="transmedia-pill">Objeto / Físico</span>
+                <span class="transmedia-pill">Indumentaria</span>
               </div>
-              <h3>[Placeholder — Transmedia 06]</h3>
-              <p>Descripción breve de la sexta activación transmedia y cómo conectaba con las demás piezas.</p>
+              <h3>Indumentaria</h3>
+              <p>Accesorios diseñados para llevar la identidad del universo Hebra al cuerpo.</p>
             </div>
           </article>
 
-          <!-- Transmedia 07 -->
-          <article class="transmedia-card" data-step-index="6">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-07.jpg" alt="Registro activación transmedia 7" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 07</span>
-                <strong>Foto de la activación 07</strong>
+          <!-- Transmedia 07: Performance (2 videos) -->
+          <article class="transmedia-card" data-step-index="6" data-media-gallery>
+            <div class="media-slot media-slot--transmedia media-slot--filled">
+              <div class="card-media-slide is-active" data-label="Video 1">
+                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                  <source src="./media/Transmedia/7-%20Performance/1.mp4" type="video/mp4">
+                </video>
               </div>
+              <div class="card-media-slide" data-label="Video 2">
+                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                  <source src="./media/Transmedia/7-%20Performance/2.mp4" type="video/mp4">
+                </video>
+              </div>
+            </div>
+            <div class="card-media-controls">
+              <button type="button" class="card-media-btn" data-media-prev aria-label="Archivo anterior">‹</button>
+              <span class="card-media-status">
+                <span data-media-counter>1 / 2</span>
+                <span class="card-media-label" data-media-label>Video 1</span>
+              </span>
+              <button type="button" class="card-media-btn" data-media-next aria-label="Siguiente archivo">›</button>
             </div>
             <div class="transmedia-body">
               <div class="transmedia-meta">
                 <span class="transmedia-num">07 / 08</span>
-                <span class="transmedia-pill">Digital / Archivo</span>
+                <span class="transmedia-pill">Performance</span>
               </div>
-              <h3>[Placeholder — Transmedia 07]</h3>
-              <p>Descripción breve de la séptima activación transmedia y su rol dentro de la narrativa.</p>
+              <h3>Performance</h3>
+              <p>Performance VJ interactiva en vivo.</p>
             </div>
           </article>
 
-          <!-- Transmedia 08 -->
-          <article class="transmedia-card" data-step-index="7">
-            <div class="media-slot media-slot--landscape">
-              <!-- TODO: <img src="./media/transmedia-08.jpg" alt="Registro activación transmedia 8" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">TRANSMEDIA 08</span>
-                <strong>Foto de la activación 08</strong>
+          <!-- Transmedia 08: Espacio Urbano (2 fotos) -->
+          <article class="transmedia-card" data-step-index="7" data-media-gallery>
+            <div class="media-slot media-slot--transmedia media-slot--filled">
+              <div class="card-media-slide is-active" data-label="Registro 1">
+                <img src="./media/Transmedia/8-%20Espacio%20Urbano/IMG-20261111-WA0014.jpg"
+                  alt="Activación en Espacio Urbano — Registro 1" loading="lazy">
               </div>
+              <div class="card-media-slide" data-label="Registro 2">
+                <img src="./media/Transmedia/8-%20Espacio%20Urbano/IMG-20261111-WA0017.jpg"
+                  alt="Activación en Espacio Urbano — Registro 2" loading="lazy">
+              </div>
+            </div>
+            <div class="card-media-controls">
+              <button type="button" class="card-media-btn" data-media-prev aria-label="Archivo anterior">‹</button>
+              <span class="card-media-status">
+                <span data-media-counter>1 / 2</span>
+                <span class="card-media-label" data-media-label>Registro 1</span>
+              </span>
+              <button type="button" class="card-media-btn" data-media-next aria-label="Siguiente archivo">›</button>
             </div>
             <div class="transmedia-body">
               <div class="transmedia-meta">
                 <span class="transmedia-num">08 / 08</span>
-                <span class="transmedia-pill">Convocatoria / Cierre</span>
+                <span class="transmedia-pill">Espacio Urbano</span>
               </div>
-              <h3>[Placeholder — Transmedia 08]</h3>
-              <p>Descripción breve de la octava activación transmedia y su articulación directa hacia Kenosis.</p>
+              <h3>Espacio Urbano</h3>
+              <p>Intervencion situada en la ciudad de La Plata invitando al evento final.</p>
             </div>
           </article>
         </div>
@@ -501,7 +607,8 @@
     <section id="instalacion-final" class="band band--dark section-block section-climax">
       <div class="blob-mask blob-mask--top blob-mask--paper" aria-hidden="true">
         <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
-          <path d="M0,0 L1440,0 L1440,48 C1315,12 1170,74 1015,34 C865,6 715,76 550,40 C395,8 250,74 115,36 C54,18 20,38 0,56 Z" />
+          <path
+            d="M0,0 L1440,0 L1440,48 C1315,12 1170,74 1015,34 C865,6 715,76 550,40 C395,8 250,74 115,36 C54,18 20,38 0,56 Z" />
         </svg>
       </div>
 
@@ -509,8 +616,6 @@
       <div class="climax-bg-sticky-track" aria-hidden="true">
         <div class="climax-bg-sticky-viewport">
           <video id="kenosis-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
-            <!-- TODO: Coloca tu video en ./media/bg-animacion.webm y/o ./media/bg-animacion.mp4 -->
-            <source src="./media/bg-animacion.webm" type="video/webm">
             <source src="./media/bg-animacion.mp4" type="video/mp4">
           </video>
           <div class="band-bg-scrim band-bg-scrim--climax"></div>
@@ -528,98 +633,62 @@
           </p>
         </header>
 
-        <!-- Video Principal de la Instalación Final -->
-        <div class="media-card media-card--dark featured-video-card reveal-on-scroll">
-          <div class="video-frame-wrapper">
-            <!-- TODO: Reemplazar este bloque por tu <video controls playsinline> o <iframe> de YouTube/Vimeo:
-            <video controls playsinline preload="metadata" poster="./media/instalacion-poster.jpg">
-              <source src="./media/instalacion-final.mp4" type="video/mp4">
-            </video>
-            -->
-            <div class="placeholder-inner">
-              <span class="placeholder-badge">VIDEO PRINCIPAL • 16:9</span>
-              <strong>Registro audiovisual de la Instalación Final (KENOSIS)</strong>
-              <p>Insertar etiqueta <code>&lt;video&gt;</code> local o <code>&lt;iframe&gt;</code> (YouTube / Vimeo) en
-                <code>#instalacion-final</code>.
-              </p>
+        <!-- Videos Principales de la Instalación Final (formato vertical) -->
+        <div class="kenosis-videos-grid">
+          <figure class="media-card media-card--dark reveal-on-scroll">
+            <div class="media-slot media-slot--reel media-slot--dark media-slot--filled">
+              <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                <source src="./media/Kenosis/1.mp4" type="video/mp4">
+              </video>
             </div>
-          </div>
-          <div class="featured-video-meta">
-            <div>
-              <span class="meta-kicker">REGISTRO CENTRAL</span>
-              <h3>Encuentro y montaje final — Gruta del Bosque / Espacio de instalación</h3>
+          </figure>
+
+          <figure class="media-card media-card--dark reveal-on-scroll">
+            <div class="media-slot media-slot--reel media-slot--dark media-slot--filled">
+              <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
+                <source src="./media/Kenosis/2.mp4" type="video/mp4">
+              </video>
             </div>
-            <!-- TODO: Ajustar fecha / sede -->
-            <span class="meta-chip meta-chip--dark">Noviembre • Registro de cierre</span>
-          </div>
+          </figure>
         </div>
 
         <!-- Galería fotográfica protagonista de la Instalación Final -->
         <div class="instalacion-gallery">
           <figure class="media-card media-card--dark gallery-item gallery-item--wide reveal-on-scroll">
-            <div class="media-slot media-slot--landscape media-slot--dark">
-              <!-- TODO: <img src="./media/instalacion-01.jpg" alt="Vista general de la instalación final Kenosis" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">KENOSIS · FOTO 01 (16:9)</span>
-                <strong>Vista panorámica de la instalación final</strong>
-                <p>Reemplazar con fotografía general del montaje terminado.</p>
-              </div>
+            <div class="media-slot media-slot--landscape media-slot--dark media-slot--filled">
+              <img src="./media/Kenosis/4.jpg" alt="Vista general de la instalación final Kenosis" loading="lazy">
             </div>
-            <figcaption class="media-caption media-caption--dark">Vista general de la instalación final montada.
-            </figcaption>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
-            <div class="media-slot media-slot--square media-slot--dark">
-              <!-- TODO: <img src="./media/instalacion-02.jpg" alt="Detalle material de Kenosis" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">KENOSIS · FOTO 02 (1:1)</span>
-                <strong>Materialidad, hilos y luz</strong>
-              </div>
+            <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
+              <img src="./media/Kenosis/3.png" alt="Detalle espacial y montaje de Kenosis" loading="lazy">
             </div>
-            <figcaption class="media-caption media-caption--dark">Detalle constructivo y lumínico del montaje.
-            </figcaption>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
-            <div class="media-slot media-slot--square media-slot--dark">
-              <!-- TODO: <img src="./media/instalacion-03.jpg" alt="Público recorriendo la instalación final" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">KENOSIS · FOTO 03 (1:1)</span>
-                <strong>Público habitando la obra</strong>
-              </div>
+            <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
+              <img src="./media/Kenosis/5.png" alt="Público recorriendo la instalación final Kenosis" loading="lazy">
             </div>
-            <figcaption class="media-caption media-caption--dark">Participantes durante la jornada de cierre.
-            </figcaption>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
-            <div class="media-slot media-slot--portrait media-slot--dark">
-              <!-- TODO: <img src="./media/instalacion-04.jpg" alt="Backstage de armado de Kenosis" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">BACKSTAGE · FOTO 04 (4:5)</span>
-                <strong>Proceso de montaje y pruebas</strong>
-              </div>
+            <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
+              <img src="./media/Kenosis/6.png" alt="Registro y calibración de Kenosis" loading="lazy">
             </div>
-            <figcaption class="media-caption media-caption--dark">Backstage de armado y calibración previa.</figcaption>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
-            <div class="media-slot media-slot--portrait media-slot--dark">
-              <!-- TODO: <img src="./media/instalacion-05.jpg" alt="Clima espacial final de Kenosis" data-lightbox> -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">KENOSIS · FOTO 05 (4:5)</span>
-                <strong>Atmósfera e iluminación final</strong>
-              </div>
+            <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
+              <img src="./media/Kenosis/7.jpeg" alt="Atmósfera e iluminación final de Kenosis" loading="lazy">
             </div>
-            <figcaption class="media-caption media-caption--dark">Clima espacial del cierre del evento.</figcaption>
-          </figure>
         </div>
       </div>
 
       <div class="blob-mask blob-mask--bottom blob-mask--lavender" aria-hidden="true">
         <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
-          <path d="M0,90 L1440,90 L1440,42 C1300,84 1165,18 1005,52 C850,86 710,12 545,48 C385,84 240,16 108,56 C48,74 18,52 0,34 Z" />
+          <path
+            d="M0,90 L1440,90 L1440,42 C1300,84 1165,18 1005,52 C850,86 710,12 545,48 C385,84 240,16 108,56 C48,74 18,52 0,34 Z" />
         </svg>
       </div>
     </section>
@@ -631,34 +700,35 @@
       <div class="container">
         <header class="section-header reveal-on-scroll">
           <span class="section-index">06 · redes</span>
-          <h2 class="section-title">Sigannos en Instagram</h2>
+          <h2 class="section-title">Nuestras Redes</h2>
           <p class="section-lead">
             Accesos a las cuentas oficiales y a la aplicación web del proyecto.
           </p>
         </header>
 
         <div class="links-hub-grid">
-          <a href="https://www.instagram.com/somos.hebra/" target="_blank" rel="noopener noreferrer"
-            class="platform-card reveal-on-scroll">
-            <span class="platform-kicker">INSTAGRAM DEL UNIVERSO</span>
-            <h3>@somos.hebra</h3>
-            <p>Cuenta narrativa principal con ilustraciones, registros y piezas editoriales del universo.</p>
-            <span class="platform-cta">Abrir Instagram ↗</span>
-          </a>
-
           <a href="https://www.instagram.com/hebra.tdm3/" target="_blank" rel="noopener noreferrer"
             class="platform-card reveal-on-scroll">
-            <span class="platform-kicker">INSTAGRAM DE PRODUCCIÓN / PISTAS</span>
+            <span class="platform-kicker">INSTAGRAM DEL UNIVERSO</span>
             <h3>@hebra.tdm3</h3>
-            <p>Bitácora de producción, glifos y seguimiento de las activaciones en territorio.</p>
+            <p>Cuenta principal y oficial del universo.</p>
             <span class="platform-cta">Abrir Instagram ↗</span>
           </a>
 
+          <a href="https://www.instagram.com/somos.hebra/" target="_blank" rel="noopener noreferrer"
+            class="platform-card reveal-on-scroll">
+            <span class="platform-kicker">INSTAGRAM SECUNDARIO</span>
+            <h3>@somos.hebra</h3>
+            <p>Un poco de backstage y risas.</p>
+            <span class="platform-cta">Abrir Instagram ↗</span>
+          </a>
+
+
           <a href="./app/" class="platform-card reveal-on-scroll">
-            <span class="platform-kicker">APLICACIÓN WEB AR</span>
-            <h3>App Hebra / Kencalos</h3>
-            <p>Acceso a la experiencia web con el traductor de glifos, mapa y visor 3D de Kencalos.</p>
-            <span class="platform-cta">Entrar a /app ↗</span>
+            <span class="platform-kicker">APLICACIÓN WEB</span>
+            <h3>Minijuego</h3>
+            <p>Acceso a la experiencia web para descubrir a los Kencalitos.</p>
+            <span class="platform-cta">Ir a la app ↗</span>
           </a>
         </div>
       </div>
@@ -678,77 +748,93 @@
         </header>
 
         <div class="team-grid">
-          <!-- TODO: Reemplazar foto, nombre, área a cargo y rol de cada uno de los 10 integrantes -->
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <!-- TODO: <img src="./media/equipo-01.jpg" alt="Foto Integrante 1"> -->
-              <span>01</span>
+              <img src="./media/team/Facundo.png" alt="Cristobal Facundo" loading="lazy">
             </div>
-            <h3>[Nombre Apellido 01]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <h3>Cristobal Facundo</h3>
+            <span class="team-role-pill">Producción</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>02</span></div>
-            <h3>[Nombre Apellido 02]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Alma.png" alt="Hardcastle Alma" loading="lazy">
+            </div>
+            <h3>Hardcastle Alma</h3>
+            <span class="team-role-pill">Sonido</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>03</span></div>
-            <h3>[Nombre Apellido 03]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Abril.png" alt="Herrera Abril" loading="lazy">
+            </div>
+            <h3>Herrera Abril</h3>
+            <span class="team-role-pill">Diseño</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>04</span></div>
-            <h3>[Nombre Apellido 04]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/fran.jpeg" alt="Lanciotti Franco" loading="lazy">
+            </div>
+            <h3>Lanciotti Franco</h3>
+            <span class="team-role-pill">Arquitectura de sistemas</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>05</span></div>
-            <h3>[Nombre Apellido 05]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Juli.png" alt="Narvaez Julieta" loading="lazy">
+            </div>
+            <h3>Narvaez Julieta</h3>
+            <span class="team-role-pill">Escenografía</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>06</span></div>
-            <h3>[Nombre Apellido 06]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Alexia.png" alt="Roberts Alexia" loading="lazy">
+            </div>
+            <h3>Roberts Alexia</h3>
+            <span class="team-role-pill">Software</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>07</span></div>
-            <h3>[Nombre Apellido 07]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Braian.png" alt="Sasso Braian" loading="lazy">
+            </div>
+            <h3>Sasso Braian</h3>
+            <span class="team-role-pill">Redes</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>08</span></div>
-            <h3>[Nombre Apellido 08]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Iara.png" alt="Sepúlveda Iara" loading="lazy">
+            </div>
+            <h3>Sepúlveda Iara</h3>
+            <span class="team-role-pill">Hardware</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>09</span></div>
-            <h3>[Nombre Apellido 09]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Chirs.png" alt="Strack Christian" loading="lazy">
+            </div>
+            <h3>Strack Christian</h3>
+            <span class="team-role-pill">Ilustración</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
 
           <article class="team-card reveal-on-scroll">
-            <div class="team-avatar"><span>10</span></div>
-            <h3>[Nombre Apellido 10]</h3>
-            <span class="team-role-pill">Área a cargo</span>
+            <div class="team-avatar">
+              <img src="./media/team/Agus.png" alt="Tabbita Agustin" loading="lazy">
+            </div>
+            <h3>Tabbita Agustin</h3>
+            <span class="team-role-pill">Interacción</span>
             <p>Breve detalle de tareas y participación en el proyecto.</p>
           </article>
         </div>
@@ -761,7 +847,8 @@
        ======================================================================= -->
   <div class="blob-edge blob-edge--on-white" aria-hidden="true">
     <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
-      <path d="M0,90 L1440,90 L1440,56 C1305,14 1165,72 1005,36 C850,4 705,74 545,38 C390,6 245,76 112,42 C50,26 18,46 0,60 Z" />
+      <path
+        d="M0,90 L1440,90 L1440,56 C1305,14 1165,72 1005,36 C850,4 705,74 545,38 C390,6 245,76 112,42 C50,26 18,46 0,60 Z" />
     </svg>
   </div>
   <footer class="site-footer">
@@ -779,22 +866,25 @@
     </div>
   </footer>
 
-  <!-- Lightbox navegable para ampliar imágenes reales al cargarlas -->
+  <!-- Lightbox navegable para ampliar imágenes y videos -->
   <div id="landing-lightbox" class="landing-lightbox hidden" role="dialog" aria-modal="true"
-    aria-label="Vista ampliada de imagen">
+    aria-label="Vista ampliada">
     <div class="lightbox-backdrop" id="lightbox-backdrop"></div>
-    <figure class="lightbox-figure">
+    <div class="lightbox-figure">
       <div class="lightbox-topbar">
         <span class="lightbox-counter" id="lightbox-counter">1 / 1</span>
-        <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Cerrar imagen">✕</button>
+        <button type="button" class="lightbox-close" id="lightbox-close" aria-label="Cerrar vista ampliada">✕</button>
       </div>
       <div class="lightbox-stage">
-        <button type="button" class="lightbox-nav-btn" id="lightbox-prev" aria-label="Imagen anterior">‹</button>
+        <button type="button" class="lightbox-nav-btn" id="lightbox-prev" aria-label="Anterior">‹</button>
         <img id="lightbox-img" src="" alt="">
-        <button type="button" class="lightbox-nav-btn" id="lightbox-next" aria-label="Imagen siguiente">›</button>
+        <div id="lightbox-video-wrap" class="lightbox-video-wrap hidden">
+          <video id="lightbox-video" class="lightbox-video" autoplay muted loop playsinline></video>
+          <button type="button" class="video-audio-toggle" id="lightbox-audio-toggle"></button>
+        </div>
+        <button type="button" class="lightbox-nav-btn" id="lightbox-next" aria-label="Siguiente">›</button>
       </div>
-      <figcaption id="lightbox-caption"></figcaption>
-    </figure>
+    </div>
   </div>
 
   <script src="./landing.js"></script>
