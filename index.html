@@ -4,10 +4,22 @@
 <head>
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
-  <title>Hebra — Bitácora Anual del Proyecto | KENOSIS</title>
+  <title>HEBRA</title>
 
-  <meta name="description"
-    content="Bitácora cronológica y archivo del proyecto anual transmedia Hebra — Una experiencia de KENOSIS. Universo, discurso, ilustraciones, muestra Fragmentos, 8 activaciones transmedia e instalación final.">
+  <!-- Favicon & Touch Icon -->
+  <link rel="icon" type="image/png" href="./media/ico.png">
+  <link rel="apple-touch-icon" href="./media/ico.png">
+
+  <!-- Link Preview (Open Graph / Twitter) -->
+  <meta property="og:type" content="website">
+  <meta property="og:url" content="https://francolanciotti.github.io/HebraWeb/">
+  <meta property="og:title" content="HEBRA">
+  <meta property="og:site_name" content="HEBRA">
+  <meta property="og:image" content="https://francolanciotti.github.io/HebraWeb/media/ico.png">
+  <meta name="twitter:card" content="summary">
+  <meta name="twitter:title" content="HEBRA">
+  <meta name="twitter:image" content="https://francolanciotti.github.io/HebraWeb/media/ico.png">
+
   <meta name="theme-color" content="#112142">
 
   <!-- Google Fonts: Epilogue -->
@@ -28,7 +40,7 @@
     <nav class="navbar" aria-label="Navegación principal">
       <a href="#inicio" class="brand-link" aria-label="Inicio Hebra">
         <span class="brand-wordmark">Hebra</span>
-        <span class="brand-sub">KENOSIS</span>
+
       </a>
 
       <button class="nav-toggle" id="nav-toggle" type="button" aria-expanded="false" aria-controls="nav-menu"
@@ -41,16 +53,16 @@
       <div class="nav-menu" id="nav-menu">
         <ul class="nav-links">
           <li><a href="#universo">Universo</a></li>
-          <li><a href="#ilustraciones">Ilustración</a></li>
-          <li><a href="#fragmentos">Fragmentos</a></li>
-          <li><a href="#transmedias">Transmedias</a></li>
+          <li><a href="#ilustraciones">Media</a></li>
+          <li><a href="#fragmentos">Fragmento</a></li>
+          <li><a href="#transmedias">Transmedia</a></li>
           <li><a href="#instalacion-final">Kenosis</a></li>
           <li><a href="#plataformas">Redes</a></li>
-          <li><a href="#equipo">Equipo</a></li>
+          <li><a href="#equipo">Nosotrxs</a></li>
         </ul>
 
-        <a href="./app/" class="nav-app-link" title="Ir a la aplicación web de Kencalos">
-          App WebAR <span aria-hidden="true">↗</span>
+        <a href="./app/" class="nav-app-link" title="Ir a nuestro minijuego.">
+          Minijuego <span aria-hidden="true">↗</span>
         </a>
       </div>
     </nav>
@@ -64,15 +76,19 @@
          PORTADA / HERO — BANDA OSCURA (#112142)
          ===================================================================== -->
     <section id="inicio" class="band band--dark hero-section">
+      <!-- Animación de fondo en loop para la banda oscura de Hebra -->
+      <div class="band-bg-media" aria-hidden="true">
+        <video id="hebra-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
+          <!-- TODO: Coloca tu video en ./media/bg-animacion.webm y/o ./media/bg-animacion.mp4 -->
+          <source src="./media/bg-animacion.webm" type="video/webm">
+          <source src="./media/bg-animacion.mp4" type="video/mp4">
+        </video>
+        <div class="band-bg-scrim"></div>
+      </div>
+
       <div class="container hero-grid">
         <div class="hero-copy">
-          <div class="hero-meta-row hero-stagger" style="--stagger: 0;">
-            <span class="eyebrow-pill eyebrow-pill--dark">Proyecto Anual Transmedia • La Plata</span>
-            <span class="status-pill status-pill--dark">Evento finalizado • Bitácora anual</span>
-          </div>
-
-          <h1 class="hero-title hero-stagger" style="--stagger: 1;">Hebra</h1>
-          <p class="hero-subtitle hero-stagger" style="--stagger: 2;">una experiencia de <strong>KENOSIS</strong></p>
+          <h1 class="hero-title hero-stagger" style="--stagger: 0;">Hebra</h1>
 
           <!-- TODO: Reemplazar con la breve introducción oficial al universo Hebra -->
           <p class="hero-intro hero-stagger" style="--stagger: 3;">
@@ -83,30 +99,11 @@
 
           <div class="hero-actions hero-stagger" style="--stagger: 4;">
             <a href="#universo" class="btn-light-pill">Comenzar recorrido ↓</a>
-            <a href="#instalacion-final" class="btn-outline-light">Ir al clímax: Kenosis</a>
-            <a href="./app/" class="hero-secondary-link">App WebAR (/app) ↗</a>
+            <a href="#instalacion-final" class="btn-outline-light">Kenosis</a>
           </div>
         </div>
 
-        <div class="hero-visual hero-stagger" style="--stagger: 2;" data-parallax="0.08">
-          <!-- TODO: Reemplazar placeholder con fotografía clave del proyecto / portada editorial -->
-          <figure class="media-card media-card--dark">
-            <div class="media-slot media-slot--portrait media-slot--dark">
-              <!-- TODO: Descomentar e insertar la imagen de portada real:
-              <img src="./media/hero-portada.jpg" alt="Registro principal del proyecto Hebra" data-lightbox>
-              -->
-              <div class="placeholder-inner">
-                <span class="placeholder-badge">PORTADA • 4:5</span>
-                <strong>Imagen principal del proyecto</strong>
-                <p>Reemplazar en <code>index.html</code> (sugerido 1200×1500 px).</p>
-              </div>
-            </div>
-            <figcaption class="media-caption media-caption--dark">
-              <!-- TODO: Editar epígrafe -->
-              Registro editorial de Hebra — Ciclo anual.
-            </figcaption>
-          </figure>
-        </div>
+
       </div>
     </section>
 
@@ -117,7 +114,7 @@
       <div class="container">
         <header class="section-header reveal-on-scroll">
           <span class="section-index">01 · PUNTO DE PARTIDA</span>
-          <h2 class="section-title">El Universo y el Discurso</h2>
+          <h2 class="section-title">El Universo</h2>
           <p class="section-lead">
             Las bases narrativas, conceptuales y poéticas desde las que nació todo el recorrido anual.
           </p>
@@ -168,9 +165,7 @@
           <!-- TODO: Describir brevemente el método de ilustración elegido -->
           <p class="section-lead">
             [Placeholder — Método de ilustración elegido] Serie visual desarrollada con el estilo ilustrativo propio
-            del universo, tal como se publicó en
-            <a href="https://www.instagram.com/somos.hebra/" target="_blank" rel="noopener noreferrer">@somos.hebra</a> y
-            <a href="https://www.instagram.com/hebra.tdm3/" target="_blank" rel="noopener noreferrer">@hebra.tdm3</a>.
+            del universo.
           </p>
         </header>
 
@@ -246,19 +241,14 @@
       <div class="container">
         <div class="fragmentos-sticky-layout">
           <div class="fragmentos-sticky-col reveal-on-scroll">
-            <span class="section-index">03 · PRIMER HITO — CUATRIMESTRE I</span>
-            <h2 class="section-title">Muestra Fragmentos</h2>
+            <span class="section-index">03 · Muestra Fragmentos — Primer hito</span>
+            <h2 class="section-title">La cueva</h2>
             <!-- TODO: Reemplazar con la descripción breve del dispositivo de Fragmentos -->
             <p class="section-lead">
               [Placeholder — Breve descripción del dispositivo de la muestra Fragmentos del cuatrimestre pasado]
               Registro del dispositivo presentado en la instancia anterior: cómo funcionaba materialmente, qué
               experiencia proponía al visitante y qué aprendizajes dejó para la etapa final.
             </p>
-            <div class="fragmentos-tags">
-              <span>Cuatrimestre I</span>
-              <span>Dispositivo físico</span>
-              <span>Muestra colectiva</span>
-            </div>
           </div>
 
           <div class="fragmentos-photos-col">
@@ -271,7 +261,8 @@
                   <p>Vista general del dispositivo del cuatrimestre pasado.</p>
                 </div>
               </div>
-              <figcaption class="media-caption">Dispositivo expuesto en la muestra Fragmentos (Cuatrimestre I).</figcaption>
+              <figcaption class="media-caption">Dispositivo expuesto en la muestra Fragmentos (Cuatrimestre I).
+              </figcaption>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
@@ -307,7 +298,7 @@
       <div class="container">
         <div class="transmedia-header-row reveal-on-scroll">
           <header class="section-header">
-            <span class="section-index">04 · DESARROLLO DEL AÑO (8 PIEZAS)</span>
+            <span class="section-index">04 · Expansiones multimediales</span>
             <h2 class="section-title">Activaciones Transmedia</h2>
             <p class="section-lead">
               Recorrido cronológico de las 8 instancias transmedia desplegadas antes del encuentro final.
@@ -502,9 +493,21 @@
          05 · INSTALACIÓN FINAL: KENOSIS (CLÍMAX DEL RELATO) — BANDA OSCURA (#112142)
          ===================================================================== -->
     <section id="instalacion-final" class="band band--dark section-block section-climax">
+      <!-- Animación de fondo en loop para la banda oscura de Kenosis -->
+      <div class="climax-bg-sticky-track" aria-hidden="true">
+        <div class="climax-bg-sticky-viewport">
+          <video id="kenosis-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
+            <!-- TODO: Coloca tu video en ./media/bg-animacion.webm y/o ./media/bg-animacion.mp4 -->
+            <source src="./media/bg-animacion.webm" type="video/webm">
+            <source src="./media/bg-animacion.mp4" type="video/mp4">
+          </video>
+          <div class="band-bg-scrim band-bg-scrim--climax"></div>
+        </div>
+      </div>
+
       <div class="container">
         <header class="section-header section-header--dark reveal-on-scroll">
-          <span class="section-index section-index--light">05 · CLÍMAX — INSTALACIÓN FINAL</span>
+          <span class="section-index section-index--light">05 · Universos cosmotécnicos — INSTALACIÓN FINAL</span>
           <h2 class="section-title section-title--light">KENOSIS</h2>
           <!-- TODO: Reemplazar con la descripción breve de la instalación final -->
           <p class="section-lead section-lead--light">
@@ -525,7 +528,8 @@
               <span class="placeholder-badge">VIDEO PRINCIPAL • 16:9</span>
               <strong>Registro audiovisual de la Instalación Final (KENOSIS)</strong>
               <p>Insertar etiqueta <code>&lt;video&gt;</code> local o <code>&lt;iframe&gt;</code> (YouTube / Vimeo) en
-                <code>#instalacion-final</code>.</p>
+                <code>#instalacion-final</code>.
+              </p>
             </div>
           </div>
           <div class="featured-video-meta">
@@ -549,7 +553,8 @@
                 <p>Reemplazar con fotografía general del montaje terminado.</p>
               </div>
             </div>
-            <figcaption class="media-caption media-caption--dark">Vista general de la instalación final montada.</figcaption>
+            <figcaption class="media-caption media-caption--dark">Vista general de la instalación final montada.
+            </figcaption>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
@@ -560,7 +565,8 @@
                 <strong>Materialidad, hilos y luz</strong>
               </div>
             </div>
-            <figcaption class="media-caption media-caption--dark">Detalle constructivo y lumínico del montaje.</figcaption>
+            <figcaption class="media-caption media-caption--dark">Detalle constructivo y lumínico del montaje.
+            </figcaption>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
@@ -571,7 +577,8 @@
                 <strong>Público habitando la obra</strong>
               </div>
             </div>
-            <figcaption class="media-caption media-caption--dark">Participantes durante la jornada de cierre.</figcaption>
+            <figcaption class="media-caption media-caption--dark">Participantes durante la jornada de cierre.
+            </figcaption>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
@@ -600,13 +607,13 @@
     </section>
 
     <!-- =====================================================================
-         06 · SITIOS WEB, PLATAFORMAS Y REDES (SOLO 3) — BANDA LAVANDA (#F2EFFA)
+         06 · redes
          ===================================================================== -->
     <section id="plataformas" class="band band--lavender section-block">
       <div class="container">
         <header class="section-header reveal-on-scroll">
-          <span class="section-index">06 · ARCHIVO DE CANALES</span>
-          <h2 class="section-title">Sitios, Plataformas y Redes</h2>
+          <span class="section-index">06 · redes</span>
+          <h2 class="section-title">Sigannos en Instagram</h2>
           <p class="section-lead">
             Accesos a las cuentas oficiales y a la aplicación web del proyecto.
           </p>
@@ -640,15 +647,15 @@
     </section>
 
     <!-- =====================================================================
-         07 · EQUIPO DE TRABAJO (10 INTEGRANTES Y ÁREA A CARGO) — BANDA BLANCA (#FFFFFF)
+         07 · Equipo de trabajo — BANDA BLANCA (#FFFFFF)
          ===================================================================== -->
     <section id="equipo" class="band band--white section-block">
       <div class="container">
         <header class="section-header reveal-on-scroll">
-          <span class="section-index">07 · CRÉDITOS</span>
-          <h2 class="section-title">Equipo — 10 Integrantes</h2>
+          <span class="section-index">07 · Equipo</span>
+          <h2 class="section-title">Nosotrxs</h2>
           <p class="section-lead">
-            Las personas detrás de Hebra y las áreas a cargo durante todo el año de producción.
+            Cada personita detrás de Hebra.
           </p>
         </header>
 
@@ -738,13 +745,12 @@
     <div class="container footer-inner">
       <div class="footer-brand">
         <span class="brand-wordmark brand-wordmark--light">Hebra</span>
-        <p>Una experiencia de <strong>KENOSIS</strong> • Bitácora anual del proyecto transmedia (TDM3 — La Plata).</p>
       </div>
 
       <div class="footer-links">
         <a href="https://www.instagram.com/somos.hebra/" target="_blank" rel="noopener noreferrer">@somos.hebra</a>
         <a href="https://www.instagram.com/hebra.tdm3/" target="_blank" rel="noopener noreferrer">@hebra.tdm3</a>
-        <a href="./app/">App WebAR (/app)</a>
+        <a href="./app/">Minijuego (/app)</a>
         <a href="#top">Volver arriba ↑</a>
       </div>
     </div>

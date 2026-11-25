@@ -293,13 +293,63 @@ function initBackToTop() {
   });
 }
 
+function setupLoopBgVideo(videoEl, sectionEl, reducedMotion) {
+  if (!videoEl) return;
+
+  const markReady = () => {
+    videoEl.classList.add('is-ready');
+    if (reducedMotion) {
+      videoEl.pause();
+    }
+  };
+
+  if (videoEl.readyState >= 2) {
+    markReady();
+  } else {
+    videoEl.addEventListener('loadeddata', markReady, { once: true });
+    videoEl.addEventListener('canplay', markReady, { once: true });
+    videoEl.addEventListener('playing', markReady, { once: true });
+  }
+
+  if (!reducedMotion && sectionEl && 'IntersectionObserver' in window) {
+    const observer = new IntersectionObserver(
+      (entries) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            videoEl.play().catch(() => {});
+          } else {
+            videoEl.pause();
+          }
+        });
+      },
+      { threshold: 0.05 }
+    );
+    observer.observe(sectionEl);
+  }
+}
+
+function initBackgroundVideos() {
+  const reducedMotion = prefersReducedMotion();
+  setupLoopBgVideo(document.getElementById('hebra-bg-video'), document.getElementById('inicio'), reducedMotion);
+  setupLoopBgVideo(
+    document.getElementById('kenosis-bg-video'),
+    document.getElementById('instalacion-final'),
+    reducedMotion
+  );
+}
+
 document.addEventListener('DOMContentLoaded', () => {
+  initScrollReveal();
   initMobileMenu();
   initBackToTop();
   initScrollProgress();
   initActiveNavHighlight();
   initSubtleParallax();
   initTransmediaTimeline();
-  initScrollReveal();
   initLightbox();
+  try {
+    initBackgroundVideos();
+  } catch (err) {
+    console.warn('Background video init error:', err);
+  }
 });
