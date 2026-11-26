@@ -323,7 +323,7 @@ code {
 .hero-section {
   position: relative;
   overflow: clip;
-  background-color: var(--video-edge-ink);
+  background-color: var(--surface-paper);
   min-height: calc(100vh - 72px);
   min-height: calc(100svh - 72px);
   display: flex;
@@ -400,6 +400,125 @@ code {
   overflow: hidden;
 }
 
+.hero-section .band-bg-media {
+  overflow: visible;
+  will-change: transform;
+}
+
+.hero-section .band-bg-clip {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  background: linear-gradient(180deg, #112142 0%, #162c59 52%, #0c1934 100%);
+}
+
+.hero-rise-crest {
+  position: absolute;
+  left: 0;
+  right: 0;
+  bottom: calc(100% - 2px);
+  height: var(--blob-edge-h);
+  pointer-events: none;
+  line-height: 0;
+  opacity: 0;
+}
+
+.hero-rise-crest svg {
+  width: 100%;
+  height: 100%;
+  display: block;
+}
+
+.hero-rise-crest svg path {
+  fill: #112142;
+}
+
+.hero-section .band-bg-video {
+  position: relative;
+  z-index: 0;
+}
+
+.hero-section .band-bg-scrim {
+  z-index: 1;
+}
+
+.hero-spores-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0;
+  transition: opacity 1s ease;
+}
+
+html.hero-intro-init .hero-rise-crest {
+  opacity: 1;
+}
+
+html.hero-intro-init .hero-section.hero-intro-done .hero-rise-crest {
+  opacity: 0;
+}
+
+html.hero-intro-init .hero-section .band-bg-media {
+  transform: translate3d(0, calc(100% + var(--blob-edge-h) + 12px), 0);
+}
+
+html.hero-intro-init .hero-section .band-bg-video,
+html.hero-intro-init .hero-section .band-bg-video.is-ready {
+  opacity: 0;
+  transform: scale(1.04);
+  transition: none;
+}
+
+html.hero-intro-init .hero-section .band-bg-scrim {
+  opacity: 0;
+}
+
+html.hero-intro-init .hero-section .hero-stagger {
+  opacity: 0;
+  transform: translateY(24px);
+  animation: none;
+}
+
+html.hero-intro-init .hero-section.hero-phase-rise .band-bg-media {
+  transform: translate3d(0, 0, 0);
+  transition: transform 2.15s cubic-bezier(0.19, 1, 0.22, 1);
+}
+
+html.hero-intro-init .hero-section.hero-phase-rise .hero-spores-canvas {
+  opacity: 1;
+  transition: opacity 1.2s ease 0.18s;
+}
+
+html.hero-intro-init .hero-section.hero-phase-video .band-bg-video.is-ready {
+  opacity: 1;
+  transform: scale(1);
+  transition:
+    opacity 1.95s cubic-bezier(0.22, 1, 0.36, 1),
+    transform 2.6s cubic-bezier(0.22, 1, 0.36, 1);
+}
+
+html.hero-intro-init .hero-section.hero-phase-video .band-bg-scrim {
+  opacity: 1;
+  transition: opacity 1.95s ease;
+}
+
+html.hero-intro-init .hero-section.hero-phase-video .hero-spores-canvas {
+  opacity: 0.42;
+  transition: opacity 1.9s ease;
+}
+
+html.hero-intro-init .hero-section.hero-phase-copy .hero-stagger {
+  opacity: 1;
+  transform: translateY(0);
+  transition:
+    opacity 1.25s var(--ease-out-expo),
+    transform 1.25s var(--ease-out-expo);
+  transition-delay: calc(var(--stagger, 0) * 360ms);
+}
+
 .climax-bg-sticky-track {
   position: absolute;
   inset: 0;
@@ -414,6 +533,25 @@ code {
   height: 100vh;
   height: 100dvh;
   overflow: hidden;
+}
+
+.climax-bg-sticky-viewport .band-bg-video {
+  position: relative;
+  z-index: 0;
+}
+
+.climax-bg-sticky-viewport .band-bg-scrim--climax {
+  z-index: 1;
+}
+
+.kenosis-spores-canvas {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  z-index: 2;
+  pointer-events: none;
+  opacity: 0.55;
 }
 
 .band-bg-video {
@@ -1780,6 +1918,14 @@ code {
   clip-path: url(#blob-card-c);
 }
 
+.media-card.has-live-blob::before,
+.editorial-card.has-live-blob::before,
+.transmedia-card.has-live-blob::before,
+.platform-card.has-live-blob::before,
+.team-card.has-live-blob::before {
+  clip-path: var(--card-live-clip);
+}
+
 .media-card--light:hover,
 .editorial-card:hover,
 .transmedia-card:hover,
@@ -1899,6 +2045,17 @@ code {
     transform: none;
     animation: none;
     transition: none;
+  }
+  .hero-spores-canvas,
+  .kenosis-spores-canvas {
+    display: none;
+  }
+  .hero-section .band-bg-media {
+    transform: none !important;
+    transition: none !important;
+  }
+  .hero-section .band-bg-video {
+    transform: none !important;
   }
   .media-card,
   .editorial-card,

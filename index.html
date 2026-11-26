@@ -30,6 +30,15 @@
     rel="stylesheet">
 
   <link rel="stylesheet" href="landing.css">
+  <script>
+    (function () {
+      var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+      var hash = window.location.hash;
+      if (!reduced && (!hash || hash === '#inicio' || hash === '#top')) {
+        document.documentElement.classList.add('hero-intro-init');
+      }
+    })();
+  </script>
 </head>
 
 <body id="top">
@@ -103,10 +112,18 @@
     <section id="inicio" class="band band--dark hero-section">
       <!-- Animación de fondo en loop para la banda oscura de Hebra -->
       <div class="band-bg-media" aria-hidden="true">
-        <video id="hebra-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
-          <source src="./media/bg-animacion.mp4" type="video/mp4">
-        </video>
-        <div class="band-bg-scrim"></div>
+        <div class="hero-rise-crest" aria-hidden="true">
+          <svg viewBox="0 0 1440 90" preserveAspectRatio="none">
+            <path d="M0,90 L0,46 C140,12 290,74 460,34 C630,4 790,72 965,36 C1130,8 1295,68 1440,30 L1440,90 Z" />
+          </svg>
+        </div>
+        <div class="band-bg-clip">
+          <video id="hebra-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
+            <source src="./media/bg-animacion.mp4" type="video/mp4">
+          </video>
+          <div class="band-bg-scrim"></div>
+          <canvas id="hero-spores-canvas" class="hero-spores-canvas" aria-hidden="true"></canvas>
+        </div>
       </div>
 
       <div class="container hero-grid">
@@ -114,13 +131,13 @@
           <h1 class="hero-title hero-stagger" style="--stagger: 0;">Hebra</h1>
 
           <!-- TODO: Reemplazar con la breve introducción oficial al universo Hebra -->
-          <p class="hero-intro hero-stagger" style="--stagger: 3;">
-            [Placeholder — Breve introducción al universo] Hebra es un proyecto transmedia anual desarrollado en la
-            ciudad de La Plata que entrelaza relato visual, dispositivos espaciales e intervenciones territoriales,
-            desde los primeros ensayos en <em>Fragmentos</em> hasta la instalación final <em>KENOSIS</em>.
+          <p class="hero-intro hero-stagger" style="--stagger: 1;">
+            En Hebra, la humanidad y la naturaleza se nutren mutuamente, coexistiendo en armonía. <br>
+            La naturaleza evolucionó hasta convertirse en la nueva tecnología, ya que no hay amenazas para la Tierra y
+            todo está en equilibrio.
           </p>
 
-          <div class="hero-actions hero-stagger" style="--stagger: 4;">
+          <div class="hero-actions hero-stagger" style="--stagger: 2;">
             <a href="#universo" class="btn-light-pill">Comenzar recorrido ↓</a>
             <a href="#instalacion-final" class="btn-outline-light">Kenosis</a>
           </div>
@@ -146,38 +163,37 @@
           <span class="section-index">01 · PUNTO DE PARTIDA</span>
           <h2 class="section-title">El Universo</h2>
           <p class="section-lead">
-            Las bases narrativas, conceptuales y poéticas desde las que nació todo el recorrido anual.
+            La idea, la narrativa y la poética desde las que nació todo este recorrido.
           </p>
         </header>
 
         <div class="discourse-grid">
           <article class="editorial-card editorial-card--white reveal-on-scroll">
             <span class="card-tag">INTRODUCCIÓN AL UNIVERSO</span>
-            <h3>El mundo de Hebra / KENOSIS</h3>
+            <h3>El mundo de Hebra</h3>
             <!-- TODO: Reemplazar con la introducción definitiva al universo -->
             <p>
-              [Placeholder — Breve introducción al universo] En el universo de Hebra, la ciudad funciona como un tejido
-              vivo atravesado por señales sutiles, restos orgánicos y presencias latentes que invitan a detenerse,
+              En el universo de Hebra, el mundo funciona como un tejido
+              vivo atravesado por la naturaleza, restos orgánicos y presencias latentes que invitan a detenerse,
               observar y reconstruir sentido en comunidad.
             </p>
             <p>
-              [Placeholder — Segundo párrafo opcional] Cada pieza del ecosistema —desde las ilustraciones y activaciones
-              urbanas hasta los dispositivos físicos y digitales— actúa como un fragmento de una misma trama.
+              Cada pieza del ecosistema, desde las ilustraciones y activaciones
+              urbanas hasta los dispositivos físicos y digitales, actúa como un fragmento de una misma trama.
             </p>
           </article>
 
           <article class="editorial-card editorial-card--tinted reveal-on-scroll">
             <span class="card-tag">DISCURSO</span>
-            <h3>Posicionamiento y poética del proyecto</h3>
+            <h3>Idea y poética del proyecto</h3>
             <!-- TODO: Reemplazar cita y texto del discurso del grupo -->
             <blockquote class="discourse-quote">
-              «[Placeholder — Frase núcleo o tesis del discurso de Hebra sobre el vínculo, la huella y la experiencia
-              compartida].»
+              <em>«Ver en tu interior cultiva la autocompasión.»</em>
             </blockquote>
             <p>
-              [Placeholder — Desarrollo del discurso] Aquí va el texto curatorial y discursivo del proyecto: qué
-              problemática o sensibilidad aborda, por qué se eligió la metáfora de la hebra y cómo evoluciona el relato
-              a lo largo del año hasta desembocar en Kenosis.
+              Hebra nace de una idea en común: potenciar la naturaleza para eliminar la contaminación del mundo.
+              Para que esto ocurra, creamos Hebra, un futuro de nuestro mundo donde la naturaleza mutó hasta límites
+              incomprendidos y en el que se rememora, a través del evento Kenosis, este cambio revitalizador.
             </p>
           </article>
         </div>
@@ -254,12 +270,10 @@
         <div class="fragmentos-sticky-layout">
           <div class="fragmentos-sticky-col reveal-on-scroll">
             <span class="section-index">03 · Muestra Fragmentos — Primer hito</span>
-            <h2 class="section-title">La cueva</h2>
+            <h2 class="section-title">La Cueva</h2>
             <!-- TODO: Reemplazar con la descripción breve del dispositivo de Fragmentos -->
             <p class="section-lead">
-              [Placeholder — Breve descripción del dispositivo de la muestra Fragmentos del cuatrimestre pasado]
-              Registro del dispositivo presentado en la instancia anterior: cómo funcionaba materialmente, qué
-              experiencia proponía al visitante y qué aprendizajes dejó para la etapa final.
+              Registro de La Cueva, un dispositivo que representa en menor escala las cuevas de nuestro universo.
             </p>
           </div>
 
@@ -306,7 +320,7 @@
                   <img src="./media/Fragmento/IMG_20260706_155508.jpg" alt="Interacción y detalles en Fragmentos"
                     decoding="async">
                 </div>
-                <figcaption class="media-caption">Interacción y detalles en muestra.</figcaption>
+                <figcaption class="media-caption">Interacción y detalles en la muestra.</figcaption>
               </figure>
             </div>
           </div>
@@ -400,10 +414,10 @@
           <!-- Transmedia 02: Soporte Digital (Web) (/app) -->
           <article class="transmedia-card" data-step-index="1">
             <a href="./app/" class="media-slot media-slot--transmedia media-slot--app-cover"
-              aria-label="Abrir MiniJuego en /app">
+              aria-label="Abrir Minijuego en /app">
               <img src="./media/faviconK.png" alt="Ícono Kencalo — Soporte Digital Web" class="app-cover-emblem"
                 decoding="async">
-              <span>MiniJuego</span>
+              <span>Minijuego</span>
             </a>
             <div class="transmedia-body">
               <div class="transmedia-meta">
@@ -412,7 +426,7 @@
               </div>
               <h3>Soporte Digital</h3>
               <p>
-                Aplicación web con traductor de glifos, mapa de La Plata y captura AR de los 3 Kencalos.
+                Aplicación web con traductor de glifos, mapa de las pistas y captura con AR de 3 Kencalos.
               </p>
               <a href="./app/" class="card-inline-link">Abrir experiencia en /app ↗</a>
             </div>
@@ -445,7 +459,7 @@
                 <span class="transmedia-pill">Lúdico</span>
               </div>
               <h3>Lúdico</h3>
-              <p>Instancia lúdica e interactiva donde el usuario captura los Kencalitos.</p>
+              <p>Instancia lúdica e interactiva donde el usuario captura a los Kencalitos.</p>
             </div>
           </article>
 
@@ -481,7 +495,7 @@
                 <span class="transmedia-pill">Objeto</span>
               </div>
               <h3>Objeto</h3>
-              <p>Sustancia tridimensional incoorporada a los arboles.</p>
+              <p>Sustancia tridimensional incorporada a los árboles.</p>
             </div>
           </article>
 
@@ -571,16 +585,16 @@
                 </video>
               </div>
               <div class="card-media-slide" data-label="Foto 1">
-                <img src="./media/Transmedia/7-%20Performance/20261110_205017.jpg"
-                  alt="Activación Performance — Foto 1" decoding="async">
+                <img src="./media/Transmedia/7-%20Performance/20261110_205017.jpg" alt="Activación Performance — Foto 1"
+                  decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 2">
-                <img src="./media/Transmedia/7-%20Performance/20261110_212450.jpg"
-                  alt="Activación Performance — Foto 2" decoding="async">
+                <img src="./media/Transmedia/7-%20Performance/20261110_212450.jpg" alt="Activación Performance — Foto 2"
+                  decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 3">
-                <img src="./media/Transmedia/7-%20Performance/20261110_212628.jpg"
-                  alt="Activación Performance — Foto 3" decoding="async">
+                <img src="./media/Transmedia/7-%20Performance/20261110_212628.jpg" alt="Activación Performance — Foto 3"
+                  decoding="async">
               </div>
             </div>
             <div class="card-media-controls">
@@ -627,7 +641,7 @@
                 <span class="transmedia-pill">Espacio Urbano</span>
               </div>
               <h3>Espacio Urbano</h3>
-              <p>Intervencion situada en la ciudad de La Plata invitando al evento final.</p>
+              <p>Intervención situada en la ciudad de La Plata para invitar al evento final.</p>
             </div>
           </article>
         </div>
@@ -656,6 +670,7 @@
             <source src="./media/bg-animacion.mp4" type="video/mp4">
           </video>
           <div class="band-bg-scrim band-bg-scrim--climax"></div>
+          <canvas id="kenosis-spores-canvas" class="kenosis-spores-canvas" aria-hidden="true"></canvas>
         </div>
       </div>
 
@@ -665,8 +680,10 @@
           <h2 class="section-title section-title--light">KENOSIS</h2>
           <!-- TODO: Reemplazar con la descripción breve de la instalación final -->
           <p class="section-lead section-lead--light">
-            [Placeholder — Descripción breve de la instalación final] Culminación del recorrido anual: espacio físico,
-            montaje completo, materialidad e interacción presencial donde convergieron todas las hebras del proyecto.
+            Un evento que sucede una vez al año, en el que se reúnen todos los hebrinos y donde se renuevan todas las
+            energías que
+            existen, acompañado de
+            auroras boreales y Kencalitos.
           </p>
         </header>
 
@@ -737,7 +754,7 @@
     <section id="plataformas" class="band band--lavender section-block">
       <div class="container">
         <header class="section-header reveal-on-scroll">
-          <span class="section-index">06 · redes</span>
+          <span class="section-index">06 · Redes</span>
           <h2 class="section-title">Nuestras Redes</h2>
           <p class="section-lead">
             Accesos a las cuentas oficiales y a la aplicación web del proyecto.
@@ -788,7 +805,7 @@
         <div class="team-grid">
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Facundo.png" alt="Cristobal Facundo" decoding="async">
+              <img src="./media/team/Facundo.png" alt="Cristóbal Facundo" decoding="async">
             </div>
             <h3>Cristobal Facundo</h3>
             <span class="team-role-pill">Producción</span>
@@ -824,7 +841,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Juli.png" alt="Narvaez Julieta" decoding="async">
+              <img src="./media/team/Juli.png" alt="Narváez Julieta" decoding="async">
             </div>
             <h3>Narvaez Julieta</h3>
             <span class="team-role-pill">Escenografía</span>
@@ -869,7 +886,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Agus.png" alt="Tabbita Agustin" decoding="async">
+              <img src="./media/team/Agus.png" alt="Tabbita Agustín" decoding="async">
             </div>
             <h3>Tabbita Agustin</h3>
             <span class="team-role-pill">Interacción</span>
