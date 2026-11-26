@@ -5,6 +5,8 @@
   <meta charset="UTF-8">
   <meta name="viewport" content="width=device-width, initial-scale=1.0, viewport-fit=cover">
   <title>HEBRA</title>
+  <meta name="description"
+    content="Hebra es un universo transmedia donde la humanidad y la naturaleza coexisten en armonía: ilustraciones, muestra Fragmentos, activaciones urbanas y la instalación final KENOSIS.">
 
   <!-- Favicon & Touch Icon -->
   <link rel="icon" type="image/png" href="./media/ico.png">
@@ -25,9 +27,16 @@
   <!-- Google Fonts: Epilogue -->
   <link rel="preconnect" href="https://fonts.googleapis.com">
   <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+  <link rel="preload" as="style"
+    href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap">
   <link
     href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
-    rel="stylesheet">
+  rel="stylesheet" media="print" onload="this.media='all'">
+  <noscript>
+    <link
+      href="https://fonts.googleapis.com/css2?family=Epilogue:ital,wght@0,400;0,500;0,600;0,700;1,400;1,600&display=swap"
+      rel="stylesheet">
+  </noscript>
 
   <link rel="stylesheet" href="landing.css">
   <script>
@@ -118,11 +127,11 @@
           </svg>
         </div>
         <div class="band-bg-clip">
-          <video id="hebra-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
-            <source src="./media/bg-animacion.mp4" type="video/mp4">
-          </video>
-          <div class="band-bg-scrim"></div>
-          <canvas id="hero-spores-canvas" class="hero-spores-canvas" aria-hidden="true"></canvas>
+            <video id="hebra-bg-video" class="band-bg-video" muted loop playsinline preload="none">
+              <source data-src="./media/bg-animacion.mp4" type="video/mp4">
+            </video>
+            <div class="band-bg-scrim"></div>
+            <canvas id="hero-spores-canvas" class="hero-spores-canvas" aria-hidden="true"></canvas>
         </div>
       </div>
 
@@ -217,44 +226,51 @@
         <div class="illustrations-layout">
           <figure class="media-card media-card--light reveal-on-scroll">
             <div class="media-slot media-slot--insta media-slot--filled">
-              <img src="./media/Ilustraciones/1.jpg" decoding="async">
+              <img src="./media/Ilustraciones/1.jpg" alt="Ilustración principal del universo Hebra" loading="lazy"
+                decoding="async">
             </div>
           </figure>
 
           <div class="illustrations-subgrid">
             <figure class="media-card media-card--light reveal-on-scroll">
               <div class="media-slot media-slot--insta media-slot--filled">
-                <img src="./media/Ilustraciones/2.jpg" decoding="async">
+                <img src="./media/Ilustraciones/2.jpg" alt="Ilustración del universo Hebra — estudio visual 2"
+                  loading="lazy" decoding="async">
               </div>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
               <div class="media-slot media-slot--insta media-slot--filled">
-                <img src="./media/Ilustraciones/3.jpg" decoding="async">
+                <img src="./media/Ilustraciones/3.jpg" alt="Ilustración del universo Hebra — estudio visual 3"
+                  loading="lazy" decoding="async">
               </div>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
               <div class="media-slot media-slot--insta media-slot--filled">
-                <img src="./media/Ilustraciones/4.jpg" decoding="async">
+                <img src="./media/Ilustraciones/4.jpg" alt="Ilustración del universo Hebra — estudio visual 4"
+                  loading="lazy" decoding="async">
               </div>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
               <div class="media-slot media-slot--insta media-slot--filled">
-                <img src="./media/Ilustraciones/Rectangle%2075.png" decoding="async">
+                <img src="./media/Ilustraciones/Rectangle%2075.jpg" alt="Ilustración conceptual del universo Hebra 5"
+                  loading="lazy" decoding="async">
               </div>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
               <div class="media-slot media-slot--insta media-slot--filled">
-                <img src="./media/Ilustraciones/Rectangle%2076.png" decoding="async">
+                <img src="./media/Ilustraciones/Rectangle%2076.jpg" alt="Ilustración conceptual del universo Hebra 6"
+                  loading="lazy" decoding="async">
               </div>
             </figure>
 
             <figure class="media-card media-card--light reveal-on-scroll">
               <div class="media-slot media-slot--insta media-slot--filled">
-                <img src="./media/Ilustraciones/Rectangle%2077.png" decoding="async">
+                <img src="./media/Ilustraciones/Rectangle%2077.jpg" alt="Ilustración conceptual del universo Hebra 7"
+                  loading="lazy" decoding="async">
               </div>
             </figure>
           </div>
@@ -281,9 +297,9 @@
             <div class="fragmentos-row-top">
               <figure class="media-card media-card--light reveal-on-scroll">
                 <div class="media-slot media-slot--reel media-slot--filled">
-                  <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                    <source src="./media/Fragmento/video_dispositivo.mp4" type="video/mp4">
-                  </video>
+                    <video class="loop-content-video" muted loop playsinline preload="none">
+                      <source data-src="./media/Fragmento/video_dispositivo.mp4" type="video/mp4">
+                    </video>
                 </div>
                 <figcaption class="media-caption">Registro en video del dispositivo en la muestra Fragmentos.
                 </figcaption>
@@ -292,7 +308,7 @@
               <figure class="media-card media-card--light reveal-on-scroll">
                 <div class="media-slot media-slot--reel media-slot--filled">
                   <img src="./media/Fragmento/IMG_20260706_155355_1.jpg"
-                    alt="Dispositivo completo en la muestra Fragmentos" decoding="async">
+                  alt="Dispositivo completo en la muestra Fragmentos" loading="lazy" decoding="async">
                 </div>
                 <figcaption class="media-caption">Vista del dispositivo en Fragmentos.</figcaption>
               </figure>
@@ -302,7 +318,7 @@
               <figure class="media-card media-card--light reveal-on-scroll">
                 <div class="media-slot media-slot--reel media-slot--filled">
                   <img src="./media/Fragmento/IMG_20260706_155408.jpg" alt="Detalle material del dispositivo Fragmentos"
-                    decoding="async">
+                  loading="lazy" decoding="async">
                 </div>
                 <figcaption class="media-caption">Detalle y materialidad.</figcaption>
               </figure>
@@ -310,7 +326,7 @@
               <figure class="media-card media-card--light reveal-on-scroll">
                 <div class="media-slot media-slot--reel media-slot--filled">
                   <img src="./media/Fragmento/IMG_20260706_155439.jpg"
-                    alt="Registro del dispositivo en la muestra Fragmentos" decoding="async">
+                  alt="Registro del dispositivo en la muestra Fragmentos" loading="lazy" decoding="async">
                 </div>
                 <figcaption class="media-caption">Registro espacial.</figcaption>
               </figure>
@@ -318,7 +334,7 @@
               <figure class="media-card media-card--light reveal-on-scroll">
                 <div class="media-slot media-slot--reel media-slot--filled">
                   <img src="./media/Fragmento/IMG_20260706_155508.jpg" alt="Interacción y detalles en Fragmentos"
-                    decoding="async">
+                  loading="lazy" decoding="async">
                 </div>
                 <figcaption class="media-caption">Interacción y detalles en la muestra.</figcaption>
               </figure>
@@ -357,35 +373,35 @@
             <div class="media-slot media-slot--transmedia media-slot--filled">
               <div class="card-media-slide is-active" data-label="Glifos">
                 <div class="glyphs-showcase-plate" role="img" aria-label="Sistema de 12 glifos de Hebra">
-                  <img src="./app/assets/glifos/image%20(45)%202.svg" alt="Glifo 1" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%203.svg" alt="Glifo 2" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%204.svg" alt="Glifo 3" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%205.svg" alt="Glifo 4" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%206.svg" alt="Glifo 5" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%207.svg" alt="Glifo 6" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%208.svg" alt="Glifo 7" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%209.svg" alt="Glifo 8" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%2010.svg" alt="Glifo 9" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%2011.svg" alt="Glifo 10" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%2012.svg" alt="Glifo 11" decoding="async">
-                  <img src="./app/assets/glifos/image%20(45)%2013.svg" alt="Glifo 12" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%202.svg" alt="Glifo 1" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%203.svg" alt="Glifo 2" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%204.svg" alt="Glifo 3" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%205.svg" alt="Glifo 4" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%206.svg" alt="Glifo 5" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%207.svg" alt="Glifo 6" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%208.svg" alt="Glifo 7" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%209.svg" alt="Glifo 8" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%2010.svg" alt="Glifo 9" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%2011.svg" alt="Glifo 10" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%2012.svg" alt="Glifo 11" loading="lazy" decoding="async">
+                  <img src="./app/assets/glifos/image%20(45)%2013.svg" alt="Glifo 12" loading="lazy" decoding="async">
                 </div>
               </div>
               <div class="card-media-slide" data-label="Gato Gota">
-                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                  <source src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20gatogota_codigo.mp4"
+                    class="loop-content-video" muted loop playsinline preload="none">
+                  <source data-src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20gatogota_codigo.mp4"
                     type="video/mp4">
                 </video>
               </div>
               <div class="card-media-slide" data-label="Pulpito">
-                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                  <source src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20pulpito_codigo.mp4"
+                    class="loop-content-video" muted loop playsinline preload="none">
+                  <source data-src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20pulpito_codigo.mp4"
                     type="video/mp4">
                 </video>
               </div>
               <div class="card-media-slide" data-label="Rino">
-                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                  <source src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20rino_codigo.mp4"
+                    class="loop-content-video" muted loop playsinline preload="none">
+                  <source data-src="./media/Transmedia/1-%20DatoDigital(glifos)/Copia%20de%20rino_codigo.mp4"
                     type="video/mp4">
                 </video>
               </div>
@@ -416,7 +432,7 @@
             <a href="./app/" class="media-slot media-slot--transmedia media-slot--app-cover"
               aria-label="Abrir Minijuego en /app">
               <img src="./media/faviconK.png" alt="Ícono Kencalo — Soporte Digital Web" class="app-cover-emblem"
-                decoding="async">
+              loading="lazy" decoding="async">
               <span>Minijuego</span>
             </a>
             <div class="transmedia-body">
@@ -436,13 +452,13 @@
           <article class="transmedia-card" data-step-index="2" data-media-gallery>
             <div class="media-slot media-slot--transmedia media-slot--filled">
               <div class="card-media-slide is-active" data-label="Video">
-                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                  <source src="./media/Transmedia/3-%20Ludico/1.mp4" type="video/mp4">
-                </video>
+                  <video class="loop-content-video" muted loop playsinline preload="none">
+                    <source data-src="./media/Transmedia/3-%20Ludico/1.mp4" type="video/mp4">
+                  </video>
               </div>
               <div class="card-media-slide" data-label="Foto">
                 <img src="./media/Transmedia/3-%20Ludico/2.jpg" alt="Activación Lúdico — Registro fotográfico"
-                  decoding="async">
+                loading="lazy" decoding="async">
               </div>
             </div>
             <div class="card-media-controls">
@@ -467,18 +483,21 @@
           <article class="transmedia-card" data-step-index="3" data-media-gallery>
             <div class="media-slot media-slot--transmedia media-slot--filled">
               <div class="card-media-slide is-active" data-label="Video">
-                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                  <source src="./media/Transmedia/4-%20Objeto/1.mp4" type="video/mp4">
-                </video>
+                  <video class="loop-content-video" muted loop playsinline preload="none">
+                    <source data-src="./media/Transmedia/4-%20Objeto/1.mp4" type="video/mp4">
+                  </video>
               </div>
               <div class="card-media-slide" data-label="Foto 1">
-                <img src="./media/Transmedia/4-%20Objeto/2.png" alt="Activación Objeto — Foto 1" decoding="async">
+                <img src="./media/Transmedia/4-%20Objeto/2.jpg" alt="Activación Objeto — Foto 1" loading="lazy"
+                  decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 2">
-                <img src="./media/Transmedia/4-%20Objeto/3.png" alt="Activación Objeto — Foto 2" decoding="async">
+                <img src="./media/Transmedia/4-%20Objeto/3.jpg" alt="Activación Objeto — Foto 2" loading="lazy"
+                  decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 3">
-                <img src="./media/Transmedia/4-%20Objeto/4.png" alt="Activación Objeto — Foto 3" decoding="async">
+                <img src="./media/Transmedia/4-%20Objeto/4.jpg" alt="Activación Objeto — Foto 3" loading="lazy"
+                  decoding="async">
               </div>
             </div>
             <div class="card-media-controls">
@@ -504,15 +523,15 @@
             <div class="media-slot media-slot--transmedia media-slot--filled">
               <div class="card-media-slide is-active" data-label="Foto 1">
                 <img src="./media/Transmedia/5-%20Grafica/WhatsApp%20Image%202026-10-29%20at%2010.31.34%20PM.jpeg"
-                  alt="Activación Gráfica — Registro 1" decoding="async">
+                alt="Activación Gráfica — Registro 1" loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 2">
                 <img src="./media/Transmedia/5-%20Grafica/WhatsApp%20Image%202026-10-29%20at%2010.31.34%20PM%20(1).jpeg"
-                  alt="Activación Gráfica — Registro 2" decoding="async">
+                alt="Activación Gráfica — Registro 2" loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 3">
                 <img src="./media/Transmedia/5-%20Grafica/WhatsApp%20Image%202026-10-29%20at%2010.31.38%20PM.jpeg"
-                  alt="Activación Gráfica — Registro 3" decoding="async">
+                alt="Activación Gráfica — Registro 3" loading="lazy" decoding="async">
               </div>
             </div>
             <div class="card-media-controls">
@@ -538,19 +557,19 @@
             <div class="media-slot media-slot--transmedia media-slot--filled">
               <div class="card-media-slide is-active" data-label="Foto 1">
                 <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%201794506584009.jpg"
-                  alt="Activación Indumentaria — Foto 1" decoding="async">
+                alt="Activación Indumentaria — Foto 1" loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 2">
                 <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%20IMG_20261112_150556.jpg"
-                  alt="Activación Indumentaria — Foto 2" decoding="async">
+                alt="Activación Indumentaria — Foto 2" loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 3">
                 <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%20IMG_20261112_150619.jpg"
-                  alt="Activación Indumentaria — Foto 3" decoding="async">
+                alt="Activación Indumentaria — Foto 3" loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 4">
                 <img src="./media/Transmedia/6-%20Indumentaria/Copia%20de%20IMG_20261112_151011.jpg"
-                  alt="Activación Indumentaria — Foto 4" decoding="async">
+                alt="Activación Indumentaria — Foto 4" loading="lazy" decoding="async">
               </div>
             </div>
             <div class="card-media-controls">
@@ -575,26 +594,26 @@
           <article class="transmedia-card" data-step-index="6" data-media-gallery>
             <div class="media-slot media-slot--transmedia media-slot--filled">
               <div class="card-media-slide is-active" data-label="Video 1">
-                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                  <source src="./media/Transmedia/7-%20Performance/1.mp4" type="video/mp4">
-                </video>
+                  <video class="loop-content-video" muted loop playsinline preload="none">
+                    <source data-src="./media/Transmedia/7-%20Performance/1.mp4" type="video/mp4">
+                  </video>
               </div>
               <div class="card-media-slide" data-label="Video 2">
-                <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                  <source src="./media/Transmedia/7-%20Performance/2.mp4" type="video/mp4">
-                </video>
+                  <video class="loop-content-video" muted loop playsinline preload="none">
+                    <source data-src="./media/Transmedia/7-%20Performance/2.mp4" type="video/mp4">
+                  </video>
               </div>
               <div class="card-media-slide" data-label="Foto 1">
                 <img src="./media/Transmedia/7-%20Performance/20261110_205017.jpg" alt="Activación Performance — Foto 1"
-                  decoding="async">
+                loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 2">
                 <img src="./media/Transmedia/7-%20Performance/20261110_212450.jpg" alt="Activación Performance — Foto 2"
-                  decoding="async">
+                loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Foto 3">
                 <img src="./media/Transmedia/7-%20Performance/20261110_212628.jpg" alt="Activación Performance — Foto 3"
-                  decoding="async">
+                loading="lazy" decoding="async">
               </div>
             </div>
             <div class="card-media-controls">
@@ -620,11 +639,11 @@
             <div class="media-slot media-slot--transmedia media-slot--filled">
               <div class="card-media-slide is-active" data-label="Registro 1">
                 <img src="./media/Transmedia/8-%20Espacio%20Urbano/IMG-20261111-WA0014.jpg"
-                  alt="Activación en Espacio Urbano — Registro 1" decoding="async">
+                alt="Activación en Espacio Urbano — Registro 1" loading="lazy" decoding="async">
               </div>
               <div class="card-media-slide" data-label="Registro 2">
                 <img src="./media/Transmedia/8-%20Espacio%20Urbano/IMG-20261111-WA0017.jpg"
-                  alt="Activación en Espacio Urbano — Registro 2" decoding="async">
+                alt="Activación en Espacio Urbano — Registro 2" loading="lazy" decoding="async">
               </div>
             </div>
             <div class="card-media-controls">
@@ -666,11 +685,11 @@
       <!-- Animación de fondo en loop para la banda oscura de Kenosis -->
       <div class="climax-bg-sticky-track" aria-hidden="true">
         <div class="climax-bg-sticky-viewport">
-          <video id="kenosis-bg-video" class="band-bg-video" autoplay muted loop playsinline preload="auto">
-            <source src="./media/bg-animacion.mp4" type="video/mp4">
-          </video>
-          <div class="band-bg-scrim band-bg-scrim--climax"></div>
-          <canvas id="kenosis-spores-canvas" class="kenosis-spores-canvas" aria-hidden="true"></canvas>
+            <video id="kenosis-bg-video" class="band-bg-video" muted loop playsinline preload="none">
+              <source data-src="./media/bg-animacion.mp4" type="video/mp4">
+            </video>
+            <div class="band-bg-scrim band-bg-scrim--climax"></div>
+            <canvas id="kenosis-spores-canvas" class="kenosis-spores-canvas" aria-hidden="true"></canvas>
         </div>
       </div>
 
@@ -691,17 +710,17 @@
         <div class="kenosis-videos-grid">
           <figure class="media-card media-card--dark reveal-on-scroll">
             <div class="media-slot media-slot--reel media-slot--dark media-slot--filled">
-              <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                <source src="./media/Kenosis/1.mp4" type="video/mp4">
-              </video>
+                <video class="loop-content-video" muted loop playsinline preload="none">
+                  <source data-src="./media/Kenosis/1.mp4" type="video/mp4">
+                </video>
             </div>
           </figure>
 
           <figure class="media-card media-card--dark reveal-on-scroll">
             <div class="media-slot media-slot--reel media-slot--dark media-slot--filled">
-              <video class="loop-content-video" autoplay muted loop playsinline preload="metadata">
-                <source src="./media/Kenosis/2.mp4" type="video/mp4">
-              </video>
+                <video class="loop-content-video" muted loop playsinline preload="none">
+                  <source data-src="./media/Kenosis/2.mp4" type="video/mp4">
+                </video>
             </div>
           </figure>
         </div>
@@ -710,31 +729,35 @@
         <div class="instalacion-gallery">
           <figure class="media-card media-card--dark gallery-item gallery-item--wide reveal-on-scroll">
             <div class="media-slot media-slot--landscape media-slot--dark media-slot--filled">
-              <img src="./media/Kenosis/4.jpg" alt="Vista general de la instalación final Kenosis" decoding="async">
+              <img src="./media/Kenosis/4.jpg" alt="Vista general de la instalación final Kenosis" loading="lazy"
+                decoding="async">
             </div>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
             <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
-              <img src="./media/Kenosis/3.png" alt="Detalle espacial y montaje de Kenosis" decoding="async">
+              <img src="./media/Kenosis/3.jpg" alt="Detalle espacial y montaje de Kenosis" loading="lazy"
+                decoding="async">
             </div>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
             <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
-              <img src="./media/Kenosis/5.png" alt="Público recorriendo la instalación final Kenosis" decoding="async">
+              <img src="./media/Kenosis/5.jpg" alt="Público recorriendo la instalación final Kenosis" loading="lazy"
+                decoding="async">
             </div>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
             <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
-              <img src="./media/Kenosis/6.png" alt="Registro y calibración de Kenosis" decoding="async">
+              <img src="./media/Kenosis/6.jpg" alt="Registro y calibración de Kenosis" loading="lazy" decoding="async">
             </div>
           </figure>
 
           <figure class="media-card media-card--dark gallery-item reveal-on-scroll">
             <div class="media-slot media-slot--portrait-23 media-slot--dark media-slot--filled">
-              <img src="./media/Kenosis/7.jpeg" alt="Atmósfera e iluminación final de Kenosis" decoding="async">
+              <img src="./media/Kenosis/7.jpeg" alt="Atmósfera e iluminación final de Kenosis" loading="lazy"
+                decoding="async">
             </div>
           </figure>
         </div>
@@ -805,7 +828,7 @@
         <div class="team-grid">
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Facundo.png" alt="Cristóbal Facundo" decoding="async">
+              <img src="./media/team/Facundo.png" alt="Cristóbal Facundo" loading="lazy" decoding="async">
             </div>
             <h3>Cristobal Facundo</h3>
             <span class="team-role-pill">Producción</span>
@@ -814,7 +837,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Alma.png" alt="Hardcastle Alma" decoding="async">
+              <img src="./media/team/Alma.png" alt="Hardcastle Alma" loading="lazy" decoding="async">
             </div>
             <h3>Hardcastle Alma</h3>
             <span class="team-role-pill">Sonido</span>
@@ -823,7 +846,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Abril.png" alt="Herrera Abril" decoding="async">
+              <img src="./media/team/Abril.png" alt="Herrera Abril" loading="lazy" decoding="async">
             </div>
             <h3>Herrera Abril</h3>
             <span class="team-role-pill">Diseño</span>
@@ -832,7 +855,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/fran.jpeg" alt="Lanciotti Franco" decoding="async">
+              <img src="./media/team/fran.jpeg" alt="Lanciotti Franco" loading="lazy" decoding="async">
             </div>
             <h3>Lanciotti Franco</h3>
             <span class="team-role-pill">Arquitectura de sistemas</span>
@@ -841,7 +864,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Juli.png" alt="Narváez Julieta" decoding="async">
+              <img src="./media/team/Juli.png" alt="Narváez Julieta" loading="lazy" decoding="async">
             </div>
             <h3>Narvaez Julieta</h3>
             <span class="team-role-pill">Escenografía</span>
@@ -850,7 +873,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Alexia.png" alt="Roberts Alexia" decoding="async">
+              <img src="./media/team/Alexia.png" alt="Roberts Alexia" loading="lazy" decoding="async">
             </div>
             <h3>Roberts Alexia</h3>
             <span class="team-role-pill">Software</span>
@@ -859,7 +882,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Braian.png" alt="Sasso Braian" decoding="async">
+              <img src="./media/team/Braian.png" alt="Sasso Braian" loading="lazy" decoding="async">
             </div>
             <h3>Sasso Braian</h3>
             <span class="team-role-pill">Redes</span>
@@ -868,7 +891,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Iara.png" alt="Sepúlveda Iara" decoding="async">
+              <img src="./media/team/Iara.png" alt="Sepúlveda Iara" loading="lazy" decoding="async">
             </div>
             <h3>Sepúlveda Iara</h3>
             <span class="team-role-pill">Hardware</span>
@@ -877,7 +900,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Chirs.png" alt="Strack Christian" decoding="async">
+              <img src="./media/team/Chirs.png" alt="Strack Christian" loading="lazy" decoding="async">
             </div>
             <h3>Strack Christian</h3>
             <span class="team-role-pill">Ilustración</span>
@@ -886,7 +909,7 @@
 
           <article class="team-card reveal-on-scroll">
             <div class="team-avatar">
-              <img src="./media/team/Agus.png" alt="Tabbita Agustín" decoding="async">
+              <img src="./media/team/Agus.png" alt="Tabbita Agustín" loading="lazy" decoding="async">
             </div>
             <h3>Tabbita Agustin</h3>
             <span class="team-role-pill">Interacción</span>
@@ -944,7 +967,7 @@
     </div>
   </div>
 
-  <script src="./landing.js"></script>
+  <script src="./landing.js" defer></script>
 </body>
 
 </html>

@@ -48,7 +48,7 @@ function initScrollProgress() {
     },
     { passive: true }
   );
-  update();
+  requestAnimationFrame(update);
 }
 
 function initActiveNavHighlight() {
@@ -209,7 +209,7 @@ function initTransmediaTimeline() {
   );
 
   window.addEventListener('resize', updateUI, { passive: true });
-  updateUI();
+  requestAnimationFrame(updateUI);
 }
 
 function initScrollReveal() {
@@ -258,6 +258,28 @@ function syncAudioToggleButton(btn, video) {
   btn.innerHTML = `${isUnmuted ? AUDIO_UNMUTED_ICON : AUDIO_MUTED_ICON}<span>${isUnmuted ? 'Con audio' : 'Sin audio'}</span>`;
 }
 
+function ensureVideoLoaded(videoEl, preloadMode = 'auto') {
+  if (!videoEl) return false;
+  let changed = false;
+  videoEl.querySelectorAll('source[data-src]').forEach((source) => {
+    const src = source.dataset.src;
+    if (src) {
+      source.setAttribute('src', src);
+      source.removeAttribute('data-src');
+      changed = true;
+    }
+  });
+
+  if (videoEl.preload !== preloadMode) {
+    videoEl.preload = preloadMode;
+  }
+
+  if (changed) {
+    videoEl.load();
+  }
+  return changed;
+}
+
 function initLightbox() {
   const modal = document.getElementById('landing-lightbox');
   const backdrop = document.getElementById('lightbox-backdrop');
@@ -277,7 +299,8 @@ function initLightbox() {
   const getMediaSrc = (el) => {
     if (!el) return '';
     if (el.tagName === 'VIDEO') {
-      return el.currentSrc || el.getAttribute('src') || el.querySelector('source')?.getAttribute('src') || '';
+      const source = el.querySelector('source');
+      return el.currentSrc || el.getAttribute('src') || source?.getAttribute('src') || source?.dataset.src || '';
     }
     return el.getAttribute('src') || '';
   };
@@ -297,14 +320,7 @@ function initLightbox() {
   };
 
   const warmMediaItem = (el) => {
-    if (!el) return;
-    if (el.tagName === 'VIDEO') {
-      if (el.preload !== 'auto') {
-        el.preload = 'auto';
-        if (el.readyState < 2) el.load();
-      }
-      return;
-    }
+    if (!el || el.tagName === 'VIDEO') return;
     const src = el.getAttribute('src');
     if (!src) return;
     const preImg = new Image();
@@ -334,7 +350,8 @@ function initLightbox() {
       imgEl.src = '';
       videoWrap.classList.remove('hidden');
 
-      videoEl.src = targetEl.currentSrc || targetEl.querySelector('source')?.src || getMediaSrc(targetEl);
+      const source = targetEl.querySelector('source');
+      videoEl.src = targetEl.currentSrc || source?.src || source?.dataset.src || getMediaSrc(targetEl);
       videoEl.loop = true;
       videoEl.muted = wasMuted;
       videoEl.playsInline = true;
@@ -432,16 +449,8 @@ function initMediaSwitchers() {
       slides.findIndex((slide) => slide.classList.contains('is-active'))
     );
 
-    const warmSlideVideo = (slide) => {
-      slide?.querySelectorAll('video.loop-content-video').forEach((video) => {
-        if (video.preload !== 'auto') {
-          video.preload = 'auto';
-          if (video.readyState < 2) video.load();
-        }
-      });
-    };
-
-    const showSlide = (idx) => {
+    const showSlide = (idx, options = {}) => {
+      const { isInitial = false } = options;
       const nextIdx = ((idx % slides.length) + slides.length) % slides.length;
       const reducedMotion = prefersReducedMotion();
       slides.forEach((slide, slideIdx) => {
@@ -452,17 +461,13 @@ function initMediaSwitchers() {
             video.pause();
             video.muted = true;
           });
-        } else if (!reducedMotion) {
+        } else if (!isInitial && !reducedMotion) {
           slide.querySelectorAll('video.loop-content-video').forEach((video) => {
-            if (video.preload !== 'auto') video.preload = 'auto';
+            ensureVideoLoaded(video, 'auto');
             video.play().catch(() => {});
           });
         }
       });
-
-      if (slides.length > 1) {
-        warmSlideVideo(slides[(nextIdx + 1) % slides.length]);
-      }
 
       tabs.forEach((tab) => {
         const tabIdx = parseInt(tab.getAttribute('data-media-tab') || '-1', 10);
@@ -485,7 +490,7 @@ function initMediaSwitchers() {
       });
     });
 
-    showSlide(activeIndex);
+    showSlide(activeIndex, { isInitial: true });
   });
 }
 
@@ -517,6 +522,7 @@ function initLoopContentVideos() {
         videos.forEach((other) => {
           if (other !== video) other.muted = true;
         });
+        ensureVideoLoaded(video, 'auto');
         video.muted = false;
         video.play().catch(() => {});
       } else {
@@ -539,6 +545,7 @@ function initLoopContentVideos() {
           const slideActive = !slide || slide.classList.contains('is-active');
 
           if (entry.isIntersecting && slideActive) {
+            ensureVideoLoaded(video, 'auto');
             if (!reducedMotion) video.play().catch(() => {});
           } else {
             video.pause();
@@ -546,76 +553,19 @@ function initLoopContentVideos() {
           }
         });
       },
-      { threshold: 0.15 }
+      { rootMargin: '220px 0px 220px 0px', threshold: 0.05 }
     );
 
     videos.forEach((video) => observer.observe(video));
-  }
-}
-
-function initMediaPreloader() {
-  const imageUrls = new Set();
-  document
-    .querySelectorAll('.media-slot--filled img, .team-avatar img, .glyphs-showcase-plate img')
-    .forEach((img) => {
-      const src = img.getAttribute('src');
-      if (src) imageUrls.add(src);
-    });
-
-  imageUrls.forEach((src) => {
-    const preImg = new Image();
-    preImg.decoding = 'async';
-    preImg.src = src;
-    preImg.decode?.().catch(() => {});
-  });
-
-  const videos = Array.from(document.querySelectorAll('video.loop-content-video'));
-  if (!videos.length) return;
-
-  const ensureVideoPreload = (video) => {
-    if (!video || video.preload === 'auto') return Promise.resolve();
-    video.preload = 'auto';
-    if (video.readyState >= 2) return Promise.resolve();
-
-    return new Promise((resolve) => {
-      let settled = false;
-      const done = () => {
-        if (settled) return;
-        settled = true;
-        resolve();
-      };
-      video.addEventListener('canplay', done, { once: true });
-      video.addEventListener('error', done, { once: true });
-      setTimeout(done, 2500);
-      video.load();
-    });
-  };
-
-  if ('IntersectionObserver' in window) {
-    const proximityObserver = new IntersectionObserver(
-      (entries, obs) => {
-        entries.forEach((entry) => {
-          if (entry.isIntersecting) {
-            ensureVideoPreload(entry.target);
-            obs.unobserve(entry.target);
-          }
-        });
-      },
-      { rootMargin: '1100px 0px 1100px 0px' }
-    );
-    videos.forEach((video) => proximityObserver.observe(video));
-  }
-
-  const startSequentialWarmup = async () => {
-    for (const video of videos) {
-      await ensureVideoPreload(video);
-    }
-  };
-
-  if (document.readyState === 'complete') {
-    setTimeout(startSequentialWarmup, 400);
   } else {
-    window.addEventListener('load', () => setTimeout(startSequentialWarmup, 400), { once: true });
+    videos.forEach((video) => {
+      const slide = video.closest('.card-media-slide');
+      const slideActive = !slide || slide.classList.contains('is-active');
+      if (slideActive) {
+        ensureVideoLoaded(video, 'auto');
+        if (!reducedMotion) video.play().catch(() => {});
+      }
+    });
   }
 }
 
@@ -638,8 +588,13 @@ function initBackToTop() {
   });
 }
 
-function setupLoopBgVideo(videoEl, sectionEl, reducedMotion) {
+function setupLoopBgVideo(videoEl, sectionEl, reducedMotion, options = {}) {
   if (!videoEl) return;
+
+  const { deferLoad = false, rootMargin = '400px 0px 400px 0px' } = options;
+  if (deferLoad) {
+    videoEl.dataset.deferIntro = 'true';
+  }
 
   const markReady = () => {
     videoEl.classList.add('is-ready');
@@ -656,20 +611,30 @@ function setupLoopBgVideo(videoEl, sectionEl, reducedMotion) {
     videoEl.addEventListener('playing', markReady, { once: true });
   }
 
-  if (!reducedMotion && sectionEl && 'IntersectionObserver' in window) {
+  const activateBgVideo = () => {
+    if (videoEl.dataset.deferIntro) return;
+    ensureVideoLoaded(videoEl, 'auto');
+    if (!reducedMotion) {
+      videoEl.play().catch(() => {});
+    }
+  };
+
+  if (sectionEl && 'IntersectionObserver' in window) {
     const observer = new IntersectionObserver(
       (entries) => {
         entries.forEach((entry) => {
           if (entry.isIntersecting) {
-            videoEl.play().catch(() => {});
+            activateBgVideo();
           } else {
             videoEl.pause();
           }
         });
       },
-      { threshold: 0.05 }
+      { rootMargin, threshold: 0.02 }
     );
     observer.observe(sectionEl);
+  } else if (!deferLoad) {
+    activateBgVideo();
   }
 }
 
@@ -905,15 +870,27 @@ function initHeroIntro() {
 
   requestAnimationFrame(() => {
     requestAnimationFrame(() => {
-      heroSection.classList.add('hero-phase-rise');
       spores?.start();
+      heroSection.classList.add('hero-phase-rise');
     });
   });
 
   setTimeout(() => {
-    heroSection.classList.add('hero-phase-video');
-    if (hebraVideo && hebraVideo.paused) {
+    if (hebraVideo) {
+      delete hebraVideo.dataset.deferIntro;
+      ensureVideoLoaded(hebraVideo, 'auto');
       hebraVideo.play().catch(() => {});
+    }
+  }, 650);
+
+  setTimeout(() => {
+    heroSection.classList.add('hero-phase-video');
+    if (hebraVideo) {
+      delete hebraVideo.dataset.deferIntro;
+      ensureVideoLoaded(hebraVideo, 'auto');
+      if (hebraVideo.paused) {
+        hebraVideo.play().catch(() => {});
+      }
     }
   }, 2050);
 
@@ -1557,11 +1534,16 @@ function initInteractiveCardBlobs() {
 
 function initBackgroundVideos() {
   const reducedMotion = prefersReducedMotion();
-  setupLoopBgVideo(document.getElementById('hebra-bg-video'), document.getElementById('inicio'), reducedMotion);
+  const deferHero = document.documentElement.classList.contains('hero-intro-init') && !reducedMotion;
+  setupLoopBgVideo(document.getElementById('hebra-bg-video'), document.getElementById('inicio'), reducedMotion, {
+    deferLoad: deferHero,
+    rootMargin: '200px 0px 200px 0px'
+  });
   setupLoopBgVideo(
     document.getElementById('kenosis-bg-video'),
     document.getElementById('instalacion-final'),
-    reducedMotion
+    reducedMotion,
+    { rootMargin: '400px 0px 400px 0px' }
   );
 }
 
@@ -1576,7 +1558,6 @@ document.addEventListener('DOMContentLoaded', () => {
   initMediaSwitchers();
   initLoopContentVideos();
   initLightbox();
-  initMediaPreloader();
   try {
     initBackgroundVideos();
   } catch (err) {
