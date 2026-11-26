@@ -118,7 +118,6 @@ function initTransmediaTimeline() {
   const track = document.getElementById('transmedia-track');
   const prevBtn = document.getElementById('btn-transmedia-prev');
   const nextBtn = document.getElementById('btn-transmedia-next');
-  const counterEl = document.getElementById('transmedia-counter');
   const progressFill = document.getElementById('timeline-progress-fill');
 
   if (!track) return;
@@ -126,57 +125,91 @@ function initTransmediaTimeline() {
   const total = cards.length;
   if (!total) return;
 
-  let currentStep = 0;
+  let animFrameId = null;
 
-  const updateUI = (step) => {
-    currentStep = Math.max(0, Math.min(total - 1, step));
-    const padded = String(currentStep + 1).padStart(2, '0');
-    if (counterEl) counterEl.textContent = `${padded} / ${String(total).padStart(2, '0')}`;
-    if (prevBtn) prevBtn.disabled = currentStep === 0;
-    if (nextBtn) nextBtn.disabled = currentStep === total - 1;
+  const getMaxScroll = () => Math.max(0, track.scrollWidth - track.clientWidth);
+
+  const getStepWidth = () => {
+    const firstCard = cards[0];
+    if (!firstCard) return 320;
+    const gap = parseFloat(getComputedStyle(track).gap || '20') || 20;
+    return firstCard.getBoundingClientRect().width + gap;
+  };
+
+  const updateUI = () => {
+    const maxScroll = getMaxScroll();
+    const currentLeft = track.scrollLeft;
+    if (prevBtn) prevBtn.disabled = currentLeft <= 2;
+    if (nextBtn) nextBtn.disabled = maxScroll <= 2 || currentLeft >= maxScroll - 2;
     if (progressFill) {
-      progressFill.style.width = `${((currentStep + 1) / total) * 100}%`;
+      const ratio = maxScroll > 0 ? Math.min(1, Math.max(0, currentLeft / maxScroll)) : 1;
+      const pct = 12.5 + ratio * 87.5;
+      progressFill.style.width = `${pct}%`;
     }
   };
 
-  const scrollToStep = (step) => {
-    const idx = Math.max(0, Math.min(total - 1, step));
-    const card = cards[idx];
-    if (!card) return;
+  const smoothScrollTo = (targetLeft, duration = 560) => {
+    const clampedTarget = Math.max(0, Math.min(getMaxScroll(), targetLeft));
+    if (prefersReducedMotion()) {
+      track.scrollLeft = clampedTarget;
+      updateUI();
+      return;
+    }
 
-    track.scrollTo({
-      left: card.offsetLeft - track.offsetLeft,
-      behavior: prefersReducedMotion() ? 'auto' : 'smooth'
-    });
-    updateUI(idx);
+    if (animFrameId) {
+      cancelAnimationFrame(animFrameId);
+      animFrameId = null;
+    }
+
+    const startLeft = track.scrollLeft;
+    const delta = clampedTarget - startLeft;
+    if (Math.abs(delta) < 1) {
+      track.scrollLeft = clampedTarget;
+      updateUI();
+      return;
+    }
+
+    track.style.scrollSnapType = 'none';
+    const startTime = performance.now();
+
+    const step = (now) => {
+      const elapsed = now - startTime;
+      const t = Math.min(1, elapsed / duration);
+      const eased = 1 - Math.pow(1 - t, 3);
+      track.scrollLeft = startLeft + delta * eased;
+      updateUI();
+
+      if (t < 1) {
+        animFrameId = requestAnimationFrame(step);
+      } else {
+        track.scrollLeft = clampedTarget;
+        track.style.scrollSnapType = '';
+        animFrameId = null;
+        updateUI();
+      }
+    };
+
+    animFrameId = requestAnimationFrame(step);
   };
 
-  prevBtn?.addEventListener('click', () => scrollToStep(currentStep - 1));
-  nextBtn?.addEventListener('click', () => scrollToStep(currentStep + 1));
+  prevBtn?.addEventListener('click', () => {
+    smoothScrollTo(track.scrollLeft - getStepWidth());
+  });
 
-  let scrollTimer = null;
+  nextBtn?.addEventListener('click', () => {
+    smoothScrollTo(track.scrollLeft + getStepWidth());
+  });
+
   track.addEventListener(
     'scroll',
     () => {
-      clearTimeout(scrollTimer);
-      scrollTimer = setTimeout(() => {
-        const trackLeft = track.scrollLeft;
-        let closestIdx = 0;
-        let minDiff = Infinity;
-        cards.forEach((card, idx) => {
-          const diff = Math.abs(card.offsetLeft - track.offsetLeft - trackLeft);
-          if (diff < minDiff) {
-            minDiff = diff;
-            closestIdx = idx;
-          }
-        });
-        updateUI(closestIdx);
-      }, 60);
+      if (!animFrameId) updateUI();
     },
     { passive: true }
   );
 
-  updateUI(0);
+  window.addEventListener('resize', updateUI, { passive: true });
+  updateUI();
 }
 
 function initScrollReveal() {
@@ -263,10 +296,32 @@ function initLightbox() {
     syncAudioToggleButton(videoAudioBtn, videoEl);
   };
 
+  const warmMediaItem = (el) => {
+    if (!el) return;
+    if (el.tagName === 'VIDEO') {
+      if (el.preload !== 'auto') {
+        el.preload = 'auto';
+        if (el.readyState < 2) el.load();
+      }
+      return;
+    }
+    const src = el.getAttribute('src');
+    if (!src) return;
+    const preImg = new Image();
+    preImg.decoding = 'async';
+    preImg.src = src;
+    preImg.decode?.().catch(() => {});
+  };
+
   const showAt = (index) => {
     if (!galleryItems.length) return;
     currentIndex = (index + galleryItems.length) % galleryItems.length;
     const targetEl = galleryItems[currentIndex];
+
+    if (galleryItems.length > 1) {
+      warmMediaItem(galleryItems[(currentIndex + 1) % galleryItems.length]);
+      warmMediaItem(galleryItems[(currentIndex - 1 + galleryItems.length) % galleryItems.length]);
+    }
 
     if (targetEl.tagName === 'VIDEO' && videoEl && videoWrap) {
       const wasMuted = targetEl.muted;
@@ -377,6 +432,15 @@ function initMediaSwitchers() {
       slides.findIndex((slide) => slide.classList.contains('is-active'))
     );
 
+    const warmSlideVideo = (slide) => {
+      slide?.querySelectorAll('video.loop-content-video').forEach((video) => {
+        if (video.preload !== 'auto') {
+          video.preload = 'auto';
+          if (video.readyState < 2) video.load();
+        }
+      });
+    };
+
     const showSlide = (idx) => {
       const nextIdx = ((idx % slides.length) + slides.length) % slides.length;
       const reducedMotion = prefersReducedMotion();
@@ -390,10 +454,15 @@ function initMediaSwitchers() {
           });
         } else if (!reducedMotion) {
           slide.querySelectorAll('video.loop-content-video').forEach((video) => {
+            if (video.preload !== 'auto') video.preload = 'auto';
             video.play().catch(() => {});
           });
         }
       });
+
+      if (slides.length > 1) {
+        warmSlideVideo(slides[(nextIdx + 1) % slides.length]);
+      }
 
       tabs.forEach((tab) => {
         const tabIdx = parseInt(tab.getAttribute('data-media-tab') || '-1', 10);
@@ -484,6 +553,72 @@ function initLoopContentVideos() {
   }
 }
 
+function initMediaPreloader() {
+  const imageUrls = new Set();
+  document
+    .querySelectorAll('.media-slot--filled img, .team-avatar img, .glyphs-showcase-plate img')
+    .forEach((img) => {
+      const src = img.getAttribute('src');
+      if (src) imageUrls.add(src);
+    });
+
+  imageUrls.forEach((src) => {
+    const preImg = new Image();
+    preImg.decoding = 'async';
+    preImg.src = src;
+    preImg.decode?.().catch(() => {});
+  });
+
+  const videos = Array.from(document.querySelectorAll('video.loop-content-video'));
+  if (!videos.length) return;
+
+  const ensureVideoPreload = (video) => {
+    if (!video || video.preload === 'auto') return Promise.resolve();
+    video.preload = 'auto';
+    if (video.readyState >= 2) return Promise.resolve();
+
+    return new Promise((resolve) => {
+      let settled = false;
+      const done = () => {
+        if (settled) return;
+        settled = true;
+        resolve();
+      };
+      video.addEventListener('canplay', done, { once: true });
+      video.addEventListener('error', done, { once: true });
+      setTimeout(done, 2500);
+      video.load();
+    });
+  };
+
+  if ('IntersectionObserver' in window) {
+    const proximityObserver = new IntersectionObserver(
+      (entries, obs) => {
+        entries.forEach((entry) => {
+          if (entry.isIntersecting) {
+            ensureVideoPreload(entry.target);
+            obs.unobserve(entry.target);
+          }
+        });
+      },
+      { rootMargin: '1100px 0px 1100px 0px' }
+    );
+    videos.forEach((video) => proximityObserver.observe(video));
+  }
+
+  const startSequentialWarmup = async () => {
+    for (const video of videos) {
+      await ensureVideoPreload(video);
+    }
+  };
+
+  if (document.readyState === 'complete') {
+    setTimeout(startSequentialWarmup, 400);
+  } else {
+    window.addEventListener('load', () => setTimeout(startSequentialWarmup, 400), { once: true });
+  }
+}
+
 function initBackToTop() {
   const backToTopLinks = Array.from(document.querySelectorAll('a[href="#top"]'));
   if (!backToTopLinks.length) return;
@@ -559,6 +694,7 @@ document.addEventListener('DOMContentLoaded', () => {
   initMediaSwitchers();
   initLoopContentVideos();
   initLightbox();
+  initMediaPreloader();
   try {
     initBackgroundVideos();
   } catch (err) {
