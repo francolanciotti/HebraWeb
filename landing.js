@@ -1548,6 +1548,13 @@ function initBackgroundVideos() {
 }
 
 document.addEventListener('DOMContentLoaded', () => {
+  if (!window.location.hash || window.location.hash === '#inicio' || window.location.hash === '#top') {
+    try {
+      window.scrollTo({ top: 0, left: 0, behavior: 'instant' });
+    } catch (_) {
+      window.scrollTo(0, 0);
+    }
+  }
   initScrollReveal();
   initMobileMenu();
   initBackToTop();

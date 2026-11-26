@@ -41,6 +41,14 @@
   <link rel="stylesheet" href="landing.css">
   <script>
     (function () {
+      if ('scrollRestoration' in history) {
+        history.scrollRestoration = 'manual';
+      }
+      var navEntry = performance.getEntriesByType && performance.getEntriesByType('navigation')[0];
+      var isReload = navEntry ? navEntry.type === 'reload' : performance.navigation && performance.navigation.type === 1;
+      if (isReload && window.location.hash && window.history && window.history.replaceState) {
+        window.history.replaceState(null, '', window.location.pathname + window.location.search);
+      }
       var reduced = window.matchMedia && window.matchMedia('(prefers-reduced-motion: reduce)').matches;
       var hash = window.location.hash;
       if (!reduced && (!hash || hash === '#inicio' || hash === '#top')) {
