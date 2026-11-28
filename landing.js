@@ -1532,6 +1532,109 @@ function initInteractiveCardBlobs() {
   });
 }
 
+function initTeamModal() {
+  const modal = document.getElementById('team-modal');
+  const backdrop = document.getElementById('team-modal-backdrop');
+  const closeBtn = document.getElementById('team-modal-close');
+  const prevBtn = document.getElementById('team-modal-prev');
+  const nextBtn = document.getElementById('team-modal-next');
+  const counterEl = document.getElementById('team-modal-counter');
+  const avatarEl = document.getElementById('team-modal-avatar');
+  const nameEl = document.getElementById('team-modal-name');
+  const roleEl = document.getElementById('team-modal-role');
+  const bioEl = document.getElementById('team-modal-bio');
+  const cards = Array.from(document.querySelectorAll('.team-card'));
+
+  if (!modal || !cards.length || !nameEl || !bioEl) return;
+
+  const members = cards.map((card) => {
+    const img = card.querySelector('.team-avatar img');
+    const name = card.querySelector('h3')?.textContent?.trim() || '';
+    const role = card.querySelector('.team-role-pill')?.textContent?.trim() || '';
+    const paragraphs = Array.from(card.querySelectorAll('p'))
+      .map((p) => p.innerHTML.trim())
+      .filter(Boolean);
+
+    return {
+      card,
+      imgSrc: img?.getAttribute('src') || '',
+      imgAlt: img?.getAttribute('alt') || name,
+      name,
+      role,
+      paragraphs
+    };
+  });
+
+  let currentIndex = 0;
+  let lastFocusedEl = null;
+
+  const showMember = (index) => {
+    currentIndex = (index + members.length) % members.length;
+    const member = members[currentIndex];
+
+    if (counterEl) {
+      const cur = String(currentIndex + 1).padStart(2, '0');
+      const total = String(members.length).padStart(2, '0');
+      counterEl.textContent = `${cur} / ${total}`;
+    }
+    if (avatarEl) {
+      avatarEl.src = member.imgSrc;
+      avatarEl.alt = member.imgAlt;
+    }
+    nameEl.textContent = member.name;
+    if (roleEl) {
+      roleEl.textContent = member.role;
+      roleEl.style.display = member.role ? '' : 'none';
+    }
+
+    bioEl.innerHTML = '';
+    member.paragraphs.forEach((html) => {
+      const p = document.createElement('p');
+      p.innerHTML = html;
+      bioEl.appendChild(p);
+    });
+  };
+
+  const open = (index) => {
+    lastFocusedEl = document.activeElement;
+    showMember(index);
+    modal.classList.remove('hidden');
+    document.body.style.overflow = 'hidden';
+    closeBtn?.focus();
+  };
+
+  const close = () => {
+    modal.classList.add('hidden');
+    document.body.style.overflow = '';
+    if (lastFocusedEl && typeof lastFocusedEl.focus === 'function') {
+      lastFocusedEl.focus();
+    }
+    lastFocusedEl = null;
+  };
+
+  members.forEach((member, idx) => {
+    member.card.addEventListener('click', () => open(idx));
+    member.card.addEventListener('keydown', (e) => {
+      if (e.key === 'Enter' || e.key === ' ') {
+        e.preventDefault();
+        open(idx);
+      }
+    });
+  });
+
+  prevBtn?.addEventListener('click', () => showMember(currentIndex - 1));
+  nextBtn?.addEventListener('click', () => showMember(currentIndex + 1));
+  backdrop?.addEventListener('click', close);
+  closeBtn?.addEventListener('click', close);
+
+  document.addEventListener('keydown', (e) => {
+    if (modal.classList.contains('hidden')) return;
+    if (e.key === 'Escape') close();
+    if (e.key === 'ArrowLeft') showMember(currentIndex - 1);
+    if (e.key === 'ArrowRight') showMember(currentIndex + 1);
+  });
+}
+
 function initBackgroundVideos() {
   const reducedMotion = prefersReducedMotion();
   const deferHero = document.documentElement.classList.contains('hero-intro-init') && !reducedMotion;
@@ -1565,6 +1668,11 @@ document.addEventListener('DOMContentLoaded', () => {
   initMediaSwitchers();
   initLoopContentVideos();
   initLightbox();
+  try {
+    initTeamModal();
+  } catch (err) {
+    console.warn('Team modal init error:', err);
+  }
   try {
     initBackgroundVideos();
   } catch (err) {
