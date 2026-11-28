@@ -1013,13 +1013,6 @@ html.hero-intro-init .hero-section.hero-phase-copy .hero-stagger {
   gap: 10px;
 }
 
-.timeline-counter {
-  font-size: 0.86rem;
-  font-weight: 700;
-  color: var(--accent-purple);
-  margin-right: 4px;
-}
-
 .timeline-arrow-btn {
   width: 42px;
   height: 42px;
